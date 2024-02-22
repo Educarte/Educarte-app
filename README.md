@@ -1,2 +1,0 @@
-# Educarte-app
-Educarte APP
