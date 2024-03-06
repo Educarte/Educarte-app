@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:educarte/Ui/screens/redefine_password_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
+import 'package:http/http.dart' as http;
+import '../global/global.dart' as globals;
 
 import '../components/bntAzul.dart';
 import 'login_screen.dart';
 
 class EmailCode extends StatefulWidget {
-  const EmailCode({super.key});
+  EmailCode({super.key});
 
   @override
   State<EmailCode> createState() => _EmailCodeState();
@@ -17,14 +22,51 @@ class EmailCode extends StatefulWidget {
 class _EmailCodeState extends State<EmailCode> {
   String _code = "";
   bool existError = false;
+
   bool loading = false;
+  void EnviarCodigo()async{
+    Map corpo ={
+      "email": globals.emailEsqueciSenha
+    };
+    var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/MobileRequestResetPassword"),
+        body: jsonEncode(corpo),
+        headers: {
+          "Content-Type":"application/json",
+        }
+    );
+
+    if(response.statusCode == 200){
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Código Reenviado!",style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void VerificarCode()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Users/ValidateResetPasswordCode?Code=$_code"));
+
+    if(response.statusCode == 200){
+      setState(() {
+        globals.code = _code;
+      });
+      context.go("/redefinirSenha");
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
         leading: IconButton(onPressed: (){
-          Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=> const LoginScreen()));
+          context.pushReplacement("/login");
         }, icon: const Icon(Symbols.close,color: Color(0xff474C51),)),
         backgroundColor: const Color(0xffF5F5F5),
       ),
@@ -34,12 +76,12 @@ class _EmailCodeState extends State<EmailCode> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 132,
+              SizedBox(
+                height: focusInput? 12 :132,
               ),
               Icon(Symbols.mark_email_unread,color: const Color(0xff547B9A).withOpacity(0.7),size: 95,),
               const SizedBox(height: 48,),
-              Text("Verifique seu e-mail",style: GoogleFonts.poppins(
+              Text("VERIFIQUE SEU E-MAIL",style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
                   fontSize:24,
                   color: const Color(0xff474C51),
@@ -105,12 +147,12 @@ class _EmailCodeState extends State<EmailCode> {
                 ),
               ),
               const SizedBox(height: 120,),
-              BotaoAzul(text: "Continuar",onPressed: ()=> Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=> RedefinePassword())),),
+              BotaoAzul(text: "Continuar",onPressed: ()=> VerificarCode(),),
               const SizedBox(height: 8,),
               Align(
                 alignment: Alignment.center,
                 child: TextButton(onPressed: (){
-          
+                  EnviarCodigo();
                 }, child: Text("Reenviar Código",style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,

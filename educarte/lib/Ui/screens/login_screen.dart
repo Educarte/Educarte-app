@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/bntAzulLoad.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 import 'package:page_transition/page_transition.dart';
@@ -11,6 +14,7 @@ import '../components/input.dart';
 import '../components/inputPassword.dart';
 import 'forgot_password_screen.dart';
 import 'home_screen.dart';
+import '../global/global.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,8 +27,12 @@ class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
   TextEditingController email = TextEditingController();
   TextEditingController senha = TextEditingController();
+  bool carregando = false;
 
   void Logar()async{
+    setState(() {
+      carregando = true;
+    });
     Map corpo = {
       "email": email.text,
       "password": senha.text
@@ -36,12 +44,16 @@ class _LoginScreenState extends State<LoginScreen> {
         "Content-Type": "application/json"
       }
     );
-    print(email);
-    print(senha);
     print(response.statusCode);
     print(response.body);
     
     if(response.statusCode == 200){
+      Map<String,dynamic> jsonData = jsonDecode(response.body);
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonData["token"]);
+      setState(() {
+        globals.nome = decodedToken["name"];
+        globals.token = jsonData["token"];
+      });
       var snackBar = SnackBar(
         backgroundColor: const Color(0xff547B9A),
           content: Center(
@@ -52,8 +64,12 @@ class _LoginScreenState extends State<LoginScreen> {
         ),),
       ));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      Navigator.pushReplacement(context, PageTransition(child: HomeScreen(), type: PageTransitionType.fade,duration:Duration(milliseconds: 500)));
+      context.go("/home");
+
     }else{
+      setState(() {
+        carregando = false;
+      });
       var snackBar = SnackBar(
           backgroundColor: const Color(0xff547B9A),
           content: Center(
@@ -130,14 +146,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       const SizedBox(height: 16,),
                       InputPassword(onChange: senha,name: "Senha",),
                       // lascar os inputs
-                      const SizedBox(height: 8,),
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
+                        height: 50,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             TextButton(onPressed: (){
-                              Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=> const ForgotPasswordScreen()));
+                             context.pushReplacement("/esqueciSenha");
                             }, child: Text("Esqueceu a senha?",style: GoogleFonts.poppins(
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
@@ -147,7 +163,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 48,),
+                      if(carregando == false)
                       BotaoAzul(text: "Entrar",onPressed: ()=> Logar(),),
+                      if(carregando == true)
+                      BotaoAzulLoad()
                     ],
                   ),
                 ),

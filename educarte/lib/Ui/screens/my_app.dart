@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../routes.dart';
 import '../styles/theme/theme.dart';
 import 'login_screen.dart';
 
@@ -8,11 +9,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Educarte',
       debugShowCheckedModeBanner: false,
       theme: theme,
-      home: const LoginScreen(),
+      routerConfig: Routes.router,
     );
   }
 }

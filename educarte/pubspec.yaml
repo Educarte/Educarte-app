@@ -41,6 +41,7 @@ dependencies:
   pin_code_fields:
   jwt_decoder:
   page_transition:
+  go_router: 
 
 
 
