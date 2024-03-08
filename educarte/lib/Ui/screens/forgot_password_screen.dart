@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
+import '../components/bntAzulLoad.dart';
 import '../global/global.dart' as globals;
 
 import '../components/bntAzul.dart';
@@ -21,10 +22,14 @@ class ForgotPasswordScreen extends StatefulWidget {
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController email = TextEditingController();
+  bool carregando = false;
   
   void EnviarCodigo()async{
+    setState(() {
+      carregando = true;
+    });
     Map corpo ={
-      "email": email
+      "email": email.text
     };
     var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/MobileRequestResetPassword"),
       body: jsonEncode(corpo),
@@ -40,11 +45,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       });
 
     }else{
+      setState(() {
+        carregando = false;
+      });
       var snackBar = SnackBar(
           backgroundColor: const Color(0xff547B9A),
           content: Center(
             child: Text("E-mail Inválido!",style: GoogleFonts.poppins(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Colors.white
             ),),
@@ -103,9 +111,12 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ]
               )),
               const SizedBox(height: 24,),
-              Input(name: "E-mail", obscureText: false,onChange: email,),
+              Input(name: "E-mail", obscureText: false, onChange: email,),
               const SizedBox(height: 165,),
+              if(carregando == false)
               BotaoAzul(text: "Continuar",onPressed: () => EnviarCodigo(),),
+              if(carregando == true)
+                BotaoAzulLoad()
             ],
           ),
         ),

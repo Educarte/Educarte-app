@@ -37,11 +37,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
       setState(() {
         nome.text = jsonData["name"];
-        telefone?.text = jsonData["cellphone"];
         email.text = jsonData["email"];
+        if(jsonData["cellphone"] != null){
+          telefone?.text = jsonData["cellphone"];
+        }
       });
     }
   }
+  String id = "";
+  void GetStudentId()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
+      headers: {
+        "Authorization": "Bearer ${globals.token}"
+      }
+    );
+  }
+
+
 
   @override
   void initState() {
@@ -49,9 +61,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     MeusDados();
   }
-
-
-
   @override
   Widget build(BuildContext context) {
     bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;

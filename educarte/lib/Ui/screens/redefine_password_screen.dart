@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/bntAzulLoad.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,12 +23,16 @@ class RedefinePassword extends StatefulWidget {
 class _RedefinePasswordState extends State<RedefinePassword> {
   TextEditingController novaSenha = TextEditingController();
   TextEditingController confirmarSenha = TextEditingController();
+  bool carregando = false;
 
   void UpdatePasssword()async{
+    setState(() {
+      carregando = true;
+    });
     Map corpo = {
       "code": globals.code,
-      "newPassword": novaSenha,
-      "confirmPassword": confirmarSenha
+      "newPassword": novaSenha.text,
+      "confirmPassword": confirmarSenha.text
     };
 
     var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/UpdateForgotPassword"),
@@ -36,6 +41,33 @@ class _RedefinePasswordState extends State<RedefinePassword> {
         "Content-Type":"application/json"
       }
     );
+    if(response.statusCode == 200){
+      context.go("/login");
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }else{
+      setState(() {
+        carregando = false;
+      });
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Erro ao tentar redefinir senha!",style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
   }
 
   @override
@@ -82,7 +114,10 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               const SizedBox(height: 24,),
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
-              BotaoAzul(text: "Continuar",onPressed: () => context.pushReplacement("/login"),),
+              if(carregando == false)
+              BotaoAzul(text: "Continuar",onPressed: () => UpdatePasssword(),),
+              if(carregando == true)
+                BotaoAzulLoad()
             ],
           ),
         ),

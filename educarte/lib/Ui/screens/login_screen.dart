@@ -53,6 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         globals.nome = decodedToken["name"];
         globals.token = jsonData["token"];
+        globals.id = jsonData["sub"];
       });
       var snackBar = SnackBar(
         backgroundColor: const Color(0xff547B9A),
@@ -74,7 +75,7 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: const Color(0xff547B9A),
           content: Center(
         child: Text("Credenciais Inválidas!",style: GoogleFonts.poppins(
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             color: Colors.white
         ),),

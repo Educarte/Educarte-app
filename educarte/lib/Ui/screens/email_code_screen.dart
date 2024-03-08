@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
+import '../components/bntAzulLoad.dart';
 import '../global/global.dart' as globals;
 
 import '../components/bntAzul.dart';
@@ -22,6 +23,7 @@ class EmailCode extends StatefulWidget {
 class _EmailCodeState extends State<EmailCode> {
   String _code = "";
   bool existError = false;
+  bool carregando = false;
 
   bool loading = false;
   void EnviarCodigo()async{
@@ -40,7 +42,7 @@ class _EmailCodeState extends State<EmailCode> {
           backgroundColor: const Color(0xff547B9A),
           content: Center(
             child: Text("Código Reenviado!",style: GoogleFonts.poppins(
-                fontSize: 20,
+                fontSize: 18,
                 fontWeight: FontWeight.w700,
                 color: Colors.white
             ),),
@@ -50,6 +52,9 @@ class _EmailCodeState extends State<EmailCode> {
   }
 
   void VerificarCode()async{
+    setState(() {
+      carregando = true;
+    });
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Users/ValidateResetPasswordCode?Code=$_code"));
 
     if(response.statusCode == 200){
@@ -57,6 +62,20 @@ class _EmailCodeState extends State<EmailCode> {
         globals.code = _code;
       });
       context.go("/redefinirSenha");
+    }else{
+      setState(() {
+        carregando = false;
+      });
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Código Inválido!",style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          ));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
   @override
@@ -147,7 +166,10 @@ class _EmailCodeState extends State<EmailCode> {
                 ),
               ),
               const SizedBox(height: 120,),
+              if(carregando == false)
               BotaoAzul(text: "Continuar",onPressed: ()=> VerificarCode(),),
+              if(carregando == true)
+                BotaoAzulLoad(),
               const SizedBox(height: 8,),
               Align(
                 alignment: Alignment.center,
