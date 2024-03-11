@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:educarte/Ui/components/bntAzul.dart';
 import 'package:educarte/Ui/components/bntBranco.dart';
 import 'package:flutter/cupertino.dart';
@@ -7,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../Interector/base/constants.dart';
+import '../global/global.dart' as globals;
+import 'package:http/http.dart' as http;
 import '../components/input.dart';
 
 class EducarteShell extends StatefulWidget {
@@ -17,13 +21,30 @@ class EducarteShell extends StatefulWidget {
   @override
   State<EducarteShell> createState() => _EducarteShellState();
 }
-
+List<String> list = <String>['One', 'Two', 'Three', 'Four'];
 class _EducarteShellState extends State<EducarteShell> {
   int selectedIndex = 2;
   TextEditingController nome = TextEditingController();
   TextEditingController sala = TextEditingController();
   TextEditingController responsavel = TextEditingController();
   TextEditingController auxiliar = TextEditingController();
+
+  String dropdownValue = list.first;
+
+  String id = "";
+  void Student()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
+        headers: {
+          "Authorization": "Bearer ${globals.token}"
+        }
+    );
+
+    if(response.statusCode == 200){
+
+      print(response.body);
+    }
+
+  }
 
 
   Future<bool> _onWillPop() async {
@@ -104,7 +125,7 @@ class _EducarteShellState extends State<EducarteShell> {
           builder: (BuildContext context){
             return Container(
               width: screenWidth(context),
-              height: 461,
+              height: 465,
               decoration: BoxDecoration(
                   color: colorScheme(context).onBackground,
                   borderRadius: const BorderRadius.only(topRight: Radius.circular(8),topLeft: Radius.circular(8))
@@ -129,7 +150,54 @@ class _EducarteShellState extends State<EducarteShell> {
                       ],
                     ),
                     const SizedBox(height: 32,),
-                    Input(name: "Nome", obscureText: false, onChange: nome),
+                    SizedBox(
+                      height: 55,
+                      child: DropdownButtonFormField<String>(
+                        value: dropdownValue,
+                        icon: const Icon(Symbols.expand_more),
+                        elevation: 16,
+                        style: GoogleFonts.poppins(
+                            fontWeight: FontWeight.w400,
+                            fontSize: 16,
+                            color: const Color(0xff474C51),
+                          height: 1.3
+                        ),
+                        decoration: InputDecoration(
+                            labelText: "Nome",
+                            labelStyle: GoogleFonts.poppins(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 16,
+                                color: const Color(0xff474C51),
+                                height: 1.3
+                            ),
+                            border: const OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide: const BorderSide(
+                                    color: Color(0xffA0A4A8)
+                                )
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(4),
+                                borderSide: const BorderSide(
+                                    color: Color(0xffA0A4A8)
+                                )
+                            )
+                        ),
+                        onChanged: (String? value) {
+                          // This is called when the user selects an item.
+                          setState(() {
+                            dropdownValue = value!;
+                          });
+                        },
+                        items: list.map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
                     const SizedBox(height: 16,),
                     Input(name: "Sala", obscureText: false, onChange: sala),
                     const SizedBox(height: 16,),
