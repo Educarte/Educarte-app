@@ -25,8 +25,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
-  TextEditingController email = TextEditingController();
-  TextEditingController senha = TextEditingController();
+  TextEditingController email = TextEditingController(text: "pai@email.com");
+  TextEditingController senha = TextEditingController(text: "Asdf1234");
   bool carregando = false;
 
   void Logar()async{
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         globals.nome = decodedToken["name"];
         globals.token = jsonData["token"];
-        globals.id = jsonData["sub"];
+        globals.id = decodedToken["sub"];
       });
       var snackBar = SnackBar(
         backgroundColor: const Color(0xff547B9A),

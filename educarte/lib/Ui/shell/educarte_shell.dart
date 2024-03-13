@@ -21,7 +21,7 @@ class EducarteShell extends StatefulWidget {
   @override
   State<EducarteShell> createState() => _EducarteShellState();
 }
-List<String> list = <String>['One', 'Two', 'Three', 'Four'];
+List<String> list = <String>[""];
 class _EducarteShellState extends State<EducarteShell> {
   int selectedIndex = 2;
   TextEditingController nome = TextEditingController();
@@ -32,16 +32,22 @@ class _EducarteShellState extends State<EducarteShell> {
   String dropdownValue = list.first;
 
   String id = "";
-  void Student()async{
+  void student()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
     );
-
     if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      setState(() {
+        list = List.empty(growable: true);
 
-      print(response.body);
+        for(var i=0;i < jsonData["items"].length; i++){
+          list.add(jsonData["items"][i]["name"]);
+        }
+      });
+      print(list);
     }
 
   }
@@ -51,6 +57,12 @@ class _EducarteShellState extends State<EducarteShell> {
     return false;
   }
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    student();
+  }
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -115,8 +127,15 @@ class _EducarteShellState extends State<EducarteShell> {
     setState(() {
       selectedIndex = index;
     });
+    print(list.map<DropdownMenuItem<String>>((String value) {
+      return DropdownMenuItem<String>(
+        value: value,
+        child: Text(value),
+      );
+    }).toList());
     switch (index) {
       case 4:
+        student();
         showModalBottomSheet(
           useRootNavigator: true,
           isScrollControlled: true,
