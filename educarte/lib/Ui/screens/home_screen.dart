@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../Interector/models/apiDiaries.dart';
 import '../components/bntAzul.dart';
 import '../components/bntBranco.dart';
 import '../global/global.dart' as globals;
@@ -30,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> {
         "Authorization": "Bearer ${globals.token.toString()}",
       }
     );
-    print(response.statusCode);
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
       print(jsonData);
@@ -45,17 +45,27 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
   String id = "";
+  List<apiDiaries> listDiaries = [];
   void getStudentId()async{
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
+    try{
+      var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
+          headers: {
+            "Authorization": "Bearer ${globals.token}"
+          }
+      );
+      if(response.statusCode == 200){
+        var decodeJson = jsonDecode(response.body);
 
-    Map<String,dynamic> jsonData = jsonDecode(response.body);
-    setState(() {
-      id = jsonData["items"][0]["id"];
-    });
+        (decodeJson["diaries"] as List).where((diary) {
+          listDiaries.add(apiDiaries.fromJson(diary));
+
+          return true;
+        }).toList();
+      }
+    }catch (e){
+      print("erro -----------");
+    }
+
   }
 
   void student()async{
@@ -66,7 +76,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     if(response.statusCode == 200){
-      print(response.body);
+      Map<String,dynamic> jsonData = jsonDecode(response.body);
+      setState(() {
+        id = jsonData["items"][0]["id"];
+      });
+      getStudentId();
     }
 
   }
@@ -79,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     meusDados();
     student();
+    getStudentId();
   }
   @override
   Widget build(BuildContext context) {
@@ -226,8 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Container(
                         width: screenWidth(context),
                         height: 297,
-                        alignment: Alignment.center,
-                        child: Column(
+                        child: listDiaries == [] ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Icon(Symbols.diagnosis,size: 40,),
@@ -241,6 +255,69 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),textAlign: TextAlign.center,),
                             ),
                           ],
+                        ):
+                        ListView.builder(
+                          itemCount: listDiaries.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: screenWidth(context),
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      border: Border(
+                                        bottom: BorderSide(
+                                          color: colorScheme(context).outline.withOpacity(0.5)
+                                        )
+                                      )
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text("Para: ",style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: colorScheme(context).surface,
+                                              fontWeight: FontWeight.w500
+                                            ),),
+                                            if(listDiaries[index].diaryType == 0)
+                                            Text(globals.nomeAluno.toString(),style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: colorScheme(context).surface,
+                                                fontWeight: FontWeight.w400
+                                            ),),
+                                            if(listDiaries[index].diaryType == 1)
+                                              Text(globals.nomeSala.toString(),style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: colorScheme(context).surface,
+                                                  fontWeight: FontWeight.w400
+                                              ),),
+                                            if(listDiaries[index].diaryType == 2)
+                                            Text("Escola",style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                color: colorScheme(context).surface,
+                                                fontWeight: FontWeight.w400
+                                            ),),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6,),
+                                        Text(listDiaries[index].description.toString(),style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: colorScheme(context).surface,
+                                            fontWeight: FontWeight.w300
+                                        ),),
+                                      ],
+                                    ),
+                                  ),
+                                ]
+                              ),
+                            );
+                          },
+
                         ),
                       ),
                     ],

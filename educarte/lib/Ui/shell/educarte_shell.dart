@@ -28,8 +28,10 @@ class _EducarteShellState extends State<EducarteShell> {
   TextEditingController sala = TextEditingController();
   TextEditingController responsavel = TextEditingController();
   TextEditingController auxiliar = TextEditingController();
+  List<String> listId = [];
+  int valueIndex = 0;
 
-  String dropdownValue = list.first;
+  String dropdownValue = "";
 
   String id = "";
   void student()async{
@@ -45,11 +47,33 @@ class _EducarteShellState extends State<EducarteShell> {
 
         for(var i=0;i < jsonData["items"].length; i++){
           list.add(jsonData["items"][i]["name"]);
+          listId.add(jsonData["items"][i]["id"]);
         }
+
+        dropdownValue = list.first;
+        studentId(valueIndex);
       });
-      print(list);
     }
 
+  }
+
+  void studentId(int index)async{
+    var response = await http.get(
+      Uri.parse("http://64.225.53.11:5000/Students/${listId[index]}"),
+      headers: {
+        "Authorization": "Bearer ${globals.token}"
+      }
+    );
+
+    if(response.statusCode == 200){
+      var jsonData = jsonDecode(response.body);
+      print(response.body);
+      setState(() {
+        sala.text = jsonData["classroom"]["name"];
+        globals.nomeSala = jsonData["classroom"]["name"];
+        globals.nomeAluno = jsonData["name"];
+      });
+    }
   }
 
 
@@ -127,12 +151,7 @@ class _EducarteShellState extends State<EducarteShell> {
     setState(() {
       selectedIndex = index;
     });
-    print(list.map<DropdownMenuItem<String>>((String value) {
-      return DropdownMenuItem<String>(
-        value: value,
-        child: Text(value),
-      );
-    }).toList());
+
     switch (index) {
       case 4:
         student();
@@ -207,6 +226,9 @@ class _EducarteShellState extends State<EducarteShell> {
                           // This is called when the user selects an item.
                           setState(() {
                             dropdownValue = value!;
+                            valueIndex = list.indexWhere((element) => element ==  value!);
+
+                            studentId(valueIndex);
                           });
                         },
                         items: list.map<DropdownMenuItem<String>>((String value) {

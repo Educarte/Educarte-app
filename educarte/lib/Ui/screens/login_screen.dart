@@ -44,8 +44,6 @@ class _LoginScreenState extends State<LoginScreen> {
         "Content-Type": "application/json"
       }
     );
-    print(response.statusCode);
-    print(response.body);
     
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
