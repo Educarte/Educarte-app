@@ -1,13 +1,17 @@
 import 'package:educarte/Interector/base/constants.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class Input extends StatefulWidget {
-  Input({super.key,required this.name,required this.obscureText,required this.onChange});
-  String name;
-  bool obscureText;
-  TextEditingController onChange;
+  const Input({
+    super.key,
+    required this.name,
+    required this.obscureText,
+    required this.onChange
+  });
+  final String name;
+  final bool obscureText;
+  final TextEditingController onChange;
 
   @override
   State<Input> createState() => _InputState();

@@ -4,9 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class InputPassword extends StatefulWidget {
-  InputPassword({super.key,required this.onChange,required this.name});
-  TextEditingController onChange;
-  String name;
+  const InputPassword({
+    super.key,
+    required this.onChange,
+    required this.name
+  });
+  final TextEditingController onChange;
+  final String name;
 
   @override
   State<InputPassword> createState() => _InputPasswordState();

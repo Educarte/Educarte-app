@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class BotaoAzul extends StatefulWidget {
-  BotaoAzul({super.key,required this.text,this.onPressed});
-  String? text;
+  const BotaoAzul({
+    super.key,
+    required this.text,
+    this.onPressed
+  });
+  final String text;
   final VoidCallback? onPressed;
+
   @override
   State<BotaoAzul> createState() => _BotaoAzulState();
 }
@@ -26,11 +31,13 @@ class _BotaoAzulState extends State<BotaoAzul> {
               )
           ),
         ),
-        child: Text(widget.text!,style: GoogleFonts.poppins(
+        child: Text(
+            widget.text,style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: colorScheme(context).onPrimary
-        ),),
+          )
+        )
       ),
     );
   }

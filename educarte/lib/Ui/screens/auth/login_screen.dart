@@ -1,20 +1,16 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/bntAzulLoad.dart';
+import 'package:educarte/Ui/components/bnt_azul_load.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
-import 'package:page_transition/page_transition.dart';
 
-import '../components/bntAzul.dart';
-import '../components/input.dart';
-import '../components/inputPassword.dart';
-import 'forgot_password_screen.dart';
-import 'home_screen.dart';
-import '../global/global.dart' as globals;
+import '../../components/bnt_azul.dart';
+import '../../components/input.dart';
+import '../../components/input_password.dart';
+import '../../global/global.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -29,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController senha = TextEditingController(text: "Asdf1234");
   bool carregando = false;
 
-  void Logar()async{
+  void logar()async{
     setState(() {
       carregando = true;
     });
@@ -163,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const SizedBox(height: 48,),
                       if(carregando == false)
-                      BotaoAzul(text: "Entrar",onPressed: ()=> Logar(),),
+                      BotaoAzul(text: "Entrar",onPressed: ()=> logar(),),
                       if(carregando == true)
                       BotaoAzulLoad()
                     ],

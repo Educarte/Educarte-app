@@ -1,20 +1,18 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/screens/redefine_password_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
-import '../components/bntAzulLoad.dart';
-import '../global/global.dart' as globals;
+import '../../../components/bnt_azul_load.dart';
+import '../../../global/global.dart' as globals;
 
-import '../components/bntAzul.dart';
-import 'login_screen.dart';
+import '../../../components/bnt_azul.dart';
 
 class EmailCode extends StatefulWidget {
-  EmailCode({super.key});
+  const EmailCode({super.key});
 
   @override
   State<EmailCode> createState() => _EmailCodeState();
@@ -24,9 +22,9 @@ class _EmailCodeState extends State<EmailCode> {
   String _code = "";
   bool existError = false;
   bool carregando = false;
-
   bool loading = false;
-  void EnviarCodigo()async{
+
+  void enviarCodigo()async{
     Map corpo ={
       "email": globals.emailEsqueciSenha
     };
@@ -51,7 +49,7 @@ class _EmailCodeState extends State<EmailCode> {
     }
   }
 
-  void VerificarCode()async{
+  void verificarCode()async{
     setState(() {
       carregando = true;
     });
@@ -167,19 +165,18 @@ class _EmailCodeState extends State<EmailCode> {
               ),
               const SizedBox(height: 120,),
               if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: ()=> VerificarCode(),),
+              BotaoAzul(text: "Continuar",onPressed: ()=> verificarCode()),
               if(carregando == true)
                 BotaoAzulLoad(),
               const SizedBox(height: 8,),
               Align(
                 alignment: Alignment.center,
-                child: TextButton(onPressed: (){
-                  EnviarCodigo();
-                }, child: Text("Reenviar Código",style: GoogleFonts.poppins(
+                child: TextButton(onPressed: () =>  enviarCodigo(), 
+                child: Text("Reenviar Código",style: GoogleFonts.poppins(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: const Color(0xff474C51)
-                ),)),
+                ))),
               )
             ],
           ),

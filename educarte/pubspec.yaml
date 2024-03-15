@@ -42,6 +42,9 @@ dependencies:
   jwt_decoder:
   page_transition:
   go_router: 
+  intl: ^0.18.1
+  flutter_localizations:
+    sdk: flutter
 
 
 

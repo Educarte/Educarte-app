@@ -1,12 +1,12 @@
-import 'package:educarte/Ui/screens/email_code_screen.dart';
-import 'package:educarte/Ui/screens/forgot_password_screen.dart';
-import 'package:educarte/Ui/screens/home_screen.dart';
-import 'package:educarte/Ui/screens/login_screen.dart';
+import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart';
+import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
+import 'package:educarte/Ui/screens/home/home_screen.dart';
+import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:educarte/Ui/screens/messages_screen.dart';
-import 'package:educarte/Ui/screens/redefine_password_screen.dart';
+import 'package:educarte/Ui/screens/auth/recover_password/redefine_password_screen.dart';
+import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:go_router/go_router.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'styles/transitions/fade_transition.dart';
 
 
@@ -25,7 +25,7 @@ class Routes {
       ),
       GoRoute(
         path: "/verifiqueEmail",
-        builder: (context, state) => EmailCode(),
+        builder: (context, state) => const EmailCode(),
       ),
       GoRoute(
         path: "/redefinirSenha",
@@ -34,6 +34,10 @@ class Routes {
       GoRoute(
         path: "/recados",
         builder: (context, state) => const MessagesScreen(),
+      ),
+      GoRoute(
+        path: "/timeControl",
+        builder: (context, state) => const TimeControlPage(),
       ),
       ShellRoute(
         builder: (context, state, child) {

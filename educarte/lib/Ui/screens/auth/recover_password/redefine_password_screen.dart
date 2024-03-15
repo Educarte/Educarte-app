@@ -1,17 +1,15 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/bntAzulLoad.dart';
+import 'package:educarte/Ui/components/bnt_azul_load.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
-import '../global/global.dart' as globals;
-import '../components/bntAzul.dart';
-import '../components/input.dart';
-import 'email_code_screen.dart';
-import 'login_screen.dart';
+import '../../../global/global.dart' as globals;
+import '../../../components/bnt_azul.dart';
+import '../../../components/input.dart';
 
 class RedefinePassword extends StatefulWidget {
   const RedefinePassword({super.key});
@@ -25,7 +23,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   TextEditingController confirmarSenha = TextEditingController();
   bool carregando = false;
 
-  void UpdatePasssword()async{
+  void updatePasssword()async{
     setState(() {
       carregando = true;
     });
@@ -66,6 +64,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
                 color: Colors.white
             ),),
           ));
+          
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
@@ -115,7 +114,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
               if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: () => UpdatePasssword(),),
+              BotaoAzul(text: "Continuar",onPressed: () => updatePasssword()),
               if(carregando == true)
                 BotaoAzulLoad()
             ],

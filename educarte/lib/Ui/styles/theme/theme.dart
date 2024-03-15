@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 ThemeData get theme => ThemeData(
     useMaterial3: true,
@@ -6,7 +7,10 @@ ThemeData get theme => ThemeData(
     iconTheme: IconThemeData(color: _colorScheme.outline),
     textTheme: TextTheme(
         titleLarge: TextStyle(
-            color: _colorScheme.onBackground
+          color: _colorScheme.onBackground
+        ),
+        bodyLarge: GoogleFonts.poppins(
+          fontSize: 16
         )
     )
 );

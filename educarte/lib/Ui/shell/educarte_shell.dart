@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/bntAzul.dart';
-import 'package:educarte/Ui/components/bntBranco.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:educarte/Ui/components/bnt_azul.dart';
+import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,8 +13,10 @@ import 'package:http/http.dart' as http;
 import '../components/input.dart';
 
 class EducarteShell extends StatefulWidget {
-  EducarteShell({super.key, required this.child});
-
+  const EducarteShell({
+    super.key, 
+    required this.child
+  });
   final Widget child;
 
   @override
@@ -83,7 +84,6 @@ class _EducarteShellState extends State<EducarteShell> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     student();
   }
@@ -226,7 +226,7 @@ class _EducarteShellState extends State<EducarteShell> {
                           // This is called when the user selects an item.
                           setState(() {
                             dropdownValue = value!;
-                            valueIndex = list.indexWhere((element) => element ==  value!);
+                            valueIndex = list.indexWhere((element) => element ==  value);
 
                             studentId(valueIndex);
                           });
@@ -246,7 +246,7 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 16,),
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
-                    BotaoAzul(text: "Atualizar informações")
+                    const BotaoAzul(text: "Atualizar informações")
                   ],
                 ),
               ),
@@ -289,11 +289,11 @@ class _EducarteShellState extends State<EducarteShell> {
                       ],
                     ),
                     const SizedBox(height: 32,),
-                    BotaoAzul(text: "Visualizar"),
+                    const BotaoAzul(text: "Visualizar"),
                     const SizedBox(height: 16,),
-                    BotaoBranco(text: "Baixar"),
+                    const BotaoBranco(text: "Baixar"),
                     const SizedBox(height: 16,),
-                    BotaoBranco(text: "Compartilhar"),
+                    const BotaoBranco(text: "Compartilhar"),
                   ],
                 ),
               ),

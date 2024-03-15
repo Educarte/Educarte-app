@@ -7,10 +7,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../Interector/models/apiDiaries.dart';
-import '../components/bntAzul.dart';
-import '../components/bntBranco.dart';
-import '../global/global.dart' as globals;
+import '../../../Interector/models/api_diaries.dart';
+import '../../components/bnt_azul.dart';
+import '../../components/bnt_branco.dart';
+import '../../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatefulWidget {
@@ -45,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
   String id = "";
-  List<apiDiaries> listDiaries = [];
+  List<ApiDiaries> listDiaries = [];
   void getStudentId()async{
     try{
       var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         var decodeJson = jsonDecode(response.body);
 
         (decodeJson["diaries"] as List).where((diary) {
-          listDiaries.add(apiDiaries.fromJson(diary));
+          listDiaries.add(ApiDiaries.fromJson(diary));
 
           return true;
         }).toList();
@@ -89,7 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     meusDados();
     student();
@@ -98,9 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
+
     return Scaffold(
       backgroundColor: colorScheme(context).background,
-      body: Container(
+      body: SizedBox(
         width: screenWidth(context),
         height: screenHeight(context),
         child: Padding(
@@ -191,7 +191,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: Colors.black.withOpacity(0.3),
                         spreadRadius: 0,
                         blurRadius: 4,
-                        offset: Offset(0, 4), // changes position of shadow
+                        offset: const Offset(0, 4), // changes position of shadow
                       ),
                     ],
                   ),
@@ -338,7 +338,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.black.withOpacity(0.3),
                             spreadRadius: 0,
                             blurRadius: 4,
-                            offset: Offset(0, 4), // changes position of shadow
+                            offset: const Offset(0, 4), // changes position of shadow
                           ),
                         ],
                       ),
@@ -495,7 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: Colors.black.withOpacity(0.3),
                               spreadRadius: 0,
                               blurRadius: 4,
-                              offset: Offset(0, 4), // changes position of shadow
+                              offset: const Offset(0, 4), // changes position of shadow
                             ),
                           ],
                         ),

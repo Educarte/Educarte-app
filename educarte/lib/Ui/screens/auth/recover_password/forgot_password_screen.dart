@@ -5,13 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
-import '../components/bntAzulLoad.dart';
-import '../global/global.dart' as globals;
+import '../../../components/bnt_azul_load.dart';
+import '../../../global/global.dart' as globals;
 
-import '../components/bntAzul.dart';
-import '../components/input.dart';
-import 'email_code_screen.dart';
-import 'login_screen.dart';
+import '../../../components/bnt_azul.dart';
+import '../../../components/input.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -24,7 +22,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   TextEditingController email = TextEditingController();
   bool carregando = false;
   
-  void EnviarCodigo()async{
+  void enviarCodigo()async{
     setState(() {
       carregando = true;
     });
@@ -114,7 +112,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               Input(name: "E-mail", obscureText: false, onChange: email,),
               const SizedBox(height: 165,),
               if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: () => EnviarCodigo(),),
+              BotaoAzul(text: "Continuar",onPressed: () => enviarCodigo()),
               if(carregando == true)
                 BotaoAzulLoad()
             ],

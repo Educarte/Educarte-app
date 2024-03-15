@@ -1,9 +1,11 @@
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class BotaoAzulLoad extends StatefulWidget {
-  BotaoAzulLoad({super.key});
+  const BotaoAzulLoad({
+    super.key
+  });
+  
   @override
   State<BotaoAzulLoad> createState() => _BotaoAzulState();
 }
