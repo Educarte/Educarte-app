@@ -6,10 +6,12 @@ class BotaoAzul extends StatefulWidget {
   const BotaoAzul({
     super.key,
     required this.text,
-    this.onPressed
+    this.onPressed, 
+    this.loading = false
   });
   final String text;
   final VoidCallback? onPressed;
+  final bool loading;
 
   @override
   State<BotaoAzul> createState() => _BotaoAzulState();
@@ -22,7 +24,7 @@ class _BotaoAzulState extends State<BotaoAzul> {
       height: 44,
       width: screenWidth(context),
       child: ElevatedButton(
-        onPressed: widget.onPressed,
+        onPressed: widget.loading ? null : widget.onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => colorScheme(context).primary),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -31,7 +33,7 @@ class _BotaoAzulState extends State<BotaoAzul> {
               )
           ),
         ),
-        child: Text(
+        child: widget.loading ? const CircularProgressIndicator() : Text(
             widget.text,style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
