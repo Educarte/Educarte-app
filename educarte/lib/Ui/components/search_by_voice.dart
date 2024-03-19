@@ -6,7 +6,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:provider/provider.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
@@ -63,8 +62,9 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
           ),
         ),
       ),
-      body: Consumer<SpeechProvider>(
-        builder: (_, speechProvider, child) {
+      body: ListenableBuilder(
+        listenable: speechProvider,
+        builder: (_, child) {
           return Column(
             children: [
               const SizedBox(height: 32),
@@ -136,10 +136,6 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
     );
   }
 
-  void setStatusListening(SpeechProviderState status){
-    Provider.of<SpeechProvider>(widget.context, listen: false).changeStatus(receivedStatus: status);
-  }
-
   Future<void> initSpeechState() async {
     try {
       var hasSpeech = await speech.initialize(
@@ -167,7 +163,7 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
   }
 
   void startListening() {
-    setStatusListening(SpeechProviderState.started);
+    speechProvider.changeStatus(receivedStatus: SpeechProviderState.started);
 
     speech.listen(
       onResult: resultListener,
@@ -185,21 +181,20 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
     if(result.finalResult && result.alternates.first.recognizedWords.isNotEmpty){
       widget.controller.text = result.recognizedWords;
 
-      setStatusListening(SpeechProviderState.finish);
-
-      Navigator.pop(widget.context);
+      speechProvider.changeStatus(receivedStatus: SpeechProviderState.finish);
+      context.pop();
     }
   }
 
   void errorListener(SpeechRecognitionError error) {
     if(error.errorMsg == "error_no_match" || error.errorMsg == "error_speech_timeout" || error.errorMsg == "error_network"){
-      setStatusListening(SpeechProviderState.error);
+      speechProvider.changeStatus(receivedStatus: SpeechProviderState.error);
     }
   }
 
   void statusListener(String status) {
     if(status == "done"){
-      setStatusListening(SpeechProviderState.done);
+      speechProvider.changeStatus(receivedStatus: SpeechProviderState.done);
     }
   }
 

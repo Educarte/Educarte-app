@@ -10,9 +10,12 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
   DI.addServices();
   
-  runApp(Provider(
-    create: (context) => SpeechProvider(),
-    child: const MyApp()
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create:(context) => SpeechProvider())
+      ],
+      child: const MyApp()
     )
   );
 }

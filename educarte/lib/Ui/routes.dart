@@ -1,3 +1,4 @@
+import 'package:educarte/Ui/components/search_by_voice.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
 import 'package:educarte/Ui/screens/home/home_screen.dart';
@@ -38,6 +39,13 @@ class Routes {
       GoRoute(
         path: "/timeControl",
         builder: (context, state) => const TimeControlPage(),
+      ),
+      GoRoute(
+        path: "/searchByVoice",
+        builder: (context, state) => SearchByVoicePage(
+          controller: (state.extra as Map)["controller"], 
+          context: context
+        ),
       ),
       ShellRoute(
         builder: (context, state, child) {

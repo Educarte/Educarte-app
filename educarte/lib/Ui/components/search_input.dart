@@ -7,7 +7,7 @@ import '../../Interector/base/constants.dart';
 class CustomSearchInput extends StatefulWidget {
   const CustomSearchInput({
     super.key,
-    this.label = "Pesquise por palavras",
+    this.label = "Pesquise por nome",
     required this.controller, 
     required this.action
   });
@@ -27,7 +27,7 @@ class _CustomSearchInputState extends State<CustomSearchInput> {
 
   @override
   Widget build(BuildContext context) {
-    BorderRadius borderRadius = BorderRadius.circular(8);
+    BorderRadius borderRadius = BorderRadius.circular(4);
     OutlineInputBorder border ({Color borderColor = Colors.transparent}) => OutlineInputBorder(
       borderRadius: borderRadius,
       borderSide: BorderSide(
@@ -35,62 +35,29 @@ class _CustomSearchInputState extends State<CustomSearchInput> {
       )
     );
 
-    return Card(
-      margin: EdgeInsets.zero,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: borderRadius
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow:  [
-            BoxShadow(
-              color: themeProvider.shadow(context),
-              blurRadius: 13
-            )
-          ]
+    return TextFormField(
+      controller: widget.controller,
+      onFieldSubmitted: (String value) => widget.action(),
+      onChanged: (String value) => widget.action(),
+      decoration: InputDecoration(
+        fillColor: Colors.transparent,
+        filled: true,
+        suffixIcon: GestureDetector(
+          onTap: () => context.push("/searchByVoice", extra: {"controller": widget.controller}),
+          child: Icon(
+            Symbols.keyboard_voice,
+            size: 24,
+            color: colorScheme(context).surface,
+          ),
         ),
-        child: TextField(
-          controller: widget.controller,
-          onSubmitted: (String value) => widget.action(),
-          onChanged: (String value) => widget.action(),
-          decoration: InputDecoration(
-            fillColor: colorScheme(context).background,
-            filled: true,
-            prefixIcon: InkWell(
-              splashFactory: NoSplash.splashFactory,
-              onTap: () => context.push("/match/searchByVoicePage", extra: {
-                "controller": widget.controller, 
-                "context": context,
-                "searchVoiceInputType": widget.searchVoiceInputType
-              }),
-              child: InkWell(
-                child: Icon(
-                  Symbols.keyboard_voice,
-                  size: 24,
-                  color: colorScheme(context).outline,
-                ),
-              ),
-            ),
-            suffixIcon: GestureDetector(
-              onTap: () => widget.action(),
-              child: Icon(
-                Symbols.search,
-                size: 24,
-                color: colorScheme(context).outline,
-              ),
-            ),
-            suffixIconColor: colorScheme(context).outline,
-            enabledBorder: border(),
-            focusedBorder: border(),
-            border: border(),
-            label: Text(
-              widget.label,
-              style: const TextStyle(
-                // color: primaryColor,
-                fontWeight: FontWeight.normal
-              ),
-            ),
+        enabledBorder: border(borderColor: colorScheme(context).outline),
+        focusedBorder: border(borderColor: colorScheme(context).outline),
+        border: border(borderColor: colorScheme(context).outline),
+        label: Text(
+          widget.label,
+          style: textTheme(context).bodyLarge!.copyWith(
+            color: colorScheme(context).surface,
+            fontWeight: FontWeight.w400
           ),
         ),
       ),
