@@ -57,6 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
   String id = "";
   List<ApiDiaries> listDiaries = [];
   String dataEntrada = "00/00/0000";
+  String horaEntrada = "00/00/0000";
+  String horaSaida = "00/00/0000";
   List<String> listData = [];
   var jsonStudent;
   void getStudentId()async{
@@ -72,6 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
           listDiaries.add(ApiDiaries.fromJson(diary));
           return true;
         }).toList();
+        setState(() {
+          horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["currentMenu"]["startDate"].toString()));
+          print(horaEntrada);
+        });
         listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         setLoading(load: false);
 

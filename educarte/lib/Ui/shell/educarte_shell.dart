@@ -96,6 +96,7 @@ class _EducarteShellState extends State<EducarteShell> {
       body: widget.child,
       bottomNavigationBar: NavigationBar(
         height: 65,
+        indicatorShape: const CircleBorder(),
         labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
         backgroundColor: colorScheme.primary,
         indicatorColor: colorScheme.onBackground.withOpacity(0.25),
