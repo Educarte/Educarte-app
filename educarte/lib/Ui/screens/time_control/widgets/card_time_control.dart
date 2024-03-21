@@ -1,4 +1,6 @@
 import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/Interector/models/classroom_model.dart';
+import 'package:educarte/Interector/models/legal_guardians_model.dart';
 import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:flutter/material.dart';
@@ -49,18 +51,22 @@ class CardTimeControl extends StatelessWidget {
                 child: DashedLine(),
               ),
               if(student.classrooms != null)
-              const InformationAboutTheStudents(
+              InformationAboutTheStudents(
                 title: "Sala",
-                description: "Berçário I",
+                classroom: student.classrooms!.first,
                 first: 0
               ),
-              const InformationAboutTheStudents(
-                title: "Representante Legal",
-                description: "Nome do represente Legal"
-              ),
-              const InformationAboutTheStudents(
-                title: "Representante Legal",
-                description: "Nome do represente Legal"
+              ListView.builder(
+                padding: EdgeInsetsDirectional.zero,
+                primary: false,
+                shrinkWrap: true,
+                itemCount: student.legalGuardians!.length, 
+                itemBuilder: (_, index) {
+                  return InformationAboutTheStudents(
+                    legalGuardian: student.legalGuardians![index],
+                    first: index == 0 ? 0 : 10,
+                  );
+                }
               ),
               const SizedBox(height: 10),
               const BotaoAzul(
@@ -77,17 +83,20 @@ class CardTimeControl extends StatelessWidget {
 class InformationAboutTheStudents extends StatelessWidget {
   const InformationAboutTheStudents({
     super.key,
-    required this.title,
-    required this.description,
-    this.first = 10
+    this.title = "Representante Legal",
+    this.first = 10, 
+    this.legalGuardian, 
+    this.classroom
   });
   final String title;
-  final String description;
+  final LegalGuardian? legalGuardian;
+  final Classroom? classroom;
   final double first;
 
   @override
   Widget build(BuildContext context) {
     Color textColor = colorScheme(context).surface;
+    String? description = legalGuardian != null ? legalGuardian!.name : classroom!.name ?? "";
 
     return Expanded(
       flex: 0,

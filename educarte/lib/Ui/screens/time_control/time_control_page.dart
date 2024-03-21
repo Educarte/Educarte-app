@@ -102,9 +102,9 @@ class _TimeControlPageState extends State<TimeControlPage> {
     } else {
       return Scaffold(
         resizeToAvoidBottomInset: false,
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+        body: Padding(
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 const SizedBox(height: 48),
@@ -191,6 +191,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                   )
                 ),
                 ListView.builder(
+                  padding: EdgeInsets.zero,
                   primary: false,
                   shrinkWrap: true,
                   itemCount: students.length,
