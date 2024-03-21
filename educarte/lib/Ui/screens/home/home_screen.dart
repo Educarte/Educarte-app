@@ -57,8 +57,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String id = "";
   List<ApiDiaries> listDiaries = [];
   String dataEntrada = "00/00/0000";
-  String horaEntrada = "00/00/0000";
-  String horaSaida = "00/00/0000";
+  String horaEntrada = "00";
+  String minEntrada = "00";
+  String horaSaida = "00";
+  String minSaida = "00";
   List<String> listData = [];
   var jsonStudent;
   void getStudentId()async{
@@ -75,8 +77,21 @@ class _HomeScreenState extends State<HomeScreen> {
           return true;
         }).toList();
         setState(() {
-          horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["currentMenu"]["startDate"].toString()));
-          print(horaEntrada);
+          if(decodeJson["accessControls"].length == 1){
+
+            horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+          }
+          else if(decodeJson["accessControls"].length == 2){
+            dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            horaSaida = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
+            minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
+          }
+          print(dataEntrada);
+
         });
         listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         setLoading(load: false);
@@ -504,7 +519,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: colorScheme(context)
                                                   .onSurface
                                           ),),
-                                        Text("07h 10min",
+                                        Text("${horaEntrada}h ${minEntrada}min",
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 14,
@@ -522,7 +537,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                             color: colorScheme(context)
                                                 .onSurface
                                         ),),
-                                        Text("19h 49min",
+                                        Text("${horaSaida}h ${minSaida}min",
                                           style: GoogleFonts.poppins(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 14,
