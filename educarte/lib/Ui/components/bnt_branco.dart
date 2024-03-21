@@ -32,7 +32,7 @@ class _BotaoBrancoState extends State<BotaoBranco> {
               )
           ),
         ),
-        child: Text(widget.text!,style: GoogleFonts.poppins(
+        child: Text(widget.text,style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: colorScheme(context).primary

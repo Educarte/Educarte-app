@@ -1,4 +1,5 @@
 import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -6,7 +7,11 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'dash_line.dart';
 
 class CardTimeControl extends StatelessWidget {
-  const CardTimeControl({super.key});
+  const CardTimeControl({
+    super.key, 
+    required this.student
+  });
+  final Student student;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +34,9 @@ class CardTimeControl extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    "Nome do aluno exemplo",
+                    student.name!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: textTheme(context).bodyLarge!.copyWith(
                       color: colorScheme(context).surface,
                       fontWeight: FontWeight.w600
@@ -41,6 +48,7 @@ class CardTimeControl extends StatelessWidget {
                 padding: EdgeInsets.symmetric(vertical: 8),
                 child: DashedLine(),
               ),
+              if(student.classrooms != null)
               const InformationAboutTheStudents(
                 title: "Sala",
                 description: "Berçário I",

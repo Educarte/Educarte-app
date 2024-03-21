@@ -117,10 +117,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
     if (loading) {
-      return Center(
-          child: const CircularProgressIndicator());
+      return const Center(
+          child: CircularProgressIndicator());
     } else {
       return Scaffold(
         backgroundColor: colorScheme(context).background,
