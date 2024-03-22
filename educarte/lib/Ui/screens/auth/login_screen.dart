@@ -49,16 +49,16 @@ class _LoginScreenState extends State<LoginScreen> {
         globals.token = jsonData["token"];
         globals.id = decodedToken["sub"];
       });
-      var snackBar = SnackBar(
-        backgroundColor: const Color(0xff547B9A),
-          content: Center(
-        child: Text("Seja bem Vindo!",style: GoogleFonts.poppins(
-          fontSize: 18,
-          fontWeight: FontWeight.w400,
-          color: Colors.white
-        ),),
-      ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      // var snackBar = SnackBar(
+      //   backgroundColor: const Color(0xff547B9A),
+      //     content: Center(
+      //   child: Text("Seja bem Vindo!",style: GoogleFonts.poppins(
+      //     fontSize: 18,
+      //     fontWeight: FontWeight.w400,
+      //     color: Colors.white
+      //   ),),
+      // ));
+      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       context.go("/home");
 
     }else{

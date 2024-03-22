@@ -76,8 +76,6 @@ class _EducarteShellState extends State<EducarteShell> {
       });
     }
   }
-
-
   Future<bool> _onWillPop() async {
     return false;
   }
@@ -89,55 +87,52 @@ class _EducarteShellState extends State<EducarteShell> {
   }
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-
     return Scaffold(
       body: widget.child,
       bottomNavigationBar: NavigationBar(
         height: 65,
-        indicatorShape: const CircleBorder(side: BorderSide(width:45)),
+        indicatorShape: CircleBorder(side: BorderSide(width:100)),
         labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
-        backgroundColor: colorScheme.primary,
-        indicatorColor: colorScheme.onBackground.withOpacity(0.25),
+        backgroundColor: colorScheme(context).primary,
+        indicatorColor: colorScheme(context).onBackground.withOpacity(0.25),
         destinations: <NavigationDestination>[
           NavigationDestination(
-            icon: Icon(Symbols.diagnosis,color: colorScheme.onPrimary),
+            icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
             selectedIcon: Icon(
               Symbols.diagnosis,
-              color: colorScheme.onPrimary,
+              color: colorScheme(context).onPrimary,
             ),
             label: 'Recados',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.nutrition,color: colorScheme.onPrimary,),
+            icon: Icon(Symbols.nutrition,color: colorScheme(context).onPrimary,),
             selectedIcon: Icon(
               Symbols.nutrition,
-              color: colorScheme.onPrimary,
+              color: colorScheme(context).onPrimary,
             ),
             label: 'Cardápio',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.cottage,color: colorScheme.onPrimary),
+            icon: Icon(Symbols.cottage,color: colorScheme(context).onPrimary),
             selectedIcon: Icon(
               Symbols.cottage,
-              color: colorScheme.onPrimary,
+              color: colorScheme(context).onPrimary,
             ),
             label: 'Home',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.alarm_on,color: colorScheme.onPrimary),
+            icon: Icon(Symbols.alarm_on,color: colorScheme(context).onPrimary),
             selectedIcon: Icon(
               Symbols.alarm_on,
-              color: colorScheme.onPrimary,
+              color: colorScheme(context).onPrimary,
             ),
             label: 'EntradaSaida',
           ),
           NavigationDestination(
-            icon: Icon(Symbols.switch_account,color: colorScheme.onPrimary),
+            icon: Icon(Symbols.switch_account,color: colorScheme(context).onPrimary),
             selectedIcon: Icon(
               Symbols.switch_account,
-              color: colorScheme.onPrimary,
+              color: colorScheme(context).onPrimary,
             ),
             label: 'Troca de Guarda',
           ),

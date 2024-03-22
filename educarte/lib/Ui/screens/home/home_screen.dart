@@ -101,7 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
       print("erro -----------");
       print(e);
     }
-
   }
 
   void student()async{
@@ -121,6 +120,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
+  void putDados()async{
+    try{
+      Map corpo = {
+        "name": nome.text,
+        "email": email.text,
+        "cellphone": telefone?.text
+      };
+      var response = await http.put(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
+          body: jsonEncode(corpo),
+          headers: {
+            "Authorization": "Bearer ${globals.token}",
+            "Content-Type":"application/json"
+          }
+      );
+      print(response.body);
+      if(response.statusCode == 200){
+        Navigator.of(context).pop();
+        meusDados();
+        getStudentId();
+      }
+    }catch(e){
+      print(e);
+    }
+
+  }
+
 
 
   @override
@@ -132,6 +157,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
     if (loading) {
       return const Center(
           child: CircularProgressIndicator());
@@ -177,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (BuildContext context) {
                               return Container(
                                 width: screenWidth(context),
-                                height: 449,
+                                height: focusInput? 700: 449,
                                 decoration: BoxDecoration(
                                     color: colorScheme(context).onBackground,
                                     borderRadius: const BorderRadius.only(
@@ -219,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                           obscureText: false,
                                           onChange: telefone!),
                                       const SizedBox(height: 32,),
-                                      BotaoAzul(text: "Atualizar informações"),
+                                      BotaoAzul(text: "Atualizar informações",onPressed: ()=> putDados(),),
                                       const SizedBox(height: 16,),
                                       BotaoBranco(text: "Sair do aplicativo",
                                         onPressed: () => context.go("/login"),)
