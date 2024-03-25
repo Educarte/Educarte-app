@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData get theme => ThemeData(
     useMaterial3: true,
+    primaryColor: const Color(0xff547B9A),
     colorScheme: _colorScheme,
     iconTheme: IconThemeData(color: _colorScheme.outline),
     textTheme: TextTheme(

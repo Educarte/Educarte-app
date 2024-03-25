@@ -78,7 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
         }).toList();
         setState(() {
           if(decodeJson["accessControls"].length == 1){
-
             horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
@@ -90,8 +89,6 @@ class _HomeScreenState extends State<HomeScreen> {
             horaSaida = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
             minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
-          print(dataEntrada);
-
         });
         listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         setLoading(load: false);
@@ -145,7 +142,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
   }
-
 
 
   @override
@@ -353,7 +349,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemCount: listDiaries.length,
                               itemBuilder: (BuildContext context, int index) {
                                 return Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .start,
                                     children: [
                                       Container(
                                         width: screenWidth(context),
@@ -361,7 +358,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                         decoration: BoxDecoration(
                                             border: Border(
                                                 bottom: BorderSide(
-                                                    color: colorScheme(context)
+                                                    color: colorScheme(
+                                                        context)
                                                         .outline.withOpacity(
                                                         0.5)
                                                 )
@@ -385,7 +383,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     .diaryType == 0)
                                                   Text(globals.nomeAluno
                                                       .toString(),
-                                                    style: GoogleFonts.poppins(
+                                                    style: GoogleFonts
+                                                        .poppins(
                                                         fontSize: 14,
                                                         color: colorScheme(
                                                             context).surface,
@@ -395,8 +394,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 if(listDiaries[index]
                                                     .diaryType == 1)
                                                   Text(
-                                                    globals.nomeSala.toString(),
-                                                    style: GoogleFonts.poppins(
+                                                    globals.nomeSala
+                                                        .toString(),
+                                                    style: GoogleFonts
+                                                        .poppins(
                                                         fontSize: 14,
                                                         color: colorScheme(
                                                             context).surface,
@@ -406,7 +407,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 if(listDiaries[index]
                                                     .diaryType == 2)
                                                   Text("Escola",
-                                                    style: GoogleFonts.poppins(
+                                                    style: GoogleFonts
+                                                        .poppins(
                                                         fontSize: 14,
                                                         color: colorScheme(
                                                             context).surface,
@@ -416,8 +418,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                               ],
                                             ),
 
-                                            Text(listDiaries[index].description
-                                                .toString(),
+                                            Text(
+                                              listDiaries[index].description
+                                                  .toString(),
                                               style: GoogleFonts.poppins(
                                                 fontSize: 14,
                                                 color: colorScheme(context)
@@ -425,7 +428,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 fontWeight: FontWeight.w300,
                                               ),
                                               maxLines: 3,
-                                              overflow: TextOverflow.ellipsis,),
+                                              overflow: TextOverflow
+                                                  .ellipsis,),
                                             const SizedBox(height: 12,),
                                           ],
                                         ),

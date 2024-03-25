@@ -41,6 +41,7 @@ dependencies:
   pin_code_fields:
   jwt_decoder:
   page_transition:
+  table_calendar: ^3.0.9
   go_router: 
   intl: ^0.18.1
   flutter_localizations:
@@ -49,6 +50,8 @@ dependencies:
   permission_handler: ^11.3.0
   provider: ^6.1.2
   get_it: ^7.6.7
+
+
 
 
 

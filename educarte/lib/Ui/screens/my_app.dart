@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: const [
         Locale('pt', 'BR')
-      ],  
+      ],
       title: 'Educarte',
       debugShowCheckedModeBanner: false,
       theme: theme,

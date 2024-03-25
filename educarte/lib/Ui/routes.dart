@@ -3,7 +3,7 @@ import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart
 import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
 import 'package:educarte/Ui/screens/home/home_screen.dart';
 import 'package:educarte/Ui/screens/auth/login_screen.dart';
-import 'package:educarte/Ui/screens/messages_screen.dart';
+import 'package:educarte/Ui/screens/Messagens/messages_screen.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/redefine_password_screen.dart';
 import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
@@ -33,10 +33,6 @@ class Routes {
         builder: (context, state) => const RedefinePassword(),
       ),
       GoRoute(
-        path: "/recados",
-        builder: (context, state) => const MessagesScreen(),
-      ),
-      GoRoute(
         path: "/timeControl",
         builder: (context, state) => const TimeControlPage(),
       ),
@@ -56,6 +52,11 @@ class Routes {
             path: "/home",
             pageBuilder: (context, state) =>
                 FadeTransitionPage(child: const HomeScreen()),
+          ),
+          GoRoute(
+            path: "/recados",
+            pageBuilder: (context, state) =>
+                FadeTransitionPage(child: const MessagesScreen()),
           ),
         ],
       ),
