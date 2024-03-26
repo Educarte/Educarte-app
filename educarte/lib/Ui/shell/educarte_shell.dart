@@ -220,6 +220,8 @@ class _EducarteShellState extends State<EducarteShell> {
                             color: const Color(0xff474C51),
                           height: 1.3
                         ),
+
+
                         decoration: InputDecoration(
                             labelText: "Nome",
                             labelStyle: GoogleFonts.poppins(
