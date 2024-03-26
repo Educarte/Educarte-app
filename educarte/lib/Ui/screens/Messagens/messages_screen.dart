@@ -50,27 +50,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 focusedDay: DateTime.now(),
                 onDaySelected: _onDaySelected,
               ),
-              FlutterFlowCalendar(
-                color: Color(0xFF547B9A),
-                iconColor: FlutterFlowTheme.of(context).secondaryText,
-                weekFormat: true,
-                weekStartsMonday: true,
-                rowHeight: 52,
-                onChange: (DateTimeRange? newSelectedDate) {
-                  setState(() => _model.calendarSelectedDay = newSelectedDate);
-                },
-                titleStyle: TextStyle(
-                  color: Color(0xFF474C51),
-                  fontWeight: FontWeight.w500,
-                ),
-                dayOfWeekStyle: FlutterFlowTheme.of(context).labelLarge,
-                dateStyle: TextStyle(
-                  color: Color(0xFF474C51),
-                  fontSize: 16,
-                ),
-                selectedDateStyle: FlutterFlowTheme.of(context).titleSmall,
-                inactiveDateStyle: FlutterFlowTheme.of(context).labelMedium,
-              ),
+              
             ],
           ),
         ),

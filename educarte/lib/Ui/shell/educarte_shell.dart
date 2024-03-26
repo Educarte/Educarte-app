@@ -113,7 +113,7 @@ class _EducarteShellState extends State<EducarteShell> {
         height: 65,
         labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
         backgroundColor: colorScheme(context).primary,
-        indicatorColor: Colors.transparent,
+        indicatorColor: colorScheme(context).primary,
         destinations: <NavigationDestination>[
           NavigationDestination(
             icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
