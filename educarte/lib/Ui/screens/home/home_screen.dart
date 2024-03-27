@@ -199,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             builder: (BuildContext context) {
                               return Container(
                                 width: screenWidth(context),
-                                height: focusInput? 700: 449,
+                                height: focusInput? 700: 449 ,
                                 decoration: BoxDecoration(
                                     color: colorScheme(context).onBackground,
                                     borderRadius: const BorderRadius.only(
@@ -231,7 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                       const SizedBox(height: 32,),
                                       Input(name: "Nome",
                                           obscureText: false,
-                                          onChange: nome),
+                                          onChange: nome,
+                                      ),
                                       const SizedBox(height: 16,),
                                       Input(name: "E-mail",
                                           obscureText: false,

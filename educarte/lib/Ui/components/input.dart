@@ -7,11 +7,12 @@ class Input extends StatefulWidget {
     super.key,
     required this.name,
     required this.obscureText,
-    required this.onChange
+    required this.onChange,
   });
   final String name;
   final bool obscureText;
   final TextEditingController onChange;
+
 
   @override
   State<Input> createState() => _InputState();
@@ -32,6 +33,9 @@ class _InputState extends State<Input> {
             fontSize: 16,
             color: const Color(0xff474C51)
         ),
+        onTap: (){
+
+        },
         decoration: InputDecoration(
             labelText: widget.name,
             labelStyle: GoogleFonts.poppins(
