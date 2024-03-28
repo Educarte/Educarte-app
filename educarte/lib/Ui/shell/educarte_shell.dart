@@ -178,6 +178,7 @@ class _EducarteShellState extends State<EducarteShell> {
         showModalBottomSheet(
           useRootNavigator: true,
           isScrollControlled: true,
+          isDismissible: false,
           context: context,
           backgroundColor: Colors.black.withOpacity(0.3),
           builder: (BuildContext context){
@@ -280,6 +281,9 @@ class _EducarteShellState extends State<EducarteShell> {
       case 1:
         showModalBottomSheet(
           context: context,
+          isDismissible: false,
+          useRootNavigator: true,
+          isScrollControlled: true,
           backgroundColor: Colors.black.withOpacity(0.3),
           builder: (BuildContext context){
             return Container(

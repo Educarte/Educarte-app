@@ -11,6 +11,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../Interector/models/api_diaries.dart';
 import '../../../Interector/validations/convertter.dart';
 import '../../components/bnt_azul.dart';
+import '../../components/bnt_azul_load.dart';
 import '../../components/bnt_branco.dart';
 import '../../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -46,6 +47,7 @@ class _HomeScreenState extends State<HomeScreen> {
       print(jsonData);
 
       setState(() {
+        globals.nome = jsonData["name"];
         nome.text = jsonData["name"];
         email.text = jsonData["email"];
         if(jsonData["cellphone"] != null){
@@ -63,7 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
   String minSaida = "00";
   List<String> listData = [];
   var jsonStudent;
+  bool carregando = false;
+
+
   void getStudentId()async{
+    setState(() {
+      listDiaries = [];
+    });
     try{
       var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
           headers: {
@@ -118,6 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void putDados()async{
+    setState(() {
+      carregando = true;
+    });
     try{
       Map corpo = {
         "name": nome.text,
@@ -133,12 +144,19 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       print(response.body);
       if(response.statusCode == 200){
-        Navigator.of(context).pop();
-        meusDados();
-        getStudentId();
+        Future.delayed(Duration(seconds: 1)).then((value) {
+          meusDados();
+          getStudentId();
+        });
+        setState(() {
+          carregando = false;
+        });
       }
     }catch(e){
       print(e);
+      setState(() {
+        carregando = false;
+      });
     }
 
   }
@@ -194,6 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           showModalBottomSheet(
                             useRootNavigator: true,
                             isScrollControlled: true,
+                            isDismissible: false,
                             context: context,
                             backgroundColor: Colors.black.withOpacity(0.3),
                             builder: (BuildContext context) {
@@ -242,7 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                           obscureText: false,
                                           onChange: telefone!),
                                       const SizedBox(height: 32,),
-                                      BotaoAzul(text: "Atualizar informações",onPressed: ()=> putDados(),),
+                                      if(carregando == false)
+                                      BotaoAzul(text: "Atualizar informações",onPressed: (){putDados();Navigator.pop(context);},),
+                                      if(carregando == true)
+                                        BotaoAzulLoad(),
                                       const SizedBox(height: 16,),
                                       BotaoBranco(text: "Sair do aplicativo",
                                         onPressed: () => context.go("/login"),)
@@ -345,100 +367,79 @@ class _HomeScreenState extends State<HomeScreen> {
                           ) :
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 12),
-                            child: ListView.builder(
-                              itemCount: listDiaries.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Column(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .start,
-                                    children: [
-                                      Container(
-                                        width: screenWidth(context),
-                                        margin: EdgeInsets.only(bottom: 12),
-                                        decoration: BoxDecoration(
-                                            border: Border(
-                                                bottom: BorderSide(
+                                horizontal: 12),
+                            child: Container(
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: ListView.builder(
+                                  itemCount: listDiaries.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Container(
+                                      width: screenWidth(context),
+                                      margin: EdgeInsets.only(bottom: 12),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: colorScheme(
+                                                      context).outline.withOpacity(0.5),),
+                                          ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text("Para: ",
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
                                                     color: colorScheme(
-                                                        context)
-                                                        .outline.withOpacity(
-                                                        0.5)
-                                                )
-                                            )
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text("Para: ",
+                                                        context).surface,
+                                                    fontWeight: FontWeight
+                                                        .w500
+                                                ),),
+                                              if(listDiaries[index].diaryType == 0)
+                                                Text(globals.nomeAluno
+                                                    .toString(),
                                                   style: GoogleFonts.poppins(
                                                       fontSize: 14,
-                                                      color: colorScheme(
-                                                          context).surface,
-                                                      fontWeight: FontWeight
-                                                          .w500
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
                                                   ),),
-                                                if(listDiaries[index]
-                                                    .diaryType == 0)
-                                                  Text(globals.nomeAluno
-                                                      .toString(),
-                                                    style: GoogleFonts
-                                                        .poppins(
-                                                        fontSize: 14,
-                                                        color: colorScheme(
-                                                            context).surface,
-                                                        fontWeight: FontWeight
-                                                            .w400
-                                                    ),),
-                                                if(listDiaries[index]
-                                                    .diaryType == 1)
-                                                  Text(
-                                                    globals.nomeSala
-                                                        .toString(),
-                                                    style: GoogleFonts
-                                                        .poppins(
-                                                        fontSize: 14,
-                                                        color: colorScheme(
-                                                            context).surface,
-                                                        fontWeight: FontWeight
-                                                            .w400
-                                                    ),),
-                                                if(listDiaries[index]
-                                                    .diaryType == 2)
-                                                  Text("Escola",
-                                                    style: GoogleFonts
-                                                        .poppins(
-                                                        fontSize: 14,
-                                                        color: colorScheme(
-                                                            context).surface,
-                                                        fontWeight: FontWeight
-                                                            .w400
-                                                    ),),
-                                              ],
+                                              if(listDiaries[index].diaryType == 1)
+                                                Text(
+                                                  globals.nomeSala.toString(),
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                              if(listDiaries[index].diaryType == 2)
+                                                Text("Escola",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6,),
+                                          Text(
+                                            listDiaries[index].description.toString(),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: colorScheme(context).surface,
+                                              fontWeight: FontWeight.w300,
                                             ),
-
-                                            Text(
-                                              listDiaries[index].description
-                                                  .toString(),
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: colorScheme(context)
-                                                    .surface,
-                                                fontWeight: FontWeight.w300,
-                                              ),
-                                              maxLines: 3,
-                                              overflow: TextOverflow
-                                                  .ellipsis,),
-                                            const SizedBox(height: 12,),
-                                          ],
-                                        ),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,),
+                                          const SizedBox(height: 12,),
+                                        ],
                                       ),
-                                    ]
-                                );
-                              },
+                                    );
+                                  },
 
+                                ),
+                              ),
                             ),
                           ),
                         ),
