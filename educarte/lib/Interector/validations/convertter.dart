@@ -17,4 +17,10 @@ class Convertter {
 
     return ["$start de", center, isDe != null ? end : " de $end"];
   }
+
+  static String dateInMonthAndYear({required DateTime date}){
+    final DateFormat normalize = DateFormat('MMMM, yyyy', 'pt_BR');
+
+    return normalize.format(date);
+  }
 }

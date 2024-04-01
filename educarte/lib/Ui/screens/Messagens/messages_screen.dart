@@ -1,11 +1,18 @@
+import 'dart:convert';
+
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class MessagesScreen extends StatefulWidget {
-  const MessagesScreen({super.key});
+import '../../../Interector/models/api_diaries.dart';
+import '../../components/table_Calendar.dart';
+import 'package:http/http.dart' as http;
+import '../../global/global.dart' as globals;
 
+class MessagesScreen extends StatefulWidget {
+  MessagesScreen({super.key, this.idStudent});
+  String? idStudent;
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
@@ -16,6 +23,38 @@ class _MessagesScreenState extends State<MessagesScreen> {
     setState(() {
       today = day;
     });
+  }
+  bool loading = false;
+
+  void setLoading({required bool load}){
+    setState(() {
+      loading = load;
+    });
+  }
+  List<ApiDiaries> listDiaries = [];
+  void getStudentId()async{
+    setState(() {
+      listDiaries = [];
+    });
+    try{
+      var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/${widget.idStudent}"),
+          headers: {
+            "Authorization": "Bearer ${globals.token}"
+          }
+      );
+      if(response.statusCode == 200){
+        var decodeJson = jsonDecode(response.body);
+        (decodeJson["diaries"] as List).where((diary) {
+          listDiaries.add(ApiDiaries.fromJson(diary));
+          return true;
+        }).toList();
+        setLoading(load: false);
+
+      }
+    }catch (e){
+      print("erro -----------");
+      print(e);
+    }
   }
   @override
   Widget build(BuildContext context) {
@@ -30,27 +69,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
           child: Column(
             children: [
               const SizedBox(height: 20,),
-              TableCalendar(
-                calendarFormat: CalendarFormat.week,
-                locale: 'pt_BR',
-                rowHeight: 43,
-                headerStyle: HeaderStyle(
-                  formatButtonVisible: false,
-                  formatButtonShowsNext: false, // Esconde a seta que mostra o próximo mês
-                  leftChevronIcon: Icon(Symbols.arrow_back_ios, color: colorScheme(context).surface), // Personalize a seta esquerda
-                  rightChevronIcon: Icon(Icons.arrow_forward_ios, color: colorScheme(context).surface), //
-                ),
-                availableGestures: AvailableGestures.all,
-                selectedDayPredicate: (day) {
-                  return isSameDay(today, day);
-                },
+              CustomTableCalendar(callback: (DateTime? start, DateTime? end) {
 
-                firstDay: DateTime.utc(2010, 10, 16),
-                lastDay: DateTime.utc(2030, 3, 14),
-                focusedDay: DateTime.now(),
-                onDaySelected: _onDaySelected,
-              ),
-              
+              },),
             ],
           ),
         ),

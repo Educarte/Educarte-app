@@ -56,7 +56,7 @@ class Routes {
           GoRoute(
             path: "/recados",
             pageBuilder: (context, state) =>
-                FadeTransitionPage(child: const MessagesScreen()),
+                FadeTransitionPage(child: MessagesScreen()),
           ),
         ],
       ),
