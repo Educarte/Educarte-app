@@ -372,6 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: ListView.builder(
+                                  padding: EdgeInsets.only(top: 10),
                                   itemCount: listDiaries.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return Container(
@@ -588,6 +589,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       GestureDetector(
                         onTap: () {
                           showModalBottomSheet(
+                            isDismissible: false,
                             useRootNavigator: true,
                             context: context,
                             backgroundColor: Colors.black.withOpacity(0.3),
