@@ -80,11 +80,14 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
     setState(() {
       currentDay = value!;
     });
+    widget.callback!(value,null);
   }
+
 
   void setRange({DateTime? startValue, DateTime? endValue}) => setState(() {
     _startDate = startValue!;
     _endDate = endValue;
+    widget.callback!(_startDate,_endDate);
   });
 
   void pageChanged({required DateTime newFocusedDay}) => setState(() {

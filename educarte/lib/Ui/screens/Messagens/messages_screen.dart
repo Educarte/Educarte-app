@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../Interector/models/api_diaries.dart';
+import '../../../Services/config/api_config.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/table_Calendar.dart';
@@ -19,12 +21,14 @@ class MessagesScreen extends StatefulWidget {
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
+enum Loadings {none,initial,list}
 
 class _MessagesScreenState extends State<MessagesScreen> {
   DateTime today = DateTime.now();
   String id = "";
   List<ApiDiaries> listDiaries = [];
-  bool loading = false;
+  Loadings loading = Loadings.none;
+
 
 
   void _onDaySelected(DateTime day, DateTime focusDay){
@@ -34,18 +38,19 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
 
 
-  void setLoading({required bool load}){
+  void setLoading({required Loadings load}){
     setState(() {
       loading = load;
     });
   }
 
   void student()async{
-    setLoading(load: true);
+    setLoading(load: Loadings.initial);
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
-        }
+        },
+
     );
 
     if(response.statusCode == 200){
@@ -58,6 +63,32 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   }
 
+
+
+  void diaryId(DateTime? startDate)async{
+    setLoading(load: Loadings.list);
+    var url = Uri(
+        scheme: 'http://64.225.53.11:5000/Diary',
+        host: baseUrl,
+        queryParameters: {
+          'StudentId': id,
+          "StartDate": startDate
+        }
+    );
+    var response = await http.get(url,
+        headers: {
+          "Authorization": "Bearer ${globals.token}"
+        }
+    );
+    if(response.statusCode == 200){
+      var decodeJson = jsonDecode(response.body);
+      (decodeJson["diaries"] as List).where((diary) {
+        listDiaries.add(ApiDiaries.fromJson(diary));
+        return true;
+      }).toList();
+    }
+    setLoading(load: Loadings.none);
+  }
   void getStudentId()async{
     setState(() {
       listDiaries = [];
@@ -74,7 +105,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
           listDiaries.add(ApiDiaries.fromJson(diary));
           return true;
         }).toList();
-        setLoading(load: false);
+        setLoading(load: Loadings.none);
 
       }
     }catch (e){
@@ -93,7 +124,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    if (loading) {
+    if (loading == Loadings.initial) {
       return const Center(
           child: CircularProgressIndicator());
     } else {
@@ -109,7 +140,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
               children: [
                 const SizedBox(height: 20,),
                 CustomTableCalendar(
-                  callback: (DateTime? start, DateTime? end) {},),
+                  callback: (DateTime? start, DateTime? end) {
+                    diaryId(start);
+                  },),
+                if(loading == Loadings.list)
+                const Expanded(
+                  child: Center(
+                  child: CircularProgressIndicator()),
+                )
+                else
                 Expanded(
                   child: ListView.builder(
                     padding: const EdgeInsets.only(top: 10),
@@ -336,6 +375,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                             ),),
                                           ],
                                         ),
+                                        if(listDiaries[index].fileUri != null)
                                         GestureDetector(
                                           onTap: () {
                                             showModalBottomSheet(
