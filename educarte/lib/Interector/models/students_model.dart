@@ -23,7 +23,7 @@ class Student {
   int? status;
   String? birthDate;
   List<Classroom>? classrooms;
-  List<LegalGuardian>? legalGuardians;
+  LegalGuardian? legalGuardian;
   List<ContratedHour>? contratedHours;
   List<AcessControl>? accessControl;
 
@@ -46,10 +46,12 @@ class Student {
     this.status,
     this.birthDate,
     this.classrooms,
-    this.legalGuardians,
+    this.legalGuardian,
     this.contratedHours,
     this.accessControl
   });
+  
+  Student.empty();
 
   Student.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -69,16 +71,11 @@ class Student {
     time = json['time'];
     status = json['status'];
     birthDate = json['birthDate'];
+    legalGuardian = LegalGuardian.fromJson(json['legalGuardian']);
     if (json['classrooms'] != null) {
       classrooms = [];
       json['classrooms'].forEach((classroomJson) {
         classrooms!.add(Classroom.fromJson(classroomJson));
-      });
-    }
-    if (json['legalGuardians'] != null) {
-      legalGuardians = [];
-      json['legalGuardians'].forEach((guardianJson) {
-        legalGuardians!.add(LegalGuardian.fromJson(guardianJson));
       });
     }
     if (json['contratedHours'] != null) {
@@ -114,11 +111,9 @@ class Student {
     data['time'] = time;
     data['status'] = status;
     data['birthDate'] = birthDate;
+    data['legalGuardians'] = legalGuardian;
     if (classrooms != null) {
       data['classrooms'] = classrooms!.map((classroom) => classroom.toJson()).toList();
-    }
-    if (legalGuardians != null) {
-      data['legalGuardians'] = legalGuardians!.map((guardian) => guardian.toJson()).toList();
     }
     if (contratedHours != null) {
       data['contratedHours'] = contratedHours!.map((hour) => hour.toJson()).toList();

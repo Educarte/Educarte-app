@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:educarte/Interector/models/classroom_model.dart';
 import 'package:educarte/Interector/validations/convertter.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:http/http.dart' as http;
@@ -13,6 +15,16 @@ import '../../components/custom_dropdown.dart';
 import '../../components/search_input.dart';
 import 'widgets/card_time_control.dart';
 
+String tok = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOGRjNTI2Zi1kNzhkLTRhZTktODliMC0zYjk3NzYwYjVlYTMiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AZW1haWwuY29tIiwicm9sZSI6IkFkbWluIiwicHJvZmlsZSI6IkFkbWluIiwiaXNGaXJzdEFjY2VzcyI6IlRydWUiLCJleHAiOjE3MTIzNDIyMjQsImlzcyI6IkVkdWNhcnRlIiwiYXVkIjoiRWR1Y2FydGUifQ.9VQWEBLOq7EcERT7ZyBQXcl0kuLVNAIrcC4vjvkoPzs";
+
+enum TimeControlPageLoading{
+  none,
+  initial,
+  getStudents,
+  filter,
+  loaded
+}
+
 class TimeControlPage extends StatefulWidget {
   const TimeControlPage({super.key});
 
@@ -22,10 +34,10 @@ class TimeControlPage extends StatefulWidget {
 
 class _TimeControlPageState extends State<TimeControlPage> {
   List<String> currentDate = List.empty(growable: true);
-  TextEditingController search = TextEditingController();
-  bool loading = false;
-  String selected = "";
-  List<String> exampleRoomName = List.empty(growable: true);
+  final TextEditingController _search = TextEditingController();
+  TimeControlPageLoading loading = TimeControlPageLoading.none;
+  Classroom classroomSelected = Classroom.empty();
+  List<Classroom> classrooms = List.empty(growable: true);
   List<Student> students = List.empty(growable: true);
 
   @override
@@ -34,7 +46,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     super.initState();
   }
 
-  void setLoading({required bool load}){
+  void setLoading({required TimeControlPageLoading load}){
     setState(() {
       loading = load;
     });
@@ -42,30 +54,35 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
   Future<void> getInitialData() async{
     try {
-      setLoading(load: true);
+      setLoading(load: TimeControlPageLoading.initial);
 
-      await getStudents();
+      await getStudents(timeControlPageLoading: TimeControlPageLoading.initial);
 
       currentDate = await Convertter.getCurrentDate();
 
-      exampleRoomName = ["um", "dois", "tres"];
-      selected = exampleRoomName.first;
+      classroomSelected = classrooms.first;
 
-      setLoading(load: false);
+      setLoading(load: TimeControlPageLoading.loaded);
     } catch (e) {
-      setLoading(load: false);
+      setLoading(load: TimeControlPageLoading.loaded);
     }
   }
 
-  Future<void> getStudents() async{
+  Future<void> getStudents({required TimeControlPageLoading timeControlPageLoading}) async{
     try {
+      setLoading(load: timeControlPageLoading);
+
       students.clear();
-      String tok = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOGRjM2Y3YS0yMWNkLTRmODctODVmNy1lM2ZiNDE2ZmIyNWMiLCJuYW1lIjoiUGFpIiwiZW1haWwiOiJwYWlAZW1haWwuY29tIiwicm9sZSI6IkxlZ2FsR3VhcmRpYW4iLCJwcm9maWxlIjoiTGVnYWxHdWFyZGlhbiIsImlzRmlyc3RBY2Nlc3MiOiJUcnVlIiwiZXhwIjoxNzExMDUxNzMyLCJpc3MiOiJFZHVjYXJ0ZSIsImF1ZCI6IkVkdWNhcnRlIn0.4sp9CII1nn1fDwq5fG9ys7ShH88aAngw3osCjgtD5wY";
-      var response = await http.get(Uri.parse("${baseUrl}Students"),
+      var params = {
+        'Search': _search.text
+      };
+
+      var response = await http.get(Uri.parse("${baseUrl}Students").replace(queryParameters: params),
         headers: {
           "Authorization": "Bearer $tok",
         }
       );
+
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
         (jsonData["items"] as List).where((element) {
@@ -74,17 +91,35 @@ class _TimeControlPageState extends State<TimeControlPage> {
           return true;
         }).toList();
 
-        setLoading(load: false);
-        // setState(() {
-        //   nome.text = jsonData["name"];
-        //   email.text = jsonData["email"];
-        //   if(jsonData["cellphone"] != null){
-        //     telefone?.text = jsonData["cellphone"];
-        //   }
-        // });
+        await getClassrooms();
+      }
+      setLoading(load: TimeControlPageLoading.loaded);
+    } catch (e) {
+      setLoading(load: TimeControlPageLoading.loaded);
+    }
+  }
+
+  Future<void> getClassrooms() async{
+    try {
+      classrooms.clear();
+
+      var response = await http.get(Uri.parse("${baseUrl}Classroom"),
+        headers: {
+          "Authorization": "Bearer $tok",
+        }
+      );
+      if(response.statusCode == 200){
+        Map<String,dynamic> jsonData = jsonDecode(response.body);
+        classrooms.add(Classroom.empty());
+        
+        (jsonData["items"] as List).where((element) {
+          classrooms.add(Classroom.fromJson(element));
+
+          return true;
+        }).toList();
       }
     } catch (e) {
-      setLoading(load: false);
+      setLoading(load: TimeControlPageLoading.loaded);
     }
   }
 
@@ -97,7 +132,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
       fontWeight: fontWeight ?? FontWeight.w300
     );
 
-    if (loading) {
+    if (loading == TimeControlPageLoading.initial) {
       return const CircularProgressIndicator();
     } else {
       return Scaffold(
@@ -177,27 +212,34 @@ class _TimeControlPageState extends State<TimeControlPage> {
                 ),
                 const SizedBox(height: 12),
                 CustomSearchInput(
-                  controller: search, 
-                  action: () {  }
+                  controller: _search, 
+                  action: () => getStudents(timeControlPageLoading: TimeControlPageLoading.filter)
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   child: CustomDropdown(
-                    list: exampleRoomName,
-                    selected: selected,
-                    callback: (result) {
-                      
-                    },
+                    list: classrooms,
+                    selected: classroomSelected,
+                    callback: (result) => setState(() {
+                      classroomSelected = result;
+                    }),
                   )
                 ),
-                ListView.builder(
+                students.isEmpty ? Text("data") : ListView.builder(
                   padding: EdgeInsets.zero,
                   primary: false,
                   shrinkWrap: true,
                   itemCount: students.length,
                   itemBuilder:(_, index) {
                     return CardTimeControl(
-                      student: students[index],
+                      student: students[index], 
+                      callback: (bool result) {  
+                        if(result){
+                          context.pop();
+                          
+                          getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
+                        }
+                      },
                     );
                   }
                 )

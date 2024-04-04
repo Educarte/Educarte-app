@@ -13,6 +13,8 @@ class Classroom {
     this.classroomType
   });
 
+  Classroom.empty();
+
   Classroom.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
