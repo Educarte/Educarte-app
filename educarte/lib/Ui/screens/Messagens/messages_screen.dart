@@ -67,8 +67,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   void diaryId(DateTime? startDate)async{
     setLoading(load: Loadings.list);
+    String uriString = 'http://64.225.53.11:5000/Diary';
+
+    String encodedUriString = Uri.encodeFull(uriString);
+
     var url = Uri(
-        scheme: 'http://64.225.53.11:5000/Diary',
+        scheme: encodedUriString,
         host: baseUrl,
         queryParameters: {
           'StudentId': id,
@@ -89,6 +93,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
     }
     setLoading(load: Loadings.none);
   }
+
+
   void getStudentId()async{
     setState(() {
       listDiaries = [];

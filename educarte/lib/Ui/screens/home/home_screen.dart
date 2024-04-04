@@ -78,12 +78,14 @@ class _HomeScreenState extends State<HomeScreen> {
             "Authorization": "Bearer ${globals.token}"
           }
       );
+      print(response.statusCode );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
         (decodeJson["diaries"] as List).where((diary) {
           listDiaries.add(ApiDiaries.fromJson(diary));
           return true;
         }).toList();
+        print(listDiaries);
         setState(() {
           if(decodeJson["accessControls"].length == 1){
             horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
