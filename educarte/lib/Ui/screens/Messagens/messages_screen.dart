@@ -65,21 +65,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
 
 
-  void diaryId(DateTime? startDate)async{
+  void diaryId(String? startDate)async{
     setLoading(load: Loadings.list);
-    String uriString = 'http://64.225.53.11:5000/Diary';
-
-    String encodedUriString = Uri.encodeFull(uriString);
-
-    var url = Uri(
-        scheme: encodedUriString,
-        host: baseUrl,
-        queryParameters: {
-          'StudentId': id,
-          "StartDate": startDate
-        }
-    );
-    var response = await http.get(url,
+    var params = {
+      'StudentId': id,
+      "StartDate": startDate
+    };
+    var response = await http.get(Uri.parse("${baseUrl}Diary").replace(queryParameters: params),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
@@ -146,8 +138,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
               children: [
                 const SizedBox(height: 20,),
                 CustomTableCalendar(
-                  callback: (DateTime? start, DateTime? end) {
-                    diaryId(start);
+                  callback: (DateTime? startDate, DateTime? endDate) {
+                    print(startDate);
+                    if (endDate != null) {
+                      if (startDate != null && startDate.isAfter(endDate)) {
+                        DateTime temp = startDate;
+                        startDate = endDate;
+                        endDate = temp;
+                      }
+                    }
+                    diaryId(DateFormat.yMd().format(startDate!));
                   },),
                 if(loading == Loadings.list)
                 const Expanded(

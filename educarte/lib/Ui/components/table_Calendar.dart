@@ -80,7 +80,6 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
     setState(() {
       currentDay = value!;
     });
-    widget.callback!(value,null);
   }
 
 

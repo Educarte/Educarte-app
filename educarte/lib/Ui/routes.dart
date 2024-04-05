@@ -14,7 +14,7 @@ import 'styles/transitions/fade_transition.dart';
 class Routes {
   static final GoRouter router = GoRouter(
     debugLogDiagnostics: true,
-    initialLocation: '/timeControl',
+    initialLocation: '/login',
     // initialLocation: '/login',
     routes: [
       GoRoute(
