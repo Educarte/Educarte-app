@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   String id = "";
   List<ApiDiaries> listDiaries = [];
+  List<ApiDiaries> listDiariesFiltro = [];
   String dataEntrada = "00/00/0000";
   String horaEntrada = "00";
   String minEntrada = "00";
@@ -78,15 +79,17 @@ class _HomeScreenState extends State<HomeScreen> {
             "Authorization": "Bearer ${globals.token}"
           }
       );
-      print(response.statusCode );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
         (decodeJson["diaries"] as List).where((diary) {
           listDiaries.add(ApiDiaries.fromJson(diary));
           return true;
         }).toList();
-        print(listDiaries);
+        print(decodeJson["accessControls"].length);
         setState(() {
+          listDiariesFiltro = listDiaries;
+          listDiaries = listDiariesFiltro.where((element) => element.time == DateTime.now()).toList();
+          print(listDiaries);
           if(decodeJson["accessControls"].length == 1){
             horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
@@ -100,9 +103,11 @@ class _HomeScreenState extends State<HomeScreen> {
             minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
         });
-        listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
+        print(decodeJson);
+        if(decodeJson["currentMenu"] != null){
+          listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
+        }
         setLoading(load: false);
-
       }
     }catch (e){
       print("erro -----------");
@@ -122,9 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         id = jsonData["items"][0]["id"];
       });
-      getStudentId();
     }
-
   }
 
   void putDados()async{
@@ -160,15 +163,16 @@ class _HomeScreenState extends State<HomeScreen> {
         carregando = false;
       });
     }
-
   }
-
 
   @override
   void initState() {
     super.initState();
     meusDados();
     student();
+    Future.delayed(Duration(seconds: 1)).then((value) {
+      getStudentId();
+    });
     getStudentId();
   }
   @override
@@ -350,7 +354,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: screenWidth(context),
                           height: 297,
                           alignment: Alignment.topCenter,
-                          child: listDiaries == [] ? Column(
+                          child: listDiaries.isEmpty ?
+                          Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               const Icon(Symbols.diagnosis, size: 40,),
