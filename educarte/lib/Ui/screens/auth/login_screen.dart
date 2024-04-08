@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/bnt_azul_load.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
   TextEditingController email = TextEditingController(text: "pai@email.com");
   TextEditingController senha = TextEditingController(text: "Asdf1234");
+  PersistenceRepository persistenceRepository = PersistenceRepository();
   bool carregando = false;
 
   void logar()async{
@@ -44,6 +47,9 @@ class _LoginScreenState extends State<LoginScreen> {
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
       Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonData["token"]);
+
+      await persistenceRepository.update(key: SecureKey.token, value: jsonData["token"]);
+
       setState(() {
         globals.nome = decodedToken["name"];
         globals.token = jsonData["token"];
@@ -60,7 +66,6 @@ class _LoginScreenState extends State<LoginScreen> {
       // ));
       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       context.go("/home");
-
     }else{
       setState(() {
         carregando = false;

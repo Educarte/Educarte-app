@@ -5,19 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:table_calendar/table_calendar.dart';
 
 import '../../../Interector/models/api_diaries.dart';
 import '../../../Services/config/api_config.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
+import '../../components/result_not_found.dart';
 import '../../components/table_Calendar.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
 
 class MessagesScreen extends StatefulWidget {
-  MessagesScreen({super.key, this.idStudent});
-  String? idStudent;
+  const MessagesScreen({
+    super.key, 
+    this.idStudent
+  });
+  final String? idStudent;
   @override
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
@@ -63,8 +66,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   }
 
-
-
   void diaryId(String? startDate)async{
     setLoading(load: Loadings.list);
     var params = {
@@ -91,6 +92,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     setState(() {
       listDiaries = [];
     });
+
     try{
       var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
           headers: {
@@ -99,12 +101,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
       );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
-        (decodeJson["diaries"] as List).where((diary) {
-          listDiaries.add(ApiDiaries.fromJson(diary));
-          return true;
-        }).toList();
-        setLoading(load: Loadings.none);
 
+        if(decodeJson["diaries"] != null){
+          (decodeJson["diaries"] as List).where((diary) {
+            listDiaries.add(ApiDiaries.fromJson(diary));
+            return true;
+          }).toList();
+        }
+
+        setLoading(load: Loadings.none);
       }
     }catch (e){
       print("erro -----------");
@@ -113,10 +118,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
   }
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     student();
-    Future.delayed(Duration(seconds: 1)).then((value) {
+    Future.delayed(const Duration(seconds: 1)).then((value) {
       getStudentId();
     });
   }
@@ -124,7 +128,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
   Widget build(BuildContext context) {
     if (loading == Loadings.initial) {
       return const Center(
-          child: CircularProgressIndicator());
+        child: CircularProgressIndicator()
+      );
     } else {
       return Scaffold(
         body: Container(
@@ -156,7 +161,10 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 )
                 else
                 Expanded(
-                  child: ListView.builder(
+                  child: listDiaries.isEmpty ? const ResultNotFound(
+                    description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!", 
+                    iconData: Symbols.diagnosis
+                  ) : ListView.builder(
                     padding: const EdgeInsets.only(top: 10),
                     shrinkWrap: true,
                     itemCount: listDiaries.length,
@@ -164,7 +172,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       return Container(
                         width: screenWidth(context),
                         height: 385,
-                        margin: EdgeInsets.only(bottom: 16),
+                        margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: colorScheme(context).onPrimary,

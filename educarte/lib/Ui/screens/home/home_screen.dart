@@ -1,7 +1,10 @@
 import 'dart:convert';
 
 import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/input.dart';
+import 'package:educarte/Ui/components/result_not_found.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
-      print(jsonData);
 
       setState(() {
         globals.nome = jsonData["name"];
@@ -81,21 +83,26 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
-        (decodeJson["diaries"] as List).where((diary) {
-          listDiaries.add(ApiDiaries.fromJson(diary));
-          return true;
-        }).toList();
-        print(decodeJson["accessControls"].length);
+
+        if(decodeJson["diaries"] != null){
+          (decodeJson["diaries"] as List).where((diary) {
+            listDiaries.add(ApiDiaries.fromJson(diary));
+            return true;
+          }).toList();
+        }
+        
+
         setState(() {
           listDiariesFiltro = listDiaries;
           listDiaries = listDiariesFiltro.where((element) => element.time == DateTime.now()).toList();
-          print(listDiaries);
-          if(decodeJson["accessControls"].length == 1){
+          List accessControls = decodeJson["accessControls"] ?? [];
+
+          if(accessControls.length == 1){
             horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
           }
-          else if(decodeJson["accessControls"].length == 2){
+          else if(accessControls.length == 2){
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
@@ -103,15 +110,15 @@ class _HomeScreenState extends State<HomeScreen> {
             minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
         });
-        print(decodeJson);
+
         if(decodeJson["currentMenu"] != null){
           listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }
+        
         setLoading(load: false);
       }
     }catch (e){
       print("erro -----------");
-      print(e);
     }
   }
 
@@ -147,9 +154,9 @@ class _HomeScreenState extends State<HomeScreen> {
             "Content-Type":"application/json"
           }
       );
-      print(response.body);
+
       if(response.statusCode == 200){
-        Future.delayed(Duration(seconds: 1)).then((value) {
+        Future.delayed(const Duration(seconds: 1)).then((value) {
           meusDados();
           getStudentId();
         });
@@ -170,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     meusDados();
     student();
-    Future.delayed(Duration(seconds: 1)).then((value) {
+    Future.delayed(const Duration(seconds: 1)).then((value) {
       getStudentId();
     });
     getStudentId();
@@ -270,10 +277,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                       if(carregando == false)
                                       BotaoAzul(text: "Atualizar informações",onPressed: (){putDados();Navigator.pop(context);},),
                                       if(carregando == true)
-                                        BotaoAzulLoad(),
+                                        const BotaoAzulLoad(),
                                       const SizedBox(height: 16,),
                                       BotaoBranco(text: "Sair do aplicativo",
-                                        onPressed: () => context.go("/login"),)
+                                        onPressed: () async{
+                                          PersistenceRepository persistenceRepository = PersistenceRepository();
+
+                                          await persistenceRepository.delete(key: SecureKey.token);
+                                          
+                                          if(context.mounted){
+                                            context.go("/login");
+                                          }
+                                        }
+                                      )
                                     ],
                                   ),
                                 ),
@@ -355,98 +371,83 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 297,
                           alignment: Alignment.topCenter,
                           child: listDiaries.isEmpty ?
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(Symbols.diagnosis, size: 40,),
-                              const SizedBox(height: 12,),
-                              SizedBox(
-                                width: 279,
-                                child: Text(
-                                  "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 14,
-                                      color: colorScheme(context).onSurface
-                                  ), textAlign: TextAlign.center,),
-                              ),
-                            ],
+                          const ResultNotFound(
+                            description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!", 
+                            iconData: Symbols.diagnosis
                           ) :
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12),
-                            child: Container(
-                              child: Align(
-                                alignment: Alignment.topCenter,
-                                child: ListView.builder(
-                                  padding: EdgeInsets.only(top: 10),
-                                  itemCount: listDiaries.length,
-                                  itemBuilder: (BuildContext context, int index) {
-                                    return Container(
-                                      width: screenWidth(context),
-                                      margin: EdgeInsets.only(bottom: 12),
-                                      decoration: BoxDecoration(
-                                          border: Border(
-                                              bottom: BorderSide(
+                            child: Align(
+                              alignment: Alignment.topCenter,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.only(top: 10),
+                                itemCount: listDiaries.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    width: screenWidth(context),
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    decoration: BoxDecoration(
+                                        border: Border(
+                                            bottom: BorderSide(
+                                                color: colorScheme(
+                                                    context).outline.withOpacity(0.5),),
+                                        ),
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text("Para: ",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 14,
                                                   color: colorScheme(
-                                                      context).outline.withOpacity(0.5),),
-                                          ),
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text("Para: ",
+                                                      context).surface,
+                                                  fontWeight: FontWeight
+                                                      .w500
+                                              ),),
+                                            if(listDiaries[index].diaryType == 0)
+                                              Text(globals.nomeAluno
+                                                  .toString(),
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 14,
-                                                    color: colorScheme(
-                                                        context).surface,
-                                                    fontWeight: FontWeight
-                                                        .w500
+                                                    color: colorScheme(context).surface,
+                                                    fontWeight: FontWeight.w400
                                                 ),),
-                                              if(listDiaries[index].diaryType == 0)
-                                                Text(globals.nomeAluno
-                                                    .toString(),
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                              if(listDiaries[index].diaryType == 1)
-                                                Text(
-                                                  globals.nomeSala.toString(),
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                              if(listDiaries[index].diaryType == 2)
-                                                Text("Escola",
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                            ],
+                                            if(listDiaries[index].diaryType == 1)
+                                              Text(
+                                                globals.nomeSala.toString(),
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color: colorScheme(context).surface,
+                                                    fontWeight: FontWeight.w400
+                                                ),),
+                                            if(listDiaries[index].diaryType == 2)
+                                              Text("Escola",
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color: colorScheme(context).surface,
+                                                    fontWeight: FontWeight.w400
+                                                ),),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 6,),
+                                        Text(
+                                          listDiaries[index].description.toString(),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: colorScheme(context).surface,
+                                            fontWeight: FontWeight.w300,
                                           ),
-                                          const SizedBox(height: 6,),
-                                          Text(
-                                            listDiaries[index].description.toString(),
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: colorScheme(context).surface,
-                                              fontWeight: FontWeight.w300,
-                                            ),
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,),
-                                          const SizedBox(height: 12,),
-                                        ],
-                                      ),
-                                    );
-                                  },
-
-                                ),
+                                          maxLines: 3,
+                                          overflow: TextOverflow.ellipsis,),
+                                        const SizedBox(height: 12,),
+                                      ],
+                                    ),
+                                  );
+                                },
+                            
                               ),
                             ),
                           ),
@@ -521,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-                            Container(
+                            SizedBox(
                               width: screenWidth(context),
                               height: 91,
                               child: Padding(
@@ -633,11 +634,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ],
                                       ),
                                       const SizedBox(height: 32,),
-                                      BotaoAzul(text: "Visualizar"),
+                                      const BotaoAzul(text: "Visualizar"),
                                       const SizedBox(height: 16,),
-                                      BotaoBranco(text: "Baixar"),
+                                      const BotaoBranco(text: "Baixar"),
                                       const SizedBox(height: 16,),
-                                      BotaoBranco(text: "Compartilhar"),
+                                      const BotaoBranco(text: "Compartilhar"),
                                     ],
                                   ),
                                 ),
@@ -716,7 +717,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               ),
-                              Container(
+                              if(listData.length == 3)
+                              SizedBox(
                                 width: screenWidth(context),
                                 height: 91,
                                 child: Padding(
