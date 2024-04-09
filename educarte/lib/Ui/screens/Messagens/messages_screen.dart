@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/Ui/components/card_messages.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../Interector/models/api_diaries.dart';
@@ -57,11 +57,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
   }
 
-  void diaryId(String? startDate)async{
+  void diaryId(DateTime startDate, DateTime? endDate)async{
     setLoading(load: Loadings.list);
     var params = {
       'StudentId': id,
-      "StartDate": startDate
+      "StartDate": startDate.toString(),
+      "EndDate": endDate == null ? startDate.toString() : endDate.toString()
     };
     var response = await http.get(Uri.parse("$baseUrl/Diary").replace(queryParameters: params),
         headers: {
@@ -70,10 +71,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
     );
     if(response.statusCode == 200){
       var decodeJson = jsonDecode(response.body);
-      (decodeJson["diaries"] as List).where((diary) {
-        listDiaries.add(ApiDiaries.fromJson(diary));
-        return true;
-      }).toList();
+      if(decodeJson["diaries"] != null){
+        (decodeJson["diaries"] as List).where((diary) {
+          listDiaries.add(ApiDiaries.fromJson(diary));
+          return true;
+        }).toList();
+      }
     }
     setLoading(load: Loadings.none);
   }
@@ -99,6 +102,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
             return true;
           }).toList();
         }
+
+
+        diaryId(DateTime.now(), null);
 
         setLoading(load: Loadings.none);
       }
@@ -142,7 +148,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         endDate = temp;
                       }
                     }
-                    diaryId(DateFormat.yMd().format(startDate!));
+                    diaryId(startDate!, endDate);
                   },),
                 if(loading == Loadings.list)
                 const Expanded(
@@ -161,7 +167,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         width: screenWidth(context),
-                        height: 385,
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
@@ -180,185 +185,33 @@ class _MessagesScreenState extends State<MessagesScreen> {
                         child: Column(
                           children: [
                             if(listDiaries[index].diaryType == 2)
-                            Container(
-                              width: screenWidth(context),
-                              height: 120,
-                              decoration: BoxDecoration(
-                                  color: colorScheme(context).onSecondary,
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      topRight: Radius.circular(8))
-                              ),
-                              alignment: Alignment.center,
-                              child: Row(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Image.asset(
-                                          "assets/imgRecados1.png")
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 32),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Text("Para:",style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight
-                                                  .w200,
-                                              fontSize: 20,
-                                              color: colorScheme(
-                                                  context).onPrimary
-                                          ),),
-                                          SizedBox(
-                                            width: 175,
-                                            child: Text("ESCOLA",style: GoogleFonts.poppins(
-                                              textStyle: const TextStyle(
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              fontWeight: FontWeight
-                                                  .w800,
-                                              fontSize: 20,
-                                              color: colorScheme(
-                                                  context).onPrimary,
-                                            ),),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                           CardMessages(
+                               encaminhado: "ESCOLA",
+                               color: colorScheme(context).onSecondary,
+                               assets: "assets/imgRecados1.png"
+                           ),
                             if(listDiaries[index].diaryType == 1)
-                              Container(
-                                width: screenWidth(context),
-                                height: 120,
-                                decoration: BoxDecoration(
-                                    color: colorScheme(context).primary,
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8))
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 11),
-                                      child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Image.asset(
-                                              "assets/imgRecados2.png")
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 32),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text("Para:",style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight
-                                                    .w200,
-                                                fontSize: 20,
-                                                color: colorScheme(
-                                                    context).onPrimary
-                                            ),),
-                                            SizedBox(
-                                              width: 175,
-                                              child: Text(globals.nomeSala.toString().toUpperCase(),style: GoogleFonts.poppins(
-                                                textStyle: const TextStyle(
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                fontWeight: FontWeight
-                                                    .w800,
-                                                fontSize: 20,
-                                                color: colorScheme(
-                                                    context).onPrimary,
-                                              ),),
-                                            ),
-                                          ],
-                                        )
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              CardMessages(
+                                  encaminhado: globals.nomeSala.toString().toUpperCase(),
+                                  color: colorScheme(context).primary,
+                                  assets: "assets/imgRecados2.png"
                               ),
                             if(listDiaries[index].diaryType == 0)
-                              Container(
-                                width: screenWidth(context),
-                                height: 120,
-                                decoration: BoxDecoration(
-                                    color: colorScheme(context).secondary,
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(8),
-                                        topRight: Radius.circular(8))
-                                ),
-                                alignment: Alignment.center,
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 11),
-                                      child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Image.asset(
-                                              "assets/imgRecados3.png")
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 32),
-                                      child: Align(
-                                        alignment: Alignment.center,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text("Para:",style: GoogleFonts.poppins(
-                                                fontWeight: FontWeight
-                                                    .w200,
-                                                fontSize: 20,
-                                                color: colorScheme(
-                                                    context).onPrimary
-                                            ),),
-                                            SizedBox(
-                                              width: 170,
-                                              child: Text(globals.nomeAluno.toString().toUpperCase(),style: GoogleFonts.poppins(
-                                                textStyle: const TextStyle(
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                                fontWeight: FontWeight
-                                                    .w800,
-                                                fontSize: 20,
-                                                color: colorScheme(
-                                                    context).onPrimary,
-                                              ),),
-                                            ),
-                                          ],
-                                        )
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                              CardMessages(
+                                  encaminhado: globals.nomeAluno.toString().toUpperCase(),
+                                  color: colorScheme(context).secondary,
+                                  assets: "assets/imgRecados3.png"
                               ),
                             Container(
                               width: screenWidth(context),
-                              height: 265,
                               alignment: Alignment.centerLeft,
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text("Prezados Pais e Responsáveis,",style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400
-                                    ),),
-                                    const SizedBox(height: 20,),
-                                    Text("Gostaríamos de informar que o calendário de atividades para o próximo mês já está disponível no site da escola. Pedimos que acessem e confiram as datas de eventos, reuniões e demais atividades importantes. Em caso de dúvidas, estamos à disposição para esclarecimentos.",style: GoogleFonts.poppins(
+                                    Text(listDiaries[index].description.toString(),
+                                    style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400
                                     ),textAlign: TextAlign.start,),

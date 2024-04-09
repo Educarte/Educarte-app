@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/classroom_model.dart';
 import 'package:educarte/Interector/validations/convertter.dart';
