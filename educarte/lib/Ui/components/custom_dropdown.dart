@@ -65,7 +65,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
         return DropdownMenuItem<dynamic>(
           value: value,
           child: Text(
-            value.name ?? "Selecione uma data"
+            value.name ?? "Selecione uma Sala"
           ),
         );
       }).toList(),

@@ -69,7 +69,7 @@ class _EducarteShellState extends State<EducarteShell> {
 
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
-      print(response.body);
+      
       setState(() {
         sala.text = jsonData["classroom"]["name"];
         globals.nomeSala = jsonData["classroom"]["name"];

@@ -3,7 +3,9 @@ import 'package:educarte/Ui/components/organisms/confirm_entry_or_exit_modal.dar
 import 'package:flutter/material.dart';
 
 import '../../../Interector/enum/modal_type_enum.dart';
+import '../../../Interector/models/document.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
+import 'file_modal.dart';
 
 class ModalEvent {
   static build({
@@ -11,7 +13,8 @@ class ModalEvent {
     required ModalType modalType,
     CardTimeControl? cardTimeControl,
     Function(bool result)? callback,
-    Student? student
+    Student? student,
+    Document? document
   }){
     Widget modal;
 
@@ -21,7 +24,11 @@ class ModalEvent {
         cardTimeControl: cardTimeControl!,
         student: student!,
         callback:(result) => callback!(result)
-      )
+      ),
+      ModalType.menu || ModalType.archive => FileModal(
+        modalType: modalType,
+        document: document!
+      ),
     };
 
     show(

@@ -1,4 +1,3 @@
-
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:educarte/Interector/validations/convertter.dart';
 import 'package:flutter/material.dart';
@@ -102,7 +101,6 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
   @override
   Widget build(BuildContext context) {
     double iconSize = 24;
-    Color iconColor = colorScheme(context).outlineVariant;
     int limitDate = 365 * 2;
     DateTime dateNow = DateTime.now();
     TextStyle daysOfWeekStyle = textTheme(context).headlineSmall!.copyWith(

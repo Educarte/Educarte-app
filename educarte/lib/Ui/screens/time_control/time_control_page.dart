@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:educarte/Interector/base/store.dart';
+import 'package:educarte/Interector/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/classroom_model.dart';
 import 'package:educarte/Interector/validations/convertter.dart';
 import 'package:flutter/material.dart';
@@ -9,13 +11,14 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../Interector/base/constants.dart';
+import '../../../Interector/models/document.dart';
 import '../../../Interector/models/students_model.dart';
 import '../../../Services/config/api_config.dart';
 import '../../components/custom_dropdown.dart';
+import '../../components/organisms/modal.dart';
 import '../../components/search_input.dart';
+import '../../global/global.dart';
 import 'widgets/card_time_control.dart';
-
-String tok = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOGRjNTI2Zi1kNzhkLTRhZTktODliMC0zYjk3NzYwYjVlYTMiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AZW1haWwuY29tIiwicm9sZSI6IkFkbWluIiwicHJvZmlsZSI6IkFkbWluIiwiaXNGaXJzdEFjY2VzcyI6IlRydWUiLCJleHAiOjE3MTIzNDIyMjQsImlzcyI6IkVkdWNhcnRlIiwiYXVkIjoiRWR1Y2FydGUifQ.9VQWEBLOq7EcERT7ZyBQXcl0kuLVNAIrcC4vjvkoPzs";
 
 enum TimeControlPageLoading{
   none,
@@ -39,6 +42,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   Classroom classroomSelected = Classroom.empty();
   List<Classroom> classrooms = List.empty(growable: true);
   List<Student> students = List.empty(growable: true);
+  Document? menu;
 
   @override
   void initState() {
@@ -57,11 +61,54 @@ class _TimeControlPageState extends State<TimeControlPage> {
       setLoading(load: TimeControlPageLoading.initial);
 
       await getStudents(timeControlPageLoading: TimeControlPageLoading.initial);
+      await getMenu();
 
       currentDate = await Convertter.getCurrentDate();
 
       classroomSelected = classrooms.first;
 
+      setLoading(load: TimeControlPageLoading.loaded);
+    } catch (e) {
+      setLoading(load: TimeControlPageLoading.loaded);
+    }
+  }
+
+  Future<void> getMenu() async{
+    try {
+      setLoading(load: TimeControlPageLoading.initial);
+
+      var params = {
+        'Status': "0"
+      };
+      
+      var response = await http.get(Uri.parse("$baseUrl/Menus").replace(queryParameters: params),
+        headers: {
+          "Authorization": "Bearer $token",
+        }
+      );
+
+      if(response.statusCode == 200){
+        Map<String,dynamic> jsonData = jsonDecode(response.body);
+        List<Document> menus = List.empty(growable: true); 
+
+        (jsonData["items"] as List).where((element) {
+          menus.add(Document(
+            id: element["id"],
+            name: element["name"],
+            fileUri: element["uri"],
+            startDate: jsonData["startDate"] != null ? DateTime.parse(element["startDate"]) : null,
+            validUntil: jsonData["validUntil"] != null ? DateTime.parse(jsonData["validUntil"]) : null
+          ));
+
+          return true;
+        }).toList();
+
+        menus.sort((a, b) => b.startDate!.compareTo(a.startDate!));
+        menus.sort((a, b) => b.validUntil!.compareTo(a.validUntil!));
+        
+        menu =  menus.first;
+      }
+      
       setLoading(load: TimeControlPageLoading.loaded);
     } catch (e) {
       setLoading(load: TimeControlPageLoading.loaded);
@@ -77,9 +124,9 @@ class _TimeControlPageState extends State<TimeControlPage> {
         'Search': _search.text
       };
 
-      var response = await http.get(Uri.parse("${baseUrl}Students").replace(queryParameters: params),
+      var response = await http.get(Uri.parse("$baseUrl/Students").replace(queryParameters: params),
         headers: {
-          "Authorization": "Bearer $tok",
+          "Authorization": "Bearer $token",
         }
       );
 
@@ -103,9 +150,9 @@ class _TimeControlPageState extends State<TimeControlPage> {
     try {
       classrooms.clear();
 
-      var response = await http.get(Uri.parse("${baseUrl}Classroom"),
+      var response = await http.get(Uri.parse("$baseUrl/Classroom"),
         headers: {
-          "Authorization": "Bearer $tok",
+          "Authorization": "Bearer $token",
         }
       );
       if(response.statusCode == 200){
@@ -189,7 +236,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () { },
+                            onTap: menu == null || menu!.id == null ? null : () => ModalEvent.build(
+                              context: context, 
+                              modalType: ModalType.menu
+                            ),
                             child: Icon(
                               Symbols.nutrition,
                               size: iconSize,
@@ -225,7 +275,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                     }),
                   )
                 ),
-                students.isEmpty ? Text("data") : ListView.builder(
+                students.isEmpty ? const Text("data") : ListView.builder(
                   padding: EdgeInsets.zero,
                   primary: false,
                   shrinkWrap: true,

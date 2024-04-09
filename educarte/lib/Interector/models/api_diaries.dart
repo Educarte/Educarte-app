@@ -6,6 +6,7 @@ class ApiDiaries {
   bool? isDiaryForAll;
   int? diaryType;
   String? time;
+  String? imageBackground;
 
   ApiDiaries({
     this.id,
@@ -14,7 +15,8 @@ class ApiDiaries {
     this.description,
     this.isDiaryForAll,
     this.diaryType,
-    this.time
+    this.time,
+    this.imageBackground
   });
 
   ApiDiaries.fromJson(Map<String, dynamic> json) {

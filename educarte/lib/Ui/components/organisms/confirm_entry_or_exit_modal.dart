@@ -4,6 +4,7 @@ import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/molecules/modal_application_bar.dart';
+import 'package:educarte/Ui/global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -54,11 +55,10 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
     try {
       setLoading(load: true);
 
-      String tok = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwOGRjNTI2Zi1kNzhkLTRhZTktODliMC0zYjk3NzYwYjVlYTMiLCJuYW1lIjoiQWRtaW5pc3RyYWRvciIsImVtYWlsIjoiYWRtaW5AZW1haWwuY29tIiwicm9sZSI6IkFkbWluIiwicHJvZmlsZSI6IkFkbWluIiwiaXNGaXJzdEFjY2VzcyI6IlRydWUiLCJleHAiOjE3MTIzNDIyMjQsImlzcyI6IkVkdWNhcnRlIiwiYXVkIjoiRWR1Y2FydGUifQ.9VQWEBLOq7EcERT7ZyBQXcl0kuLVNAIrcC4vjvkoPzs";
       var response = await http.post(
-        Uri.parse("${baseUrl}AccessControls/${widget.student.id}"),
+        Uri.parse("$baseUrl/AccessControls/${widget.student.id}"),
         headers: {
-          "Authorization": "Bearer $tok",
+          "Authorization": "Bearer $token",
         },
         body: {
           "time": DateTime.now()

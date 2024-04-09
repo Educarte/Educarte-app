@@ -166,7 +166,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       if(carregando == false)
                       BotaoAzul(text: "Entrar",onPressed: ()=> logar(),),
                       if(carregando == true)
-                      BotaoAzulLoad()
+                      const BotaoAzulLoad()
                     ],
                   ),
                 ),

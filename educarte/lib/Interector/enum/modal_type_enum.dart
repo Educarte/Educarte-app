@@ -1,5 +1,7 @@
 enum ModalType {
-  confirmEntry(title: "Confirmar Entrada", height: 550);
+  confirmEntry(title: "Confirmar Entrada", height: 550),
+  menu(title: "Cardápio em PDF", height: 277),
+  archive(title: "Arquivo em PDF", height: 277);
 
   final String title;
   final double height;

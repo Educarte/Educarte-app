@@ -11,7 +11,7 @@ import '../../../Services/config/api_config.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/result_not_found.dart';
-import '../../components/table_Calendar.dart';
+import '../../components/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
 
@@ -31,15 +31,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
   String id = "";
   List<ApiDiaries> listDiaries = [];
   Loadings loading = Loadings.none;
-
-
-
-  void _onDaySelected(DateTime day, DateTime focusDay){
-    setState(() {
-      today = day;
-    });
-  }
-
 
   void setLoading({required Loadings load}){
     setState(() {
@@ -72,7 +63,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       'StudentId': id,
       "StartDate": startDate
     };
-    var response = await http.get(Uri.parse("${baseUrl}Diary").replace(queryParameters: params),
+    var response = await http.get(Uri.parse("$baseUrl/Diary").replace(queryParameters: params),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
@@ -144,7 +135,6 @@ class _MessagesScreenState extends State<MessagesScreen> {
                 const SizedBox(height: 20,),
                 CustomTableCalendar(
                   callback: (DateTime? startDate, DateTime? endDate) {
-                    print(startDate);
                     if (endDate != null) {
                       if (startDate != null && startDate.isAfter(endDate)) {
                         DateTime temp = startDate;

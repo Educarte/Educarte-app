@@ -39,17 +39,20 @@ class _RedefinePasswordState extends State<RedefinePassword> {
         "Content-Type":"application/json"
       }
     );
-    if(response.statusCode == 200){
+    if(response.statusCode == 200 && mounted){
       context.go("/login");
+
       var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-            child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white
-            ),),
-          ));
+        backgroundColor: const Color(0xff547B9A),
+        content: Center(
+          child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: Colors.white
+          ),),
+        )
+      );
+      
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }else{
       setState(() {

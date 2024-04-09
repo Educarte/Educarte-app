@@ -32,7 +32,7 @@ class Routes {
 
       if(globals.token != null){
         try {
-          var response = await http.post(Uri.parse("${baseUrl}Auth/refresh"),
+          var response = await http.post(Uri.parse("$baseUrl/Auth/refresh"),
             headers: {
               "Content-Type": "application/json",
               "Authorization": "Bearer ${globals.token}",
@@ -44,7 +44,7 @@ class Routes {
 
             if(globals.nome == null){
               // currentIndex = 2;
-              path = '/home';
+              path = '/timeControl';
             }
           }else if(response.statusCode == 401){
             await persistenceRepository.delete(key: SecureKey.token);
@@ -101,7 +101,8 @@ class Routes {
           GoRoute(
             path: "/recados",
             pageBuilder: (context, state) =>
-                FadeTransitionPage(child: MessagesScreen()),
+              FadeTransitionPage(child: const MessagesScreen()
+            ),
           ),
         ],
       ),
