@@ -70,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
   bool carregando = false;
 
   void getStudentId()async{
+    print(globals.id);
     setState(() {
       listDiaries = [];
     });
@@ -180,9 +181,6 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     meusDados();
     student();
-    Future.delayed(const Duration(seconds: 1)).then((value) {
-      getStudentId();
-    });
     getStudentId();
   }
   @override

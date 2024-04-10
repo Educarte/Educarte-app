@@ -69,14 +69,28 @@ class _EducarteShellState extends State<EducarteShell> {
 
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
-      
+      print(jsonData);
       setState(() {
+        var listTeachers = jsonData["classroom"]["teachers"];
+        if(listTeachers.length != 0){
+          for(var i=0; i< listTeachers.length; i++){
+            if(listTeachers[i]["profile"] == 3){
+              responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
+            }
+            if(listTeachers[i]["profile"] == 2){
+              responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
+            }
+          }
+        }
+        globals.id = jsonData["name"];
+        responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
         sala.text = jsonData["classroom"]["name"];
         globals.nomeSala = jsonData["classroom"]["name"];
         globals.nomeAluno = jsonData["name"];
       });
     }
   }
+
   Future<bool> _onWillPop() async {
     return false;
   }
@@ -168,7 +182,9 @@ class _EducarteShellState extends State<EducarteShell> {
   }
 
   void _ontItemTapped(int index, BuildContext context) {
+    int indexSelect = 0;
     setState(() {
+      indexSelect = selectedIndex;
       selectedIndex = index;
     });
 
@@ -197,7 +213,7 @@ class _EducarteShellState extends State<EducarteShell> {
                       children: [
                         IconButton(onPressed: (){
                           setState(() {
-                            selectedIndex = 2;
+                            selectedIndex = indexSelect;
                           });
                           Navigator.pop(context);
                         }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
@@ -267,7 +283,13 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 16,),
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
-                    const BotaoAzul(text: "Atualizar informações")
+                    BotaoAzul(text: "Atualizar informações",onPressed: (){
+                      setState(() {
+                        selectedIndex = indexSelect;
+                      });
+                      Navigator.pop(context);
+                      GoRouter.of(context).go("/home");
+                    },)
                   ],
                 ),
               ),
@@ -301,7 +323,7 @@ class _EducarteShellState extends State<EducarteShell> {
                       children: [
                         IconButton(onPressed: (){
                           setState(() {
-                            selectedIndex = 2;
+                            selectedIndex = indexSelect;
                           });
                           Navigator.pop(context);
                         }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
