@@ -11,6 +11,9 @@ import '../../Interector/base/constants.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 import '../components/input.dart';
+import '../global/global.dart';
+
+int selectedIndex = 0;
 
 class EducarteShell extends StatefulWidget {
   const EducarteShell({
@@ -36,12 +39,13 @@ class _EducarteShellState extends State<EducarteShell> {
   double iconSize = 30;
 
   String id = "";
-  void student()async{
+  void student() async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
     );
+
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
       setState(() {
@@ -50,8 +54,9 @@ class _EducarteShellState extends State<EducarteShell> {
         for(var i=0;i < jsonData["items"].length; i++){
           list.add(jsonData["items"][i]["name"]);
           listId.add(jsonData["items"][i]["id"]);
-        }
-
+        } 
+        
+        print(updateHomeScreen);
         dropdownValue = list.first;
         studentId(valueIndex);
       });
@@ -69,7 +74,7 @@ class _EducarteShellState extends State<EducarteShell> {
 
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
-      print(jsonData);
+
       setState(() {
         var listTeachers = jsonData["classroom"]["teachers"];
         if(listTeachers.length != 0){
@@ -82,13 +87,19 @@ class _EducarteShellState extends State<EducarteShell> {
             }
           }
         }
-        globals.id = jsonData["name"];
+        globals.idStudent = jsonData["id"];
         responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
         sala.text = jsonData["classroom"]["name"];
         globals.nomeSala = jsonData["classroom"]["name"];
         globals.nomeAluno = jsonData["name"];
       });
     }
+  }
+
+  void changeSelectedIndex(int index){
+    setState(() {
+      selectedIndex = index;
+    });
   }
 
   Future<bool> _onWillPop() async {
@@ -182,14 +193,10 @@ class _EducarteShellState extends State<EducarteShell> {
   }
 
   void _ontItemTapped(int index, BuildContext context) {
-    int indexSelect = 0;
-    setState(() {
-      indexSelect = selectedIndex;
-      selectedIndex = index;
-    });
-
     switch (index) {
       case 4:
+        changeSelectedIndex(index);
+
         student();
         showModalBottomSheet(
           useRootNavigator: true,
@@ -212,9 +219,8 @@ class _EducarteShellState extends State<EducarteShell> {
                     Row(
                       children: [
                         IconButton(onPressed: (){
-                          setState(() {
-                            selectedIndex = indexSelect;
-                          });
+                          _ontItemTapped(2, context);
+
                           Navigator.pop(context);
                         }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
                         Text("Trocar Guarda",style: GoogleFonts.poppins(
@@ -284,11 +290,10 @@ class _EducarteShellState extends State<EducarteShell> {
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
                     BotaoAzul(text: "Atualizar informações",onPressed: (){
-                      setState(() {
-                        selectedIndex = indexSelect;
-                      });
                       Navigator.pop(context);
-                      GoRouter.of(context).go("/home");
+
+                      updateHomeScreen = true;
+                      _ontItemTapped(2, context);
                     },)
                   ],
                 ),
@@ -301,6 +306,8 @@ class _EducarteShellState extends State<EducarteShell> {
         print("Entrada e saida");
         break;
       case 1:
+        changeSelectedIndex(index);
+
         showModalBottomSheet(
           context: context,
           isDismissible: false,
@@ -322,9 +329,8 @@ class _EducarteShellState extends State<EducarteShell> {
                     Row(
                       children: [
                         IconButton(onPressed: (){
-                          setState(() {
-                            selectedIndex = indexSelect;
-                          });
+                          _ontItemTapped(2, context);
+
                           Navigator.pop(context);
                         }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
                         Text("Cardápio em PDF",style: GoogleFonts.poppins(
@@ -348,10 +354,14 @@ class _EducarteShellState extends State<EducarteShell> {
         );
         break;
       case 0:
-        GoRouter.of(context).go("/recados");
+        changeSelectedIndex(index);
+
+        context.go("/recados");
         break;
       default:
-        GoRouter.of(context).go("/home");
+        changeSelectedIndex(index);
+
+        context.go("/home");
     }
   }
 }

@@ -15,6 +15,7 @@ import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'styles/transitions/fade_transition.dart';
 
@@ -41,10 +42,12 @@ class Routes {
 
           if(response.statusCode == 200){
             await persistenceRepository.update(key: SecureKey.token, value: jsonDecode(response.body)["token"]);
+            Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonDecode(response.body)["token"]);
+            globals.id = decodedToken["sub"];
 
             if(globals.nome == null){
               // currentIndex = 2;
-              path = '/timeControl';
+              path = '/home';
             }
           }else if(response.statusCode == 401){
             await persistenceRepository.delete(key: SecureKey.token);

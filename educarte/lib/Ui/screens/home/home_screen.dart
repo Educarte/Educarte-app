@@ -19,6 +19,8 @@ import '../../components/bnt_branco.dart';
 import '../../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 
+import '../../global/global.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -31,6 +33,16 @@ class _HomeScreenState extends State<HomeScreen> {
   TextEditingController email = TextEditingController();
   TextEditingController? telefone = TextEditingController();
   bool loading = false;
+  String id = "";
+  List<ApiDiaries> listDiaries = [];
+  List<ApiDiaries> listDiariesFiltro = [];
+  String dataEntrada = "00/00/0000";
+  String horaEntrada = "00";
+  String minEntrada = "00";
+  String horaSaida = "00";
+  String minSaida = "00";
+  List<String> listData = [];
+  bool carregando = false;
 
   void setLoading({required bool load}){
     setState(() {
@@ -49,7 +61,8 @@ class _HomeScreenState extends State<HomeScreen> {
       Map<String,dynamic> jsonData = jsonDecode(response.body);
 
       setState(() {
-        globals.nome = jsonData["name"];
+        List<String> groupNames = jsonData["name"].toString().split(" ");
+        globals.nome = groupNames.first;
         nome.text = jsonData["name"];
         email.text = jsonData["email"];
         if(jsonData["cellphone"] != null){
@@ -58,19 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-  String id = "";
-  List<ApiDiaries> listDiaries = [];
-  List<ApiDiaries> listDiariesFiltro = [];
-  String dataEntrada = "00/00/0000";
-  String horaEntrada = "00";
-  String minEntrada = "00";
-  String horaSaida = "00";
-  String minSaida = "00";
-  List<String> listData = [];
-  bool carregando = false;
 
-  void getStudentId()async{
-    print(globals.id);
+  void getStudentId() async{
     setState(() {
       listDiaries = [];
     });
@@ -82,18 +84,15 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
-
         if(decodeJson["diaries"] != null){
           (decodeJson["diaries"] as List).where((diary) {
             listDiaries.add(ApiDiaries.fromJson(diary));
             return true;
           }).toList();
         }
-        
-
         setState(() {
           listDiariesFiltro = listDiaries;
-          listDiaries = listDiariesFiltro.where((element) => element.time == DateTime.now()).toList();
+          listDiaries = listDiariesFiltro.where((element) => element.time == DateTime.now().toString()).toList();
           List accessControls = decodeJson["accessControls"] ?? [];
 
           if(accessControls.length == 1){
@@ -113,6 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if(decodeJson["currentMenu"] != null){
           listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }
+
+        setState(() => updateHomeScreen = false);
         
         setLoading(load: false);
       }
@@ -183,6 +184,7 @@ class _HomeScreenState extends State<HomeScreen> {
     student();
     getStudentId();
   }
+
   @override
   Widget build(BuildContext context) {
     bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;

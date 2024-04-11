@@ -52,13 +52,16 @@ class _MessagesScreenState extends State<MessagesScreen> {
       setState(() {
         id = jsonData["items"][0]["id"];
       });
-      getStudentId();
     }
 
   }
 
   void diaryId(DateTime startDate, DateTime? endDate)async{
     setLoading(load: Loadings.list);
+    setState(() {
+      listDiaries = [];
+    });
+
     var params = {
       'StudentId': id,
       "StartDate": startDate.toString(),
@@ -69,10 +72,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
           "Authorization": "Bearer ${globals.token}"
         }
     );
+    print(startDate);
     if(response.statusCode == 200){
       var decodeJson = jsonDecode(response.body);
-      if(decodeJson["diaries"] != null){
-        (decodeJson["diaries"] as List).where((diary) {
+      print(decodeJson);
+      if(decodeJson["items"] != null){
+        (decodeJson["items"] as List).where((diary) {
           listDiaries.add(ApiDiaries.fromJson(diary));
           return true;
         }).toList();
@@ -118,7 +123,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     super.initState();
     student();
     Future.delayed(const Duration(seconds: 1)).then((value) {
-      getStudentId();
+      diaryId(DateTime.now(), DateTime.now());
     });
   }
   @override
