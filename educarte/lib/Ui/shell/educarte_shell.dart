@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../Interector/base/constants.dart';
+import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 import '../components/input.dart';
@@ -102,6 +103,14 @@ class _EducarteShellState extends State<EducarteShell> {
     });
   }
 
+  void getMenu()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
+        headers: {
+          "Authorization": "Bearer ${globals.token}"
+        }
+    );
+  }
+
   Future<bool> _onWillPop() async {
     return false;
   }
@@ -139,6 +148,7 @@ class _EducarteShellState extends State<EducarteShell> {
         labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
         backgroundColor: colorScheme(context).primary,
         indicatorColor: colorScheme(context).primary,
+
         destinations: <NavigationDestination>[
           NavigationDestination(
             icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
@@ -341,7 +351,9 @@ class _EducarteShellState extends State<EducarteShell> {
                       ],
                     ),
                     const SizedBox(height: 32,),
-                    const BotaoAzul(text: "Visualizar"),
+                    BotaoAzul(text: "Visualizar",onPressed: (){
+                      FileManagement.launchUri(link: "", context: context);
+                    },),
                     const SizedBox(height: 16,),
                     const BotaoBranco(text: "Baixar"),
                     const SizedBox(height: 16,),
