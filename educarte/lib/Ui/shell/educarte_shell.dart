@@ -103,12 +103,22 @@ class _EducarteShellState extends State<EducarteShell> {
     });
   }
 
+  String urlMenu = "";
+
   void getMenu()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
     );
+
+    if(response.statusCode == 200){
+      Map<String,dynamic> decodeJson = jsonDecode(response.body);
+      setState(() {
+        urlMenu = decodeJson["items"][0]["uri"].toString();
+      });
+    }
+    print(urlMenu);
   }
 
   Future<bool> _onWillPop() async {
@@ -138,6 +148,7 @@ class _EducarteShellState extends State<EducarteShell> {
   void initState() {
     super.initState();
     student();
+    getMenu();
   }
   @override
   Widget build(BuildContext context) {
