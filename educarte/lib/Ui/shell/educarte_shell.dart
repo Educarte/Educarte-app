@@ -8,6 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../Interector/base/constants.dart';
+import '../../Interector/models/document.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -38,6 +39,13 @@ class _EducarteShellState extends State<EducarteShell> {
 
   String dropdownValue = "";
   double iconSize = 30;
+
+  bool loading = false;
+  void setLoading({required bool load}){
+    setState(() {
+      loading = load;
+    });
+  }
 
   String id = "";
   void student() async{
@@ -103,7 +111,7 @@ class _EducarteShellState extends State<EducarteShell> {
     });
   }
 
-  String urlMenu = "";
+  Document document = Document.empty();
 
   void getMenu()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
@@ -115,10 +123,10 @@ class _EducarteShellState extends State<EducarteShell> {
     if(response.statusCode == 200){
       Map<String,dynamic> decodeJson = jsonDecode(response.body);
       setState(() {
-        urlMenu = decodeJson["items"][0]["uri"].toString();
+        document = Document(id: decodeJson["items"][0]["id"].toString(),name: decodeJson["items"][0]["name"].toString(),fileUri: decodeJson["items"][0]["uri"].toString());
       });
     }
-    print(urlMenu);
+
   }
 
   Future<bool> _onWillPop() async {
@@ -328,7 +336,7 @@ class _EducarteShellState extends State<EducarteShell> {
         break;
       case 1:
         changeSelectedIndex(index);
-
+        BuildContext dcontext = context;
         showModalBottomSheet(
           context: context,
           isDismissible: false,
@@ -336,43 +344,81 @@ class _EducarteShellState extends State<EducarteShell> {
           isScrollControlled: true,
           backgroundColor: Colors.black.withOpacity(0.3),
           builder: (BuildContext context){
-            return Container(
-              width: screenWidth(context),
-              height: 277,
-              decoration: BoxDecoration(
-                  color: colorScheme(context).onBackground,
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(8),topLeft: Radius.circular(8))
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(onPressed: (){
-                          _ontItemTapped(2, context);
-
-                          Navigator.pop(context);
-                        }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
-                        Text("Cardápio em PDF",style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme(context).surface
-                        ),)
-                      ],
-                    ),
-                    const SizedBox(height: 32,),
-                    BotaoAzul(text: "Visualizar",onPressed: (){
-                      FileManagement.launchUri(link: "", context: context);
-                    },),
-                    const SizedBox(height: 16,),
-                    const BotaoBranco(text: "Baixar"),
-                    const SizedBox(height: 16,),
-                    const BotaoBranco(text: "Compartilhar"),
-                  ],
+            return StatefulBuilder(builder: (context,setstate)
+            {
+              return Container(
+                width: screenWidth(context),
+                height: 277,
+                decoration: BoxDecoration(
+                    color: colorScheme(context).onBackground,
+                    borderRadius: const BorderRadius.only(
+                        topRight: Radius.circular(8),
+                        topLeft: Radius.circular(8))
                 ),
-              ),
-            );
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 16),
+                  child:
+                  loading ?
+                  const Center(
+                    child: CircularProgressIndicator(color: Color(0xff547B9A),),) :
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          IconButton(onPressed: () {
+                            _ontItemTapped(2, context);
+
+                            Navigator.pop(context);
+                          }, icon: Icon(Symbols.close, color: colorScheme(
+                              context).surface,)),
+                          Text("Cardápio em PDF", style: GoogleFonts.poppins(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme(context).surface
+                          ),)
+                        ],
+                      ),
+                      const SizedBox(height: 32,),
+                      BotaoAzul(text: "Visualizar", onPressed: () {
+                        setstate((){
+                          loading = true;
+                        });
+                        FileManagement.launchUri(link: document.fileUri
+                            .toString(), context: context);
+                        setstate((){
+                          loading = false;
+                        });
+                      },),
+                      const SizedBox(height: 16,),
+                      BotaoBranco(text: "Baixar", onPressed: () {
+                        setstate((){
+                          loading = true;
+                        });
+                        FileManagement.download(url: document.fileUri
+                            .toString(), fileName: "Cardápio");
+                        Future.delayed(Duration(seconds: 2)).then((value) {
+                          setstate((){
+                            loading = false;
+                          });
+                        });
+                      },),
+                      const SizedBox(height: 16,),
+                      BotaoBranco(text: "Compartilhar", onPressed: () {
+                        setLoading(load: true);
+                        FileManagement.share(url: document.fileUri.toString(),
+                            document: document);
+                        Future.delayed(Duration(seconds: 2)).then((value) {
+                          setstate((){
+                            loading = false;
+                          });
+                        });
+                      },),
+                    ],
+                  ),
+                ),
+              );
+            });
           },
         );
         break;

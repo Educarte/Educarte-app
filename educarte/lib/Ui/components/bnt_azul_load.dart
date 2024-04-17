@@ -27,7 +27,7 @@ class _BotaoAzulState extends State<BotaoAzulLoad> {
           ),
         ),
         child: CircularProgressIndicator(
-          color: colorScheme(context).onPrimary,
+          color: colorScheme(context).primary,
         )
       ),
     );

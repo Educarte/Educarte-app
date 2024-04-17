@@ -2,22 +2,20 @@ import 'package:educarte/Interector/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class BotaoBranco extends StatefulWidget {
-  const BotaoBranco({
+class BotaoBrancoLoad extends StatefulWidget {
+  const BotaoBrancoLoad({
     super.key,
     required this.text,
-    this.onPressed,
-    this.enable
+    this.onPressed
   });
-  final bool? enable ;
   final String text;
   final VoidCallback? onPressed;
 
   @override
-  State<BotaoBranco> createState() => _BotaoBrancoState();
+  State<BotaoBrancoLoad> createState() => _BotaoBrancoState();
 }
 
-class _BotaoBrancoState extends State<BotaoBranco> {
+class _BotaoBrancoState extends State<BotaoBrancoLoad> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -29,16 +27,14 @@ class _BotaoBrancoState extends State<BotaoBranco> {
           backgroundColor: MaterialStateColor.resolveWith((states) => colorScheme(context).onBackground),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: colorScheme(context).primary)
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: colorScheme(context).primary)
               )
           ),
         ),
-        child: Text(widget.text,style: GoogleFonts.poppins(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: colorScheme(context).primary
-        ),),
+        child: CircularProgressIndicator(
+          color: colorScheme(context).onPrimary,
+        )
       ),
     );
   }
