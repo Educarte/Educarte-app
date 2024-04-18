@@ -7,9 +7,9 @@ class BotaoBranco extends StatefulWidget {
     super.key,
     required this.text,
     this.onPressed,
-    this.enable
+     this.loading = false
   });
-  final bool? enable ;
+  final bool loading ;
   final String text;
   final VoidCallback? onPressed;
 
@@ -24,7 +24,7 @@ class _BotaoBrancoState extends State<BotaoBranco> {
       height: 44,
       width: screenWidth(context),
       child: ElevatedButton(
-        onPressed: widget.onPressed,
+        onPressed: widget.loading ? null : widget.onPressed,
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => colorScheme(context).onBackground),
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -34,7 +34,8 @@ class _BotaoBrancoState extends State<BotaoBranco> {
               )
           ),
         ),
-        child: Text(widget.text,style: GoogleFonts.poppins(
+        child: widget.loading ? const CircularProgressIndicator() :
+        Text(widget.text,style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: colorScheme(context).primary

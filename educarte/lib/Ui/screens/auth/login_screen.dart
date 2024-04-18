@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:educarte/Interector/enum/persistence_enum.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
-import 'package:educarte/Ui/components/bnt_azul_load.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -163,10 +162,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: 48,),
-                      if(carregando == false)
-                      BotaoAzul(text: "Entrar",onPressed: ()=> logar(),),
-                      if(carregando == true)
-                      const BotaoAzulLoad()
+                      BotaoAzul(text: "Entrar",onPressed: ()=> logar(),loading: carregando,),
                     ],
                   ),
                 ),

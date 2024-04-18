@@ -40,12 +40,12 @@ class _EducarteShellState extends State<EducarteShell> {
   String dropdownValue = "";
   double iconSize = 30;
 
-  bool loading = false;
-  void setLoading({required bool load}){
-    setState(() {
-      loading = load;
-    });
-  }
+  bool loadingDownload = false;
+  // void setLoading({required bool load}){
+  //   setState(() {
+  //     loading = load;
+  //   });
+  // }
 
   String id = "";
   void student() async{
@@ -359,17 +359,16 @@ class _EducarteShellState extends State<EducarteShell> {
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16, vertical: 16),
                   child:
-                  loading ?
-                  const Center(
-                    child: CircularProgressIndicator(color: Color(0xff547B9A),),) :
                   Column(
                     children: [
                       Row(
                         children: [
                           IconButton(onPressed: () {
-                            _ontItemTapped(2, context);
+                            if(loadingDownload == false){
+                              _ontItemTapped(2, context);
 
-                            Navigator.pop(context);
+                              Navigator.pop(context);
+                            }
                           }, icon: Icon(Symbols.close, color: colorScheme(
                               context).surface,)),
                           Text("Cardápio em PDF", style: GoogleFonts.poppins(
@@ -381,39 +380,35 @@ class _EducarteShellState extends State<EducarteShell> {
                       ),
                       const SizedBox(height: 32,),
                       BotaoAzul(text: "Visualizar", onPressed: () {
-                        setstate((){
-                          loading = true;
-                        });
-                        FileManagement.launchUri(link: document.fileUri
-                            .toString(), context: context);
-                        setstate((){
-                          loading = false;
-                        });
+                        if(loadingDownload == false){
+                          FileManagement.launchUri(link: document.fileUri
+                              .toString(), context: context);
+                        }
                       },),
                       const SizedBox(height: 16,),
                       BotaoBranco(text: "Baixar", onPressed: () {
                         setstate((){
-                          loading = true;
+                          loadingDownload = true;
                         });
                         FileManagement.download(url: document.fileUri
                             .toString(), fileName: "Cardápio");
                         Future.delayed(Duration(seconds: 2)).then((value) {
                           setstate((){
-                            loading = false;
+                            loadingDownload = false;
                           });
                         });
-                      },),
+                      },
+                        loading: loadingDownload,
+                      ),
                       const SizedBox(height: 16,),
-                      BotaoBranco(text: "Compartilhar", onPressed: () {
-                        setLoading(load: true);
-                        FileManagement.share(url: document.fileUri.toString(),
-                            document: document);
-                        Future.delayed(Duration(seconds: 2)).then((value) {
-                          setstate((){
-                            loading = false;
-                          });
-                        });
-                      },),
+                      BotaoBranco(text: "Compartilhar", onPressed:  () {
+                        if(loadingDownload == false){
+                          FileManagement.share(url: document.fileUri.toString(),
+                              document: document);
+                        }
+                      },
+
+                      ),
                     ],
                   ),
                 ),

@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
-import '../../../components/bnt_azul_load.dart';
 import '../../../global/global.dart' as globals;
 
 import '../../../components/bnt_azul.dart';
@@ -164,10 +163,7 @@ class _EmailCodeState extends State<EmailCode> {
                 ),
               ),
               const SizedBox(height: 120,),
-              if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: ()=> verificarCode()),
-              if(carregando == true)
-                BotaoAzulLoad(),
+              BotaoAzul(text: "Continuar",onPressed: ()=> verificarCode(),loading: carregando,),
               const SizedBox(height: 8,),
               Align(
                 alignment: Alignment.center,

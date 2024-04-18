@@ -14,7 +14,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../../Interector/models/api_diaries.dart';
 import '../../../Interector/validations/convertter.dart';
 import '../../components/bnt_azul.dart';
-import '../../components/bnt_azul_load.dart';
 import '../../components/bnt_branco.dart';
 import '../../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -278,15 +277,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                         obscureText: false,
                                         onChange: telefone!),
                                     const SizedBox(height: 32,),
-                                    if(carregando == false)
                                     BotaoAzul(text: "Atualizar informações",
                                       onPressed: () {
                                         putDados();
                                         Navigator.pop(context);
                                       },
+                                      loading: carregando,
                                     ),
-                                    if(carregando == true)
-                                      const BotaoAzulLoad(),
                                     const SizedBox(height: 16,),
                                     BotaoBranco(text: "Sair do aplicativo",
                                       onPressed: () async{

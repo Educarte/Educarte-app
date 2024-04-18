@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
-import '../../../components/bnt_azul_load.dart';
 import '../../../global/global.dart' as globals;
 
 import '../../../components/bnt_azul.dart';
@@ -111,10 +110,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const SizedBox(height: 24,),
               Input(name: "E-mail", obscureText: false, onChange: email,),
               const SizedBox(height: 165,),
-              if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: () => enviarCodigo()),
-              if(carregando == true)
-                BotaoAzulLoad()
+              BotaoAzul(text: "Continuar",onPressed: () => enviarCodigo(),loading: carregando,),
             ],
           ),
         ),

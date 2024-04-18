@@ -7,7 +7,8 @@ class BotaoAzul extends StatefulWidget {
     super.key,
     required this.text,
     this.onPressed, 
-    this.loading = false
+    this.loading = false,
+
   });
   final String text;
   final VoidCallback? onPressed;

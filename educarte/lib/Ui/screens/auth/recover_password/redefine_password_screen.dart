@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:educarte/Ui/components/bnt_azul_load.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -116,10 +114,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               const SizedBox(height: 24,),
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
-              if(carregando == false)
-              BotaoAzul(text: "Continuar",onPressed: () => updatePasssword()),
-              if(carregando == true)
-                BotaoAzulLoad()
+              BotaoAzul(text: "Continuar",onPressed: () => updatePasssword(),loading: carregando,),
             ],
           ),
         ),
