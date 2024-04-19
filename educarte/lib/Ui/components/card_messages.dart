@@ -4,10 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../Interector/base/constants.dart';
 
 class CardMessages extends StatefulWidget {
-  CardMessages({super.key,required this.encaminhado,required this.color,required this.assets,});
-  String encaminhado;
-  String assets;
-  Color color ;
+  const CardMessages({
+    super.key,
+    required this.encaminhado,
+    required this.color,
+    required this.assets
+  });
+  final String encaminhado;
+  final String assets;
+  final Color color;
+
   @override
   State<CardMessages> createState() => _CardMessagesState();
 }

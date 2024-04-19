@@ -7,6 +7,7 @@ import 'package:educarte/Ui/components/search_by_voice.dart';
 import 'package:educarte/Ui/global/global.dart' as globals;
 import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
+import 'package:educarte/Ui/screens/entryAndExit/entry_and_exit_page.dart';
 import 'package:educarte/Ui/screens/home/home_screen.dart';
 import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:educarte/Ui/screens/messagens/messages_screen.dart';
@@ -107,6 +108,12 @@ class Routes {
               FadeTransitionPage(child: const MessagesScreen()
             ),
           ),
+          GoRoute(
+            path: "/entryAndExit",
+            pageBuilder: (context, state) =>
+              FadeTransitionPage(child: const EntryAndExitPage()
+            ),
+          )
         ],
       ),
     ],

@@ -65,7 +65,6 @@ class _EducarteShellState extends State<EducarteShell> {
           listId.add(jsonData["items"][i]["id"]);
         } 
         
-        print(updateHomeScreen);
         dropdownValue = list.first;
         studentId(valueIndex);
       });
@@ -162,61 +161,66 @@ class _EducarteShellState extends State<EducarteShell> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: widget.child,
-      bottomNavigationBar: NavigationBar(
-        height: 65,
-        labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
-        backgroundColor: colorScheme(context).primary,
-        indicatorColor: colorScheme(context).primary,
-
-        destinations: <NavigationDestination>[
-          NavigationDestination(
-            icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
-            selectedIcon: selectedIcon(
-                context: context,
-                icon: Symbols.diagnosis,
-                iconSize: iconSize
+      bottomNavigationBar: Theme(
+        data: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+        ),
+        child: NavigationBar(
+          height: 65,
+          labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
+          backgroundColor: colorScheme(context).primary,
+          indicatorColor: colorScheme(context).primary,
+          destinations: <NavigationDestination>[
+            NavigationDestination(
+              icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
+              selectedIcon: selectedIcon(
+                  context: context,
+                  icon: Symbols.diagnosis,
+                  iconSize: iconSize
+              ),
+              label: 'Recados',
             ),
-            label: 'Recados',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.nutrition,color: colorScheme(context).onPrimary,),
-            selectedIcon: selectedIcon(
-                context: context,
-                icon: Symbols.nutrition,
-                iconSize: iconSize
+            NavigationDestination(
+              icon: Icon(Symbols.nutrition,color: colorScheme(context).onPrimary,),
+              selectedIcon: selectedIcon(
+                  context: context,
+                  icon: Symbols.nutrition,
+                  iconSize: iconSize
+              ),
+              label: 'Cardápio',
             ),
-            label: 'Cardápio',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.cottage,color: colorScheme(context).onPrimary),
-            selectedIcon: selectedIcon(
-                context: context,
-                icon: Symbols.cottage,
-                iconSize: iconSize
+            NavigationDestination(
+              icon: Icon(Symbols.cottage,color: colorScheme(context).onPrimary),
+              selectedIcon: selectedIcon(
+                  context: context,
+                  icon: Symbols.cottage,
+                  iconSize: iconSize
+              ),
+              label: 'Home',
             ),
-            label: 'Home',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.alarm_on,color: colorScheme(context).onPrimary),
-            selectedIcon: selectedIcon(
-                context: context,
-                icon: Symbols.alarm_on,
-                iconSize: iconSize
+            NavigationDestination(
+              icon: Icon(Symbols.alarm_on,color: colorScheme(context).onPrimary),
+              selectedIcon: selectedIcon(
+                  context: context,
+                  icon: Symbols.alarm_on,
+                  iconSize: iconSize
+              ),
+              label: 'EntradaSaida',
             ),
-            label: 'EntradaSaida',
-          ),
-          NavigationDestination(
-            icon: Icon(Symbols.switch_account,color: colorScheme(context).onPrimary),
-            selectedIcon: selectedIcon(
-                context: context,
-                icon: Symbols.switch_account,
-                iconSize: iconSize
+            NavigationDestination(
+              icon: Icon(Symbols.switch_account,color: colorScheme(context).onPrimary),
+              selectedIcon: selectedIcon(
+                  context: context,
+                  icon: Symbols.switch_account,
+                  iconSize: iconSize
+              ),
+              label: 'Troca de Guarda',
             ),
-            label: 'Troca de Guarda',
-          ),
-        ],
-        selectedIndex: selectedIndex,
-        onDestinationSelected: (int idx) => _ontItemTapped(idx, context),
+          ],
+          selectedIndex: selectedIndex,
+          onDestinationSelected: (int idx) => _ontItemTapped(idx, context),
+        ),
       ),
     );
   }
@@ -332,11 +336,13 @@ class _EducarteShellState extends State<EducarteShell> {
         );
         break;
       case 3:
-        print("Entrada e saida");
+        changeSelectedIndex(index);
+        
+        context.go("/entryAndExit");
         break;
       case 1:
         changeSelectedIndex(index);
-        BuildContext dcontext = context;
+
         showModalBottomSheet(
           context: context,
           isDismissible: false,
@@ -392,7 +398,7 @@ class _EducarteShellState extends State<EducarteShell> {
                         });
                         FileManagement.download(url: document.fileUri
                             .toString(), fileName: "Cardápio");
-                        Future.delayed(Duration(seconds: 2)).then((value) {
+                        Future.delayed(const Duration(seconds: 2)).then((value) {
                           setstate((){
                             loadingDownload = false;
                           });
