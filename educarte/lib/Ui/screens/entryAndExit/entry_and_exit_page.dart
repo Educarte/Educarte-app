@@ -1,5 +1,6 @@
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:educarte/Ui/components/table_calendar.dart';
+import 'package:educarte/Ui/screens/entryAndExit/widgets/card_entry_and_exit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -36,6 +37,20 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                     fontWeight: FontWeight.w500,
                     color: colorScheme(context).onPrimary
                   ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20,),
+            SizedBox(
+              width: screenWidth(context),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 4,
+                  itemBuilder: (BuildContext context, int index) {
+                    return CardEntryAndExit();
+                  },
                 ),
               ),
             )
