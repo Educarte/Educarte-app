@@ -16,45 +16,48 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            CustomTableCalendar(
-              paddingTop: 24,
-              callback:(start, end) {
-                  
-              }
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Container(
-                alignment: Alignment.center,
-                height: 38,
-                color: colorScheme(context).primary.withOpacity(0.5),
-                child: Text(
-                  "Saldo de horas: +00h. 00min ",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme(context).onPrimary
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            children: [
+              CustomTableCalendar(
+                paddingTop: 24,
+                callback:(start, end) {
+
+                }
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 38,
+                  color: colorScheme(context).primary.withOpacity(0.5),
+                  child: Text(
+                    "Saldo de horas: +00h. 00min ",
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme(context).onPrimary
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20,),
-            SizedBox(
-              width: screenWidth(context),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: 4,
-                  itemBuilder: (BuildContext context, int index) {
-                    return CardEntryAndExit();
-                  },
+              const SizedBox(height: 20,),
+              SizedBox(
+                width: screenWidth(context),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 10,
+                    itemBuilder: (BuildContext context, int index) {
+                      return CardEntryAndExit();
+                    },
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

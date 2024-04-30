@@ -192,6 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: CircularProgressIndicator());
     } else {
       return Scaffold(
+        resizeToAvoidBottomInset: false ,
         backgroundColor: colorScheme(context).background,
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
@@ -288,9 +289,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     BotaoBranco(text: "Sair do aplicativo",
                                       onPressed: () async{
                                         PersistenceRepository persistenceRepository = PersistenceRepository();
-                                  
+
                                         await persistenceRepository.delete(key: SecureKey.token);
-                                        
+
                                         if(context.mounted){
                                           context.go("/login");
                                         }
@@ -302,9 +303,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             );
                           },
                         );
-                      }, 
+                      },
                       icon: const Icon(
-                        Symbols.account_circle, 
+                        Symbols.account_circle,
                         size: 30
                       )
                     )
@@ -381,7 +382,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Expanded(
                         child: listDiaries.isEmpty ?
                         const ResultNotFound(
-                          description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!", 
+                          description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
                           iconData: Symbols.diagnosis
                         ) :
                         Padding(
@@ -456,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 );
                               },
-                          
+
                             ),
                           ),
                         ),
@@ -530,7 +531,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                 ),
-                
+
                               ],
                             ),
                           ),
@@ -725,14 +726,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ),
                                     ),
                                   ),
-                
+
                                 ],
                               ),
                             ),
                             SizedBox(
                               width: screenWidth(context),
                               height: 91,
-                              child: listData.length < 3 ? 
+                              child: listData.length < 3 ?
                                 Center(
                                   child: Text(
                                     "Sem atualizações!",

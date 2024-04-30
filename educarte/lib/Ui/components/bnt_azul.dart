@@ -34,7 +34,7 @@ class _BotaoAzulState extends State<BotaoAzul> {
               )
           ),
         ),
-        child: widget.loading ? const CircularProgressIndicator() : Text(
+        child: widget.loading ? CircularProgressIndicator(color: colorScheme(context).onPrimary,) : Text(
             widget.text,style: GoogleFonts.poppins(
             fontSize: 14,
             fontWeight: FontWeight.w500,

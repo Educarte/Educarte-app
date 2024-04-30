@@ -36,6 +36,7 @@ class _EducarteShellState extends State<EducarteShell> {
   TextEditingController auxiliar = TextEditingController();
   List<String> listId = [];
   int valueIndex = 0;
+  int pageIndex = 0;
 
   String dropdownValue = "";
   double iconSize = 30;
@@ -228,11 +229,14 @@ class _EducarteShellState extends State<EducarteShell> {
   void _ontItemTapped(int index, BuildContext context) {
     switch (index) {
       case 4:
+        setState(() {
+          pageIndex = selectedIndex;
+        });
         changeSelectedIndex(index);
 
         student();
         showModalBottomSheet(
-          useRootNavigator: true,
+          useRootNavigator: false,
           isScrollControlled: true,
           isDismissible: false,
           context: context,
@@ -252,7 +256,7 @@ class _EducarteShellState extends State<EducarteShell> {
                     Row(
                       children: [
                         IconButton(onPressed: (){
-                          _ontItemTapped(2, context);
+                          _ontItemTapped(pageIndex, context);
 
                           Navigator.pop(context);
                         }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
@@ -341,6 +345,9 @@ class _EducarteShellState extends State<EducarteShell> {
         context.go("/entryAndExit");
         break;
       case 1:
+        setState(() {
+          pageIndex = selectedIndex;
+        });
         changeSelectedIndex(index);
 
         showModalBottomSheet(
@@ -371,9 +378,10 @@ class _EducarteShellState extends State<EducarteShell> {
                         children: [
                           IconButton(onPressed: () {
                             if(loadingDownload == false){
-                              _ontItemTapped(2, context);
-
+                              _ontItemTapped(pageIndex, context);
                               Navigator.pop(context);
+
+
                             }
                           }, icon: Icon(Symbols.close, color: colorScheme(
                               context).surface,)),
