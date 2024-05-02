@@ -4,6 +4,8 @@ import 'package:educarte/Ui/screens/entryAndExit/widgets/card_entry_and_exit.dar
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../Messagens/messages_screen.dart';
+
 class EntryAndExitPage extends StatefulWidget {
   const EntryAndExitPage({super.key});
 
@@ -12,19 +14,33 @@ class EntryAndExitPage extends StatefulWidget {
 }
 
 class _EntryAndExitPageState extends State<EntryAndExitPage> {
+  Loadings loading = Loadings.none;
+
+  void setLoading({required Loadings load}){
+    setState(() {
+      loading = load;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
+      body: Container(
+        width: screenWidth(context),
+        height: screenHeight(context),
+        color: colorScheme(context).background,
+        alignment: Alignment.center,
+        child: SafeArea(
           child: Column(
             children: [
-              CustomTableCalendar(
-                paddingTop: 24,
-                callback:(start, end) {
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CustomTableCalendar(
+                  paddingTop: 24,
+                  callback:(start, end) {
 
-                }
+                  }
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
@@ -42,12 +58,17 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                   ),
                 ),
               ),
-              const SizedBox(height: 20,),
-              SizedBox(
-                width: screenWidth(context),
+              if(loading == Loadings.list)
+                const Expanded(
+                  child: Center(
+                      child: CircularProgressIndicator()),
+                )
+              else
+              Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
                   child: ListView.builder(
+                    padding: const EdgeInsets.only(top: 10),
                     shrinkWrap: true,
                     itemCount: 10,
                     itemBuilder: (BuildContext context, int index) {

@@ -139,12 +139,12 @@ class _MessagesScreenState extends State<MessagesScreen> {
           height: screenHeight(context),
           color: colorScheme(context).background,
           alignment: Alignment.center,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            child: Column(
-              children: [
-                const SizedBox(height: 20,),
-                CustomTableCalendar(
+          child: Column(
+            children: [
+              const SizedBox(height: 20,),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CustomTableCalendar(
                   callback: (DateTime? startDate, DateTime? endDate) {
                     if (endDate != null) {
                       if (startDate != null && startDate.isAfter(endDate)) {
@@ -155,24 +155,28 @@ class _MessagesScreenState extends State<MessagesScreen> {
                     }
                     diaryId(startDate!, endDate);
                   },),
-                if(loading == Loadings.list)
-                const Expanded(
-                  child: Center(
-                  child: CircularProgressIndicator()),
-                )
-                else
-                Expanded(
-                  child: listDiaries.isEmpty ? const ResultNotFound(
-                    description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!", 
-                    iconData: Symbols.diagnosis
-                  ) : ListView.builder(
+              ),
+              const SizedBox(height: 16,),
+              if(loading == Loadings.list)
+              const Expanded(
+                child: Center(
+                child: CircularProgressIndicator()),
+              )
+              else
+              Expanded(
+                child: listDiaries.isEmpty ? const ResultNotFound(
+                  description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
+                  iconData: Symbols.diagnosis
+                ) : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                  child: ListView.builder(
                     padding: const EdgeInsets.only(top: 10),
                     shrinkWrap: true,
                     itemCount: listDiaries.length,
                     itemBuilder: (BuildContext context, int index) {
                       return Container(
                         width: screenWidth(context),
-                        margin: const EdgeInsets.only(bottom: 16),
+                        margin: const EdgeInsets.only(bottom: 16,left: 8,right: 8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
                           color: colorScheme(context).onPrimary,
@@ -312,9 +316,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                       );
                     },
                   ),
-                )
-              ],
-            ),
+                ),
+              )
+            ],
           ),
         ),
       );
