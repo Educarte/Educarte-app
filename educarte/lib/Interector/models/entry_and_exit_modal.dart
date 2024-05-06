@@ -20,13 +20,13 @@ class EntryAndExit {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     data['date'] = this.date;
-    if (this.accessControls != null) {
+    if (accessControls != null) {
       data['accessControls'] =
-          this.accessControls!.map((v) => v.toJson()).toList();
+          accessControls!.map((v) => v.toJson()).toList();
     }
-    if (this.contractedHour != null) {
+    if (contractedHour != null) {
       data['contractedHour'] = this.contractedHour!.toJson();
     }
     return data;
