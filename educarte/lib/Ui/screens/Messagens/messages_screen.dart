@@ -142,20 +142,18 @@ class _MessagesScreenState extends State<MessagesScreen> {
             alignment: Alignment.center,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: CustomTableCalendar(
-                    callback: (DateTime? startDate, DateTime? endDate) {
-                      if (endDate != null) {
-                        if (startDate != null && startDate.isAfter(endDate)) {
-                          DateTime temp = startDate;
-                          startDate = endDate;
-                          endDate = temp;
-                        }
+                CustomTableCalendar(
+                  paddingTop: 16,
+                  callback: (DateTime? startDate, DateTime? endDate) {
+                    if (endDate != null) {
+                      if (startDate != null && startDate.isAfter(endDate)) {
+                        DateTime temp = startDate;
+                        startDate = endDate;
+                        endDate = temp;
                       }
-                      diaryId(startDate!, endDate);
-                    },),
-                ),
+                    }
+                    diaryId(startDate!, endDate);
+                  },),
                 const SizedBox(height: 16,),
                 if(loading == Loadings.list)
                 const Expanded(
@@ -167,155 +165,152 @@ class _MessagesScreenState extends State<MessagesScreen> {
                   child: listDiaries.isEmpty ? const ResultNotFound(
                     description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
                     iconData: Symbols.diagnosis
-                  ) : Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: ListView.builder(
-                      padding: const EdgeInsets.only(top: 10),
-                      shrinkWrap: true,
-                      itemCount: listDiaries.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                          width: screenWidth(context),
-                          margin: const EdgeInsets.only(bottom: 16,left: 8,right: 8),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: colorScheme(context).onPrimary,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.3),
-                                spreadRadius: 0,
-                                blurRadius: 4,
-                                offset: const Offset(
-                                    0, 4), // changes position of shadow
+                  ) : ListView.builder(
+                    padding: const EdgeInsets.only(top: 10,right: 8,left: 8),
+                    shrinkWrap: true,
+                    itemCount: listDiaries.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        width: screenWidth(context),
+                        margin: const EdgeInsets.only(bottom: 16,left: 8,right: 8),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: colorScheme(context).onPrimary,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.3),
+                              spreadRadius: 0,
+                              blurRadius: 4,
+                              offset: const Offset(
+                                  0, 4), // changes position of shadow
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: Column(
+                          children: [
+                            if(listDiaries[index].diaryType == 2)
+                           CardMessages(
+                               encaminhado: "ESCOLA",
+                               color: colorScheme(context).onSecondary,
+                               assets: "assets/imgRecados1.png"
+                           ),
+                            if(listDiaries[index].diaryType == 1)
+                              CardMessages(
+                                  encaminhado: globals.nomeSala.toString().toUpperCase(),
+                                  color: colorScheme(context).primary,
+                                  assets: "assets/imgRecados2.png"
                               ),
-                            ],
-                          ),
-                          alignment: Alignment.center,
-                          child: Column(
-                            children: [
-                              if(listDiaries[index].diaryType == 2)
-                             CardMessages(
-                                 encaminhado: "ESCOLA",
-                                 color: colorScheme(context).onSecondary,
-                                 assets: "assets/imgRecados1.png"
-                             ),
-                              if(listDiaries[index].diaryType == 1)
-                                CardMessages(
-                                    encaminhado: globals.nomeSala.toString().toUpperCase(),
-                                    color: colorScheme(context).primary,
-                                    assets: "assets/imgRecados2.png"
-                                ),
-                              if(listDiaries[index].diaryType == 0)
-                                CardMessages(
-                                    encaminhado: globals.nomeAluno.toString().toUpperCase(),
-                                    color: colorScheme(context).secondary,
-                                    assets: "assets/imgRecados3.png"
-                                ),
-                              Container(
-                                width: screenWidth(context),
-                                alignment: Alignment.centerLeft,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(listDiaries[index].description.toString(),
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w400
-                                      ),textAlign: TextAlign.start,),
-                                      const SizedBox(height: 15,),
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text("Atenciosamente,",style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400
-                                              ),),
-                                              Text("A Direção",style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400
-                                              ),),
-                                            ],
-                                          ),
-                                          if(listDiaries[index].fileUri != null)
-                                          GestureDetector(
-                                            onTap: () {
-                                              showModalBottomSheet(
-                                                isDismissible: false,
-                                                useRootNavigator: true,
-                                                context: context,
-                                                backgroundColor: Colors.black.withOpacity(0.3),
-                                                builder: (BuildContext context) {
-                                                  return Container(
-                                                    width: screenWidth(context),
-                                                    height: 277,
-                                                    decoration: BoxDecoration(
-                                                        color: colorScheme(context).onBackground,
-                                                        borderRadius: const BorderRadius.only(
-                                                            topRight: Radius.circular(8),
-                                                            topLeft: Radius.circular(8))
+                            if(listDiaries[index].diaryType == 0)
+                              CardMessages(
+                                  encaminhado: globals.nomeAluno.toString().toUpperCase(),
+                                  color: colorScheme(context).secondary,
+                                  assets: "assets/imgRecados3.png"
+                              ),
+                            Container(
+                              width: screenWidth(context),
+                              alignment: Alignment.centerLeft,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12,vertical: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(listDiaries[index].description.toString(),
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400
+                                    ),textAlign: TextAlign.start,),
+                                    const SizedBox(height: 15,),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("Atenciosamente,",style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400
+                                            ),),
+                                            Text("A Direção",style: GoogleFonts.poppins(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w400
+                                            ),),
+                                          ],
+                                        ),
+                                        if(listDiaries[index].fileUri != null)
+                                        GestureDetector(
+                                          onTap: () {
+                                            showModalBottomSheet(
+                                              isDismissible: false,
+                                              useRootNavigator: true,
+                                              context: context,
+                                              backgroundColor: Colors.black.withOpacity(0.3),
+                                              builder: (BuildContext context) {
+                                                return Container(
+                                                  width: screenWidth(context),
+                                                  height: 277,
+                                                  decoration: BoxDecoration(
+                                                      color: colorScheme(context).onBackground,
+                                                      borderRadius: const BorderRadius.only(
+                                                          topRight: Radius.circular(8),
+                                                          topLeft: Radius.circular(8))
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 16, vertical: 16),
+                                                    child: Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            IconButton(onPressed: () {
+                                                              Navigator.pop(context);
+                                                            },
+                                                                icon: Icon(Symbols.close,
+                                                                  color: colorScheme(context)
+                                                                      .surface,)),
+                                                            Text("Arquivo em PDF",
+                                                              style: GoogleFonts.poppins(
+                                                                  fontSize: 22,
+                                                                  fontWeight: FontWeight.w600,
+                                                                  color: colorScheme(context)
+                                                                      .surface
+                                                              ),)
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 32,),
+                                                        const BotaoAzul(text: "Visualizar"),
+                                                        const SizedBox(height: 16,),
+                                                        const BotaoBranco(text: "Baixar"),
+                                                        const SizedBox(height: 16,),
+                                                        const BotaoBranco(text: "Compartilhar"),
+                                                      ],
                                                     ),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.symmetric(
-                                                          horizontal: 16, vertical: 16),
-                                                      child: Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              IconButton(onPressed: () {
-                                                                Navigator.pop(context);
-                                                              },
-                                                                  icon: Icon(Symbols.close,
-                                                                    color: colorScheme(context)
-                                                                        .surface,)),
-                                                              Text("Arquivo em PDF",
-                                                                style: GoogleFonts.poppins(
-                                                                    fontSize: 22,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    color: colorScheme(context)
-                                                                        .surface
-                                                                ),)
-                                                            ],
-                                                          ),
-                                                          const SizedBox(height: 32,),
-                                                          const BotaoAzul(text: "Visualizar"),
-                                                          const SizedBox(height: 16,),
-                                                          const BotaoBranco(text: "Baixar"),
-                                                          const SizedBox(height: 16,),
-                                                          const BotaoBranco(text: "Compartilhar"),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Container(
-                                              width: 36,
-                                              height: 36,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: colorScheme(context).secondary,
-                                              ),
-                                              alignment: Alignment.center,
-                                              child: Icon(Symbols.attach_file,color: colorScheme(context).surface,size: 20,),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            width: 36,
+                                            height: 36,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: colorScheme(context).secondary,
                                             ),
-                                          )
-                                        ],
-                                      )
-                                    ],
-                                  ),
+                                            alignment: Alignment.center,
+                                            child: Icon(Symbols.attach_file,color: colorScheme(context).surface,size: 20,),
+                                          ),
+                                        )
+                                      ],
+                                    )
+                                  ],
                                 ),
-                              )
-                            ],
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 )
               ],

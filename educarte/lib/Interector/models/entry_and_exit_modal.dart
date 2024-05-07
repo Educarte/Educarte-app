@@ -57,7 +57,7 @@ class AccessControls {
 
 class ContractedHour {
   String? id;
-  int? hours;
+  double? hours;
   int? status;
   String? startDate;
   String? endDate;

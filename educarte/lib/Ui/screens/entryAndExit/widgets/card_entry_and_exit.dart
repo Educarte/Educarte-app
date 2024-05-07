@@ -4,7 +4,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class CardEntryAndExit extends StatelessWidget {
-  const CardEntryAndExit({super.key});
+  String date;
+  String horaEntrada;
+  String? horaSaida;
+  CardEntryAndExit({super.key,required this.horaEntrada, this.horaSaida,required this.date});
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +38,10 @@ class CardEntryAndExit extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      TextSpan(text: "01 de ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
-                      TextSpan(text: "Janeiro ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: colorScheme(context).surface)),
-                      TextSpan(text: "de 2024",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
+                      TextSpan(text: date,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
+                      // TextSpan(text: "Janeiro ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: colorScheme(context).surface)),
+                      // TextSpan(text: "de 2024",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
+                      //
                     ]
                   ),
                 )
@@ -51,7 +55,7 @@ class CardEntryAndExit extends StatelessWidget {
               text: TextSpan(
                   children: [
                     TextSpan(text: "Entrada: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
-                    TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: horaEntrada,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                   ]
               ),
             ),
@@ -59,7 +63,10 @@ class CardEntryAndExit extends StatelessWidget {
               text: TextSpan(
                   children: [
                     TextSpan(text: "Saida: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
+                    if(horaSaida == null)
                     TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    if(horaSaida != null)
+                    TextSpan(text: horaSaida,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                   ]
               ),
             ),

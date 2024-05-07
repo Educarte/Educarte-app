@@ -117,7 +117,7 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
     return Expanded(
       flex: 0,
       child: Padding(
-        padding: EdgeInsets.only(top: widget.paddingTop ?? 16),
+        padding: EdgeInsets.only(top: widget.paddingTop ?? 16,right: 16,left: 16),
         child: Column(
             children: [
               Padding(

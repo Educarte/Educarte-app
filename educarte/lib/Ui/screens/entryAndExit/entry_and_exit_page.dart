@@ -41,7 +41,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
       "StartDate": DateFormat.yMd().format(startDate).toString(),
       "EndDate": endDate == null ? DateFormat.yMd().format(startDate).toString() : DateFormat.yMd().format(endDate).toString()
     };
-
+    print(idStudent);
     var response = await http.get(Uri.parse("$baseUrl/Students/AccessControls/${globals.idStudent}").replace(queryParameters: params),
       headers: {
         "Authorization": "Bearer ${globals.token}"
@@ -50,16 +50,27 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
     print(response.statusCode);
     if(response.statusCode == 200){
       var decodeJson = jsonDecode(response.body);
-      print(decodeJson["accessControlsByDate"]);
-      print("${!decodeJson["accessControlsByDate"].isEmpty} asssdfadsfasdf");
       if(!decodeJson["accessControlsByDate"].isEmpty) {
-        decodeJson.forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
-      }else{
-        print(loading);
-        setLoading(load: Loadings.none);
+        decodeJson["accessControlsByDate"].forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
       }
     }
+    setLoading(load: Loadings.none);
     print(loading);
+  }
+
+  String dateConverte(String date){
+    DateTime dateTime = DateTime.parse(date);
+
+
+    String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
+    String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
+
+    // Concatenando a data formatada
+    String result = '${formattedDate}h. $formattedTime Min';
+
+    // Output
+    return result; // Saída: 18h. 08 Min
+    
   }
 
   @override
@@ -80,21 +91,18 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
           child: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: CustomTableCalendar(
-                      paddingTop: 24,
-                      callback: (DateTime? startDate, DateTime? endDate) {
-                        if (endDate != null) {
-                          if (startDate != null && startDate.isAfter(endDate)) {
-                            DateTime temp = startDate;
-                            startDate = endDate;
-                            endDate = temp;
-                          }
+                CustomTableCalendar(
+                    paddingTop: 16,
+                    callback: (DateTime? startDate, DateTime? endDate) {
+                      if (endDate != null) {
+                        if (startDate != null && startDate.isAfter(endDate)) {
+                          DateTime temp = startDate;
+                          startDate = endDate;
+                          endDate = temp;
                         }
-                        getAccessControls(startDate!, endDate);
                       }
-                  ),
+                      getAccessControls(startDate!, endDate);
+                    }
                 ),
                 Container(
                   alignment: Alignment.center,
@@ -121,16 +129,19 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                         description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
                         iconData: Symbols.diagnosis
                     ) :
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                      child: ListView.builder(
-                        padding: const EdgeInsets.only(top: 10),
-                        shrinkWrap: true,
-                        itemCount: 10,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CardEntryAndExit();
-                        },
-                      ),
+                    ListView.builder(
+                      padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
+                      shrinkWrap: true,
+                      itemCount: listAccess.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return CardEntryAndExit(
+                          date: DateFormat('d MMMM y', 'pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
+                          horaEntrada: dateConverte(listAccess[index].contractedHour!.startDate.toString()),
+                          horaSaida: listAccess[index].contractedHour!.endDate == null ?
+                          null :
+                          dateConverte(listAccess[index].contractedHour!.endDate.toString()) ,
+                        );
+                      },
                     ),
                   )
               ],
