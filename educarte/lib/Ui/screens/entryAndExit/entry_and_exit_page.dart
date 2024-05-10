@@ -36,6 +36,9 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
 
   Future<void> getAccessControls(DateTime startDate, DateTime? endDate)async{
     setLoading(load: Loadings.list);
+    setState(() {
+      listAccess = [];
+    });
     var params = {
       'Id': idStudent,
       "StartDate": DateFormat.yMd().format(startDate).toString(),
@@ -135,15 +138,15 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                       itemCount: listAccess.length,
                       itemBuilder: (BuildContext context, int index) {
                         return CardEntryAndExit(
-                          date: DateFormat('d MMMM y', 'pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
-                          horaEntrada: dateConverte(listAccess[index].contractedHour!.startDate.toString()),
-                          horaSaida: listAccess[index].contractedHour!.endDate == null ?
-                          null :
-                          dateConverte(listAccess[index].contractedHour!.endDate.toString()) ,
+                          date: DateFormat.yMMMMd('pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
+                          horaEntrada: dateConverte(listAccess[index].accessControls![0].time.toString()),
+                          horaSaida: listAccess[index].accessControls!.length == 2 ?
+                          dateConverte(listAccess[index].accessControls![1].time.toString()):
+                          null,
                         );
                       },
                     ),
-                  )
+                  ),
               ],
             ),
           ),
