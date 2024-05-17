@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,6 @@ import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 import '../components/input.dart';
-import '../global/global.dart';
 
 int selectedIndex = 0;
 
@@ -27,7 +27,7 @@ class EducarteShell extends StatefulWidget {
   @override
   State<EducarteShell> createState() => _EducarteShellState();
 }
-List<String> list = <String>[""];
+List<Student> students = List.empty(growable: true);
 class _EducarteShellState extends State<EducarteShell> {
   int selectedIndex = 2;
   TextEditingController nome = TextEditingController();
@@ -35,10 +35,10 @@ class _EducarteShellState extends State<EducarteShell> {
   TextEditingController responsavel = TextEditingController();
   TextEditingController auxiliar = TextEditingController();
   List<String> listId = [];
-  int valueIndex = 0;
+  Student currentStudent = Student.empty();
   int pageIndex = 0;
 
-  String dropdownValue = "";
+  Student dropdownValue = Student.empty();
   double iconSize = 30;
 
   bool loadingDownload = false;
@@ -49,7 +49,9 @@ class _EducarteShellState extends State<EducarteShell> {
   // }
 
   String id = "";
-  void student() async{
+  void getStudents() async{
+    bool first = true;
+
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
@@ -59,23 +61,35 @@ class _EducarteShellState extends State<EducarteShell> {
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
       setState(() {
-        list = List.empty(growable: true);
+       students.clear();
 
         for(var i=0;i < jsonData["items"].length; i++){
-          list.add(jsonData["items"][i]["name"]);
-          listId.add(jsonData["items"][i]["id"]);
+          Student newStudent = Student.fromJson(jsonData["items"][i]);
+          students.add(newStudent);
+
+          if(newStudent == globals.currentStudent.value){
+            currentStudent = currentStudent;
+
+            dropdownValue = currentStudent;
+
+            first = false;
+          }
         } 
         
-        dropdownValue = list.first;
-        studentId(valueIndex);
+        if(first) dropdownValue = students.first;
+        studentId();
       });
     }
 
   }
 
-  void studentId(int index)async{
+  void studentId()async{
+    if(currentStudent.isEmpty){
+      currentStudent = globals.currentStudent.value;
+    }
+
     var response = await http.get(
-      Uri.parse("http://64.225.53.11:5000/Students/${listId[index]}"),
+      Uri.parse("http://64.225.53.11:5000/Students/${currentStudent.id}"),
       headers: {
         "Authorization": "Bearer ${globals.token}"
       }
@@ -155,7 +169,7 @@ class _EducarteShellState extends State<EducarteShell> {
   @override
   void initState() {
     super.initState();
-    student();
+    getStudents();
     getMenu();
   }
   @override
@@ -234,7 +248,7 @@ class _EducarteShellState extends State<EducarteShell> {
         });
         changeSelectedIndex(index);
 
-        student();
+        getStudents();
         showModalBottomSheet(
           useRootNavigator: false,
           isScrollControlled: true,
@@ -270,7 +284,7 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 32,),
                     SizedBox(
                       height: 55,
-                      child: DropdownButtonFormField<String>(
+                      child: DropdownButtonFormField<Student>(
                         value: dropdownValue,
                         icon: const Icon(Symbols.expand_more),
                         elevation: 16,
@@ -302,19 +316,19 @@ class _EducarteShellState extends State<EducarteShell> {
                                 )
                             )
                         ),
-                        onChanged: (String? value) {
+                        onChanged: (Student? value) {
                           // This is called when the user selects an item.
                           setState(() {
                             dropdownValue = value!;
-                            valueIndex = list.indexWhere((element) => element ==  value);
+                            currentStudent = students.where((element) => element == value).toList().first;
 
-                            studentId(valueIndex);
+                            studentId();
                           });
                         },
-                        items: list.map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
+                        items: students.map<DropdownMenuItem<Student>>((Student value) {
+                          return DropdownMenuItem<Student>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value.name!),
                           );
                         }).toList(),
                       ),
@@ -327,9 +341,11 @@ class _EducarteShellState extends State<EducarteShell> {
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
                     BotaoAzul(text: "Atualizar informações",onPressed: (){
+                      globals.currentStudent.value = Student.empty();
+                      globals.currentStudent.value = currentStudent;
                       Navigator.pop(context);
 
-                      updateHomeScreen = true;
+                      globals.updateHomeScreen = true;
                       _ontItemTapped(2, context);
                     },)
                   ],

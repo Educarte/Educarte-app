@@ -1,10 +1,12 @@
 import 'package:educarte/Interector/models/access_control_model.dart';
 import 'package:educarte/Interector/models/contracted_hour_model.dart';
 import 'package:educarte/Interector/models/legal_guardians_model.dart';
+import 'package:equatable/equatable.dart';
 
 import 'classroom_model.dart';
 
-class Student {
+// ignore: must_be_immutable
+class Student extends Equatable{
   String? id;
   String? name;
   String? naturalness;
@@ -52,6 +54,8 @@ class Student {
   });
   
   Student.empty();
+
+  bool get isEmpty => id == null;
 
   Student.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -124,4 +128,7 @@ class Student {
 
     return data;
   }
+
+  @override
+  List<Object> get props => [id ?? ""];
 }

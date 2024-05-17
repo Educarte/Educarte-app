@@ -45,10 +45,16 @@ class Routes {
             await persistenceRepository.update(key: SecureKey.token, value: jsonDecode(response.body)["token"]);
             Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonDecode(response.body)["token"]);
             globals.id = decodedToken["sub"];
+            globals.checkUserType(profileType: decodedToken["profile"]);
 
             if(globals.nome == null){
               // currentIndex = 2;
-              path = '/home';
+              if(globals.profile == 1){
+                path = '/home';
+              }else{
+                path = '/timeControl';
+              }
+              
             }
           }else if(response.statusCode == 401){
             await persistenceRepository.delete(key: SecureKey.token);

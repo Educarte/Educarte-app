@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/result_not_found.dart';
@@ -131,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
       setState(() {
-        id = jsonData["items"][0]["id"];
+        if(globals.currentStudent.value.isEmpty) globals.currentStudent.value = Student.fromJson(jsonData["items"][0]);
+
+        id = globals.currentStudent.value.id!;
       });
     }
   }
@@ -191,290 +194,135 @@ class _HomeScreenState extends State<HomeScreen> {
       return const Center(
           child: CircularProgressIndicator());
     } else {
-      return Scaffold(
-        resizeToAvoidBottomInset: false ,
-        backgroundColor: colorScheme(context).background,
-        body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          child: Column(
-            children: [
-              const SizedBox(height: 32),
-              Expanded(
-                flex: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+      return ValueListenableBuilder(
+        valueListenable: globals.currentStudent,
+        builder: (_, __, ___){
+          return Scaffold(
+            resizeToAvoidBottomInset: false ,
+            backgroundColor: colorScheme(context).background,
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+              child: Column(
+                children: [
+                  const SizedBox(height: 32),
+                  Expanded(
+                    flex: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Olá,", style: GoogleFonts.poppins(
-                          color: colorScheme(context).surface,
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16,
-                        ),),
-                        Text(globals.nome.toString(),
-                          style: GoogleFonts.poppins(
-                            color: colorScheme(context).primary,
-                            fontWeight: FontWeight.w800,
-                            fontSize: 25,
-                          ),),
-                      ],
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        showModalBottomSheet(
-                          useRootNavigator: true,
-                          isScrollControlled: true,
-                          isDismissible: false,
-                          context: context,
-                          backgroundColor: Colors.black.withOpacity(0.3),
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: screenWidth(context),
-                              height: focusInput? 900 : 449,
-                              decoration: BoxDecoration(
-                                color: colorScheme(context).onBackground,
-                                borderRadius: const BorderRadius.only(
-                                  topRight: Radius.circular(8),
-                                  topLeft: Radius.circular(8)
-                                )
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
-                                child: Column(
-                                  children: [
-                                    Row(
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("Olá,", style: GoogleFonts.poppins(
+                              color: colorScheme(context).surface,
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16,
+                            ),),
+                            Text(globals.nome.toString(),
+                              style: GoogleFonts.poppins(
+                                color: colorScheme(context).primary,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 25,
+                              ),),
+                          ],
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                              useRootNavigator: true,
+                              isScrollControlled: true,
+                              isDismissible: false,
+                              context: context,
+                              backgroundColor: Colors.black.withOpacity(0.3),
+                              builder: (BuildContext context) {
+                                return Container(
+                                  width: screenWidth(context),
+                                  height: focusInput? 900 : 449,
+                                  decoration: BoxDecoration(
+                                    color: colorScheme(context).onBackground,
+                                    borderRadius: const BorderRadius.only(
+                                      topRight: Radius.circular(8),
+                                      topLeft: Radius.circular(8)
+                                    )
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 16),
+                                    child: Column(
                                       children: [
-                                        IconButton(
+                                        Row(
+                                          children: [
+                                            IconButton(
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                              icon: Icon(
+                                                Symbols.close,
+                                                color: colorScheme(context).surface
+                                              )
+                                            ),
+                                            Text("Meus dados",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 22,
+                                                fontWeight: FontWeight.w600,
+                                                color: colorScheme(context).surface
+                                              )
+                                            )
+                                          ]
+                                        ),
+                                        const SizedBox(height: 32,),
+                                        Input(name: "Nome",
+                                            obscureText: false,
+                                            onChange: nome,
+                                        ),
+                                        const SizedBox(height: 16,),
+                                        Input(name: "E-mail",
+                                            obscureText: false,
+                                            onChange: email),
+                                        const SizedBox(height: 16,),
+                                        Input(name: "Telefone",
+                                            obscureText: false,
+                                            onChange: telefone!),
+                                        const SizedBox(height: 32,),
+                                        BotaoAzul(text: "Atualizar informações",
                                           onPressed: () {
+                                            putDados();
                                             Navigator.pop(context);
                                           },
-                                          icon: Icon(
-                                            Symbols.close,
-                                            color: colorScheme(context).surface
-                                          )
+                                          loading: carregando,
                                         ),
-                                        Text("Meus dados",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 22,
-                                            fontWeight: FontWeight.w600,
-                                            color: colorScheme(context).surface
-                                          )
+                                        const SizedBox(height: 16,),
+                                        BotaoBranco(text: "Sair do aplicativo",
+                                          onPressed: () async{
+                                            PersistenceRepository persistenceRepository = PersistenceRepository();
+          
+                                            await persistenceRepository.delete(key: SecureKey.token);
+          
+                                            if(context.mounted){
+                                              context.go("/login");
+                                            }
+                                          }
                                         )
-                                      ]
-                                    ),
-                                    const SizedBox(height: 32,),
-                                    Input(name: "Nome",
-                                        obscureText: false,
-                                        onChange: nome,
-                                    ),
-                                    const SizedBox(height: 16,),
-                                    Input(name: "E-mail",
-                                        obscureText: false,
-                                        onChange: email),
-                                    const SizedBox(height: 16,),
-                                    Input(name: "Telefone",
-                                        obscureText: false,
-                                        onChange: telefone!),
-                                    const SizedBox(height: 32,),
-                                    BotaoAzul(text: "Atualizar informações",
-                                      onPressed: () {
-                                        putDados();
-                                        Navigator.pop(context);
-                                      },
-                                      loading: carregando,
-                                    ),
-                                    const SizedBox(height: 16,),
-                                    BotaoBranco(text: "Sair do aplicativo",
-                                      onPressed: () async{
-                                        PersistenceRepository persistenceRepository = PersistenceRepository();
-
-                                        await persistenceRepository.delete(key: SecureKey.token);
-
-                                        if(context.mounted){
-                                          context.go("/login");
-                                        }
-                                      }
-                                    )
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      icon: const Icon(
-                        Symbols.account_circle,
-                        size: 30
-                      )
-                    )
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24),
-              Expanded(
-                flex: 1,
-                child: Container(
-                  width: screenWidth(context),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: colorScheme(context).onBackground,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        spreadRadius: 0,
-                        blurRadius: 4,
-                        offset: const Offset(
-                            0, 4), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: screenWidth(context),
-                        height: 103,
-                        decoration: BoxDecoration(
-                            color: colorScheme(context).primary,
-                            borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(8),
-                                topRight: Radius.circular(8))
-                        ),
-                        child: Stack(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: SizedBox(
-                                  height: 80,
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .end,
-                                      children: [
-                                        Text("Recados de",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color(0xffF5F5F5),
-                                          ),),
-                                        Text(
-                                          "HOJE", style: GoogleFonts.poppins(
-                                            fontSize: 71,
-                                            fontWeight: FontWeight.w800,
-                                            color: const Color(0xffF5F5F5),
-                                            height: 0.8
-                                        ),),
                                       ],
                                     ),
                                   ),
-                                ),
-                              ),
-                            ),
-                            Image.asset("assets/imgRecados.png"),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: listDiaries.isEmpty ?
-                        const ResultNotFound(
-                          description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
-                          iconData: Symbols.diagnosis
-                        ) :
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12),
-                          child: Align(
-                            alignment: Alignment.topCenter,
-                            child: ListView.builder(
-                              padding: const EdgeInsets.only(top: 10),
-                              itemCount: listDiaries.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return Container(
-                                  width: screenWidth(context),
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                              color: colorScheme(
-                                                  context).outline.withOpacity(0.5),),
-                                      ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Text("Para: ",
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                color: colorScheme(
-                                                    context).surface,
-                                                fontWeight: FontWeight
-                                                    .w500
-                                            ),),
-                                          if(listDiaries[index].diaryType == 0)
-                                            Text(globals.nomeAluno
-                                                .toString(),
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  color: colorScheme(context).surface,
-                                                  fontWeight: FontWeight.w400
-                                              ),),
-                                          if(listDiaries[index].diaryType == 1)
-                                            Text(
-                                              globals.nomeSala.toString(),
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  color: colorScheme(context).surface,
-                                                  fontWeight: FontWeight.w400
-                                              ),),
-                                          if(listDiaries[index].diaryType == 2)
-                                            Text("Escola",
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  color: colorScheme(context).surface,
-                                                  fontWeight: FontWeight.w400
-                                              ),),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 6,),
-                                      Text(
-                                        listDiaries[index].description.toString(),
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          color: colorScheme(context).surface,
-                                          fontWeight: FontWeight.w300,
-                                        ),
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,),
-                                      const SizedBox(height: 12,),
-                                    ],
-                                  ),
                                 );
                               },
-
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                            );
+                          },
+                          icon: const Icon(
+                            Symbols.account_circle,
+                            size: 30
+                          )
+                        )
+                      ],
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Expanded(
-                flex: 0,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      width: screenWidth(context) / 2 - 24,
-                      height: 166,
+                  const SizedBox(height: 24),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      width: screenWidth(context),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: colorScheme(context).onBackground,
@@ -492,300 +340,460 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Container(
                             width: screenWidth(context),
-                            height: 74,
+                            height: 103,
                             decoration: BoxDecoration(
-                                color: colorScheme(context).secondary,
+                                color: colorScheme(context).primary,
                                 borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(8),
                                     topRight: Radius.circular(8))
                             ),
                             child: Stack(
                               children: [
-                                Align(
-                                    alignment: Alignment.bottomRight,
-                                    child: Image.asset("assets/imgEntSd.png")
-                                ),
                                 Padding(
-                                  padding: const EdgeInsets.only(left: 10),
+                                  padding: const EdgeInsets.only(right: 10),
                                   child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start,
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center,
-                                      children: [
-                                        Text("Entrada",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: const Color(0xffF5F5F5),
-                                          ),),
-                                        Text("e saída",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                            color: const Color(0xffF5F5F5),
-                                          ),),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            width: screenWidth(context),
-                            height: 91,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 12),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Data: ", style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: colorScheme(context)
-                                              .onSurface
-                                      ),),
-                                      Text(dataEntrada,
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: colorScheme(context)
-                                                .onSurface
-                                        ),)
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text("Entrada: ",
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 14,
-                                            color: colorScheme(context)
-                                                .onSurface
-                                        ),),
-                                      Text("${horaEntrada}h ${minEntrada}min",
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14,
-                                            color: colorScheme(context)
-                                                .onSurface
-                                        ),)
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "Saída: ", style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 14,
-                                          color: colorScheme(context)
-                                              .onSurface
-                                      ),),
-                                      Text("${horaSaida}h ${minSaida}min",
-                                        style: GoogleFonts.poppins(
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 14,
-                                            color: colorScheme(context)
-                                                .onSurface
-                                        ),)
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showModalBottomSheet(
-                          isDismissible: false,
-                          useRootNavigator: true,
-                          context: context,
-                          backgroundColor: Colors.black.withOpacity(0.3),
-                          builder: (BuildContext context) {
-                            return Container(
-                              width: screenWidth(context),
-                              height: 277,
-                              decoration: BoxDecoration(
-                                  color: colorScheme(context).onBackground,
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(8),
-                                      topLeft: Radius.circular(8))
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 16),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        IconButton(onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                            icon: Icon(Symbols.close,
-                                              color: colorScheme(context)
-                                                  .surface,)),
-                                        Text("Cardápio em PDF",
-                                          style: GoogleFonts.poppins(
-                                              fontSize: 22,
-                                              fontWeight: FontWeight.w600,
-                                              color: colorScheme(context)
-                                                  .surface
-                                          ),)
-                                      ],
-                                    ),
-                                    const SizedBox(height: 32,),
-                                    const BotaoAzul(text: "Visualizar"),
-                                    const SizedBox(height: 16,),
-                                    const BotaoBranco(text: "Baixar"),
-                                    const SizedBox(height: 16,),
-                                    const BotaoBranco(text: "Compartilhar"),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: Container(
-                        width: screenWidth(context) / 2 - 24,
-                        height: 166,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          color: colorScheme(context).onBackground,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              spreadRadius: 0,
-                              blurRadius: 4,
-                              offset: const Offset(
-                                  0, 4), // changes position of shadow
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: screenWidth(context),
-                              height: 74,
-                              decoration: BoxDecoration(
-                                  color: colorScheme(context).onSecondary,
-                                  borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(8),
-                                      topRight: Radius.circular(8))
-                              ),
-                              child: Stack(
-                                children: [
-                                  Align(
-                                      alignment: Alignment.bottomRight,
-                                      child: Image.asset(
-                                          "assets/imgAtualizacao.png")
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: SizedBox(
-                                        width: screenWidth(context),
-                                        child: RichText(text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text: "Atualização\ndo ",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight
-                                                        .w400,
-                                                    fontSize: 20,
-                                                    color: colorScheme(
-                                                        context).onPrimary
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: "CARDÁPIO",
-                                                style: GoogleFonts.poppins(
-                                                    fontWeight: FontWeight
-                                                        .bold,
-                                                    fontSize: 20,
-                                                    color: colorScheme(
-                                                        context).onPrimary
-                                                ),
-                                              )
-                                            ]
-                                        )),
+                                    alignment: Alignment.bottomRight,
+                                    child: SizedBox(
+                                      height: 80,
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .end,
+                                          children: [
+                                            Text("Recados de",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w400,
+                                                color: const Color(0xffF5F5F5),
+                                              ),),
+                                            Text(
+                                              "HOJE", style: GoogleFonts.poppins(
+                                                fontSize: 71,
+                                                fontWeight: FontWeight.w800,
+                                                color: const Color(0xffF5F5F5),
+                                                height: 0.8
+                                            ),),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-
-                                ],
+                                ),
+                                Image.asset("assets/imgRecados.png"),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: listDiaries.isEmpty ?
+                            const ResultNotFound(
+                              description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
+                              iconData: Symbols.diagnosis
+                            ) :
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12),
+                              child: Align(
+                                alignment: Alignment.topCenter,
+                                child: ListView.builder(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  itemCount: listDiaries.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Container(
+                                      width: screenWidth(context),
+                                      margin: const EdgeInsets.only(bottom: 12),
+                                      decoration: BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: colorScheme(
+                                                      context).outline.withOpacity(0.5),),
+                                          ),
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text("Para: ",
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    color: colorScheme(
+                                                        context).surface,
+                                                    fontWeight: FontWeight
+                                                        .w500
+                                                ),),
+                                              if(listDiaries[index].diaryType == 0)
+                                                Text(globals.nomeAluno
+                                                    .toString(),
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                              if(listDiaries[index].diaryType == 1)
+                                                Text(
+                                                  globals.nomeSala.toString(),
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                              if(listDiaries[index].diaryType == 2)
+                                                Text("Escola",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: colorScheme(context).surface,
+                                                      fontWeight: FontWeight.w400
+                                                  ),),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 6,),
+                                          Text(
+                                            listDiaries[index].description.toString(),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: colorScheme(context).surface,
+                                              fontWeight: FontWeight.w300,
+                                            ),
+                                            maxLines: 3,
+                                            overflow: TextOverflow.ellipsis,),
+                                          const SizedBox(height: 12,),
+                                        ],
+                                      ),
+                                    );
+                                  },
+          
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              width: screenWidth(context),
-                              height: 91,
-                              child: listData.length < 3 ?
-                                Center(
-                                  child: Text(
-                                    "Sem atualizações!",
-                                    style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
-                                      color: colorScheme(context).outline
-                                    ),
-                                  ),
-                                )
-                              : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .center,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Expanded(
+                    flex: 0,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          width: screenWidth(context) / 2 - 24,
+                          height: 166,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: colorScheme(context).onBackground,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.3),
+                                spreadRadius: 0,
+                                blurRadius: 4,
+                                offset: const Offset(
+                                    0, 4), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: screenWidth(context),
+                                height: 74,
+                                decoration: BoxDecoration(
+                                    color: colorScheme(context).secondary,
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(8),
+                                        topRight: Radius.circular(8))
+                                ),
+                                child: Stack(
                                   children: [
-                                    Text(
-                                      listData[0], style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 16,
-                                        color: colorScheme(context).onSurface
-                                    ),),
-                                    Text(listData[1].trim(),
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 20,
-                                          color: colorScheme(context)
-                                              .onSurface
-                                      ),),
-                                    Text(
-                                      listData[2], style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 12,
-                                        color: colorScheme(context).onSurface
-                                    ),),
+                                    Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Image.asset("assets/imgEntSd.png")
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 10),
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Text("Entrada",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: const Color(0xffF5F5F5),
+                                              ),),
+                                            Text("e saída",
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w500,
+                                                color: const Color(0xffF5F5F5),
+                                              ),),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+          
                                   ],
                                 ),
                               ),
-                            )
-                          ],
+                              SizedBox(
+                                width: screenWidth(context),
+                                height: 91,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 12),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .spaceBetween,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Data: ", style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              color: colorScheme(context)
+                                                  .onSurface
+                                          ),),
+                                          Text(dataEntrada,
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                color: colorScheme(context)
+                                                    .onSurface
+                                            ),)
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text("Entrada: ",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 14,
+                                                color: colorScheme(context)
+                                                    .onSurface
+                                            ),),
+                                          Text("${horaEntrada}h ${minEntrada}min",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: colorScheme(context)
+                                                    .onSurface
+                                            ),)
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          Text(
+                                            "Saída: ", style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 14,
+                                              color: colorScheme(context)
+                                                  .onSurface
+                                          ),),
+                                          Text("${horaSaida}h ${minSaida}min",
+                                            style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: colorScheme(context)
+                                                    .onSurface
+                                            ),)
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
-                      ),
+                        GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                              isDismissible: false,
+                              useRootNavigator: true,
+                              context: context,
+                              backgroundColor: Colors.black.withOpacity(0.3),
+                              builder: (BuildContext context) {
+                                return Container(
+                                  width: screenWidth(context),
+                                  height: 277,
+                                  decoration: BoxDecoration(
+                                      color: colorScheme(context).onBackground,
+                                      borderRadius: const BorderRadius.only(
+                                          topRight: Radius.circular(8),
+                                          topLeft: Radius.circular(8))
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 16),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          children: [
+                                            IconButton(onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                                icon: Icon(Symbols.close,
+                                                  color: colorScheme(context)
+                                                      .surface,)),
+                                            Text("Cardápio em PDF",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: colorScheme(context)
+                                                      .surface
+                                              ),)
+                                          ],
+                                        ),
+                                        const SizedBox(height: 32,),
+                                        const BotaoAzul(text: "Visualizar"),
+                                        const SizedBox(height: 16,),
+                                        const BotaoBranco(text: "Baixar"),
+                                        const SizedBox(height: 16,),
+                                        const BotaoBranco(text: "Compartilhar"),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Container(
+                            width: screenWidth(context) / 2 - 24,
+                            height: 166,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: colorScheme(context).onBackground,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.3),
+                                  spreadRadius: 0,
+                                  blurRadius: 4,
+                                  offset: const Offset(
+                                      0, 4), // changes position of shadow
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              children: [
+                                Container(
+                                  width: screenWidth(context),
+                                  height: 74,
+                                  decoration: BoxDecoration(
+                                      color: colorScheme(context).onSecondary,
+                                      borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(8),
+                                          topRight: Radius.circular(8))
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Image.asset(
+                                              "assets/imgAtualizacao.png")
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8),
+                                        child: Align(
+                                          alignment: Alignment.center,
+                                          child: SizedBox(
+                                            width: screenWidth(context),
+                                            child: RichText(text: TextSpan(
+                                                children: [
+                                                  TextSpan(
+                                                    text: "Atualização\ndo ",
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight: FontWeight
+                                                            .w400,
+                                                        fontSize: 20,
+                                                        color: colorScheme(
+                                                            context).onPrimary
+                                                    ),
+                                                  ),
+                                                  TextSpan(
+                                                    text: "CARDÁPIO",
+                                                    style: GoogleFonts.poppins(
+                                                        fontWeight: FontWeight
+                                                            .bold,
+                                                        fontSize: 20,
+                                                        color: colorScheme(
+                                                            context).onPrimary
+                                                    ),
+                                                  )
+                                                ]
+                                            )),
+                                          ),
+                                        ),
+                                      ),
+          
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: screenWidth(context),
+                                  height: 91,
+                                  child: listData.length < 3 ?
+                                    Center(
+                                      child: Text(
+                                        "Sem atualizações!",
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 14,
+                                          color: colorScheme(context).outline
+                                        ),
+                                      ),
+                                    )
+                                  : Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 10),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .spaceBetween,
+                                      crossAxisAlignment: CrossAxisAlignment
+                                          .center,
+                                      children: [
+                                        Text(
+                                          listData[0], style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 16,
+                                            color: colorScheme(context).onSurface
+                                        ),),
+                                        Text(listData[1].trim(),
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 20,
+                                              color: colorScheme(context)
+                                                  .onSurface
+                                          ),),
+                                        Text(
+                                          listData[2], style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 12,
+                                            color: colorScheme(context).onSurface
+                                        ),),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
+                  )
+                ],
+              ),
+            ),
+          );
+        }
       );
     }
   }

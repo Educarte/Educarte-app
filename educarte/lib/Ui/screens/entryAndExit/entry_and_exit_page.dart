@@ -12,7 +12,6 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../components/result_not_found.dart';
 import '../../global/global.dart';
-import '../Messagens/messages_screen.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
 
@@ -78,7 +77,6 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getAccessControls(DateTime.now(),DateTime.now());
   }
@@ -109,7 +107,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                 ),
                 Container(
                   alignment: Alignment.center,
-                  margin: EdgeInsets.symmetric(vertical: 16),
+                  margin: const EdgeInsets.symmetric(vertical: 16),
                   height: 38,
                   color: colorScheme(context).primary.withOpacity(0.5),
                   child: Text(

@@ -4,24 +4,29 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class CardEntryAndExit extends StatelessWidget {
-  String date;
-  String horaEntrada;
-  String? horaSaida;
-  CardEntryAndExit({super.key,required this.horaEntrada, this.horaSaida,required this.date});
+  const CardEntryAndExit({
+    super.key,
+    required this.horaEntrada, 
+    this.horaSaida,
+    required this.date
+  });
+  final String date;
+  final String horaEntrada;
+  final String? horaSaida;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: screenWidth(context),
       height: 127,
-      margin: EdgeInsets.only(bottom: 20,left: 8,right: 8),
+      margin: const EdgeInsets.only(bottom: 20,left: 8,right: 8),
       decoration: BoxDecoration(
         color: colorScheme(context).background,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
             blurRadius: 4,
-            offset: Offset(0, 4)
+            offset: const Offset(0, 4)
           ),
         ],borderRadius: BorderRadius.circular(8),
       ),
@@ -101,6 +106,8 @@ class MySeparator extends StatelessWidget {
         final dashHeight = height;
         final dashCount = (boxWidth / (2 * dashWidth)).floor();
         return Flex(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          direction: Axis.horizontal,
           children: List.generate(dashCount, (_) {
             return SizedBox(
               width: dashWidth,
@@ -110,8 +117,6 @@ class MySeparator extends StatelessWidget {
               ),
             );
           }),
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          direction: Axis.horizontal,
         );
       },
     );

@@ -26,8 +26,8 @@ class _BotaoBrancoState extends State<BotaoBranco> {
       child: ElevatedButton(
         onPressed: widget.loading ? null : widget.onPressed,
         style: ButtonStyle(
-          backgroundColor: MaterialStateColor.resolveWith((states) => colorScheme(context).onBackground),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          backgroundColor: WidgetStateColor.resolveWith((states) => colorScheme(context).onBackground),
+          shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
                 side: BorderSide(color: colorScheme(context).primary)

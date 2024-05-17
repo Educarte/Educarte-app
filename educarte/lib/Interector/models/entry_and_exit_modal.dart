@@ -21,13 +21,13 @@ class EntryAndExit {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['date'] = this.date;
+    data['date'] = date;
     if (accessControls != null) {
       data['accessControls'] =
           accessControls!.map((v) => v.toJson()).toList();
     }
     if (contractedHour != null) {
-      data['contractedHour'] = this.contractedHour!.toJson();
+      data['contractedHour'] = contractedHour!.toJson();
     }
     return data;
   }
@@ -47,10 +47,10 @@ class AccessControls {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['accessControlType'] = this.accessControlType;
-    data['time'] = this.time;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['accessControlType'] = accessControlType;
+    data['time'] = time;
     return data;
   }
 }
@@ -74,12 +74,12 @@ class ContractedHour {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['hours'] = this.hours;
-    data['status'] = this.status;
-    data['startDate'] = this.startDate;
-    data['endDate'] = this.endDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['hours'] = hours;
+    data['status'] = status;
+    data['startDate'] = startDate;
+    data['endDate'] = endDate;
     return data;
   }
 }

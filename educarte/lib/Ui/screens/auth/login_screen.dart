@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/enum/persistence_enum.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,8 @@ class _LoginScreenState extends State<LoginScreen> {
         globals.nome = decodedToken["name"];
         globals.token = jsonData["token"];
         globals.id = decodedToken["sub"];
+
+        globals.checkUserType(profileType: decodedToken["profile"]);
       });
       // var snackBar = SnackBar(
       //   backgroundColor: const Color(0xff547B9A),
@@ -64,7 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
       //   ),),
       // ));
       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      context.go("/home");
+      if(globals.profile == 1){
+        context.go("/home");
+      }
+      
     }else{
       setState(() {
         carregando = false;
