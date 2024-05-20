@@ -57,20 +57,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
         globals.checkUserType(profileType: decodedToken["profile"]);
       });
-      // var snackBar = SnackBar(
-      //   backgroundColor: const Color(0xff547B9A),
-      //     content: Center(
-      //   child: Text("Seja bem Vindo!",style: GoogleFonts.poppins(
-      //     fontSize: 18,
-      //     fontWeight: FontWeight.w400,
-      //     color: Colors.white
-      //   ),),
-      // ));
-      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      if(globals.profile == 1){
-        context.go("/home");
-      }
-      
+      print(globals.profile);
+
+      String path = globals.routerPath(decodedToken["isFirstAccess"]);
+
+      context.go(path);
+
     }else{
       setState(() {
         carregando = false;

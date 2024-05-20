@@ -49,11 +49,8 @@ class Routes {
 
             if(globals.nome == null){
               // currentIndex = 2;
-              if(globals.profile == 1){
-                path = '/home';
-              }else{
-                path = '/timeControl';
-              }
+              
+              path = globals.routerPath(decodedToken["isFirstAccess"]);
               
             }
           }else if(response.statusCode == 401){

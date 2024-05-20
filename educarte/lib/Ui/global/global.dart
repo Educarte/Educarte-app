@@ -23,3 +23,15 @@ int checkUserType({required String profileType}){
     _ => profile = 1
   };
 }
+String routerPath(bool firtAccess){
+  if(firtAccess){
+    return "/redefinirSenha";
+  }else{
+    if(profile == 1){
+      return "/home";
+    }else{
+      return "/timeControl";
+    }
+  }
+
+}
