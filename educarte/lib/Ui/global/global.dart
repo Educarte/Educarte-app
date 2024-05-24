@@ -23,8 +23,8 @@ int checkUserType({required String profileType}){
     _ => profile = 1
   };
 }
-String routerPath(bool firtAccess){
-  if(firtAccess){
+String routerPath({required bool firstAccess}){
+  if(firstAccess){
     return "/redefinirSenha";
   }else{
     if(profile == 1){
@@ -33,5 +33,4 @@ String routerPath(bool firtAccess){
       return "/timeControl";
     }
   }
-
 }

@@ -50,7 +50,7 @@ class Routes {
             if(globals.nome == null){
               // currentIndex = 2;
               
-              path = globals.routerPath(decodedToken["isFirstAccess"]);
+              path = globals.routerPath(firstAccess: bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase()));
               
             }
           }else if(response.statusCode == 401){
@@ -82,7 +82,7 @@ class Routes {
       ),
       GoRoute(
         path: "/redefinirSenha",
-        builder: (context, state) => const RedefinePassword(),
+        builder: (context, state) => RedefinePassword(firstAccess: false),
       ),
       GoRoute(
         path: "/timeControl",

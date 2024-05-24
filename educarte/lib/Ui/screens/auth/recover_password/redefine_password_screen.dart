@@ -10,8 +10,11 @@ import '../../../components/bnt_azul.dart';
 import '../../../components/input.dart';
 
 class RedefinePassword extends StatefulWidget {
-  const RedefinePassword({super.key});
-
+  const RedefinePassword({
+    super.key,
+    this.firstAccess = false
+  });
+  final bool firstAccess;
 
   @override
   State<RedefinePassword> createState() => _RedefinePasswordState();
@@ -38,8 +41,14 @@ class _RedefinePasswordState extends State<RedefinePassword> {
         "Content-Type":"application/json"
       }
     );
+    print(response.statusCode);
     if(response.statusCode == 200 && mounted){
-      context.go("/login");
+      if(widget.firstAccess == true){
+        context.go("/home");
+      }else{
+        context.go("/login");
+      }
+
 
       var snackBar = SnackBar(
         backgroundColor: const Color(0xff547B9A),
@@ -70,15 +79,67 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+  void updatePasswordFirstAcess()async{
+    print("oi");
+    setState(() {
+      carregando = true;
+    });
+    Map corpo = {
+      "userId": globals.id.toString(),
+      "newPassword": novaSenha.text,
+      "confirmPassword": confirmarSenha.text
+    };
+
+    var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}/ResetPassword"),
+        body: jsonEncode(corpo),
+        headers: {
+          "Content-Type":"application/json"
+        }
+    );
+    print(response.statusCode);
+    if(response.statusCode == 200 && mounted){
+      context.go("/home");
+
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          )
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }else{
+      setState(() {
+        carregando = false;
+      });
+      var snackBar = SnackBar(
+          backgroundColor: const Color(0xff547B9A),
+          content: Center(
+            child: Text("Erro ao tentar redefinir senha!",style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+                color: Colors.white
+            ),),
+          ));
+
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        leading: IconButton(onPressed: (){
+        leading: widget.firstAccess ? IconButton(onPressed: (){
+          if(widget.firstAccess == false)
           context.pushReplacement("/login");
-        }, icon: const Icon(Symbols.close,color: Color(0xff474C51),)),
+        }, icon:  const Icon(Symbols.close,color:Color(0xff474C51),)):
+            null,
         backgroundColor: const Color(0xffF5F5F5),
       ),
       body: Padding(
@@ -115,7 +176,14 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               const SizedBox(height: 24,),
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
-              BotaoAzul(text: "Continuar",onPressed: () => updatePasssword(),loading: carregando,),
+              BotaoAzul(text: "Continuar",onPressed: () {
+                print(widget.firstAccess);
+                if(widget.firstAccess == true){
+                  updatePasswordFirstAcess();
+                }else{
+                  updatePasssword();
+                }
+              },loading: carregando,),
             ],
           ),
         ),

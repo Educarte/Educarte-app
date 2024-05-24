@@ -57,12 +57,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
         globals.checkUserType(profileType: decodedToken["profile"]);
       });
-      print(globals.profile);
+      print(decodedToken["isFirstAccess"]);
+      bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase());
 
-      String path = globals.routerPath(decodedToken["isFirstAccess"]);
+      String path = globals.routerPath(firstAccess: firstAccess);
 
-      context.go(path);
+      if(firstAccess){
+        return context.go(path, extra: {"firstAccess": firstAccess});
+      }
 
+      return context.go(path);
     }else{
       setState(() {
         carregando = false;
