@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,6 +132,12 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print("primeiro acesso esta ${widget.firstAccess}");
+  }
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
@@ -177,12 +184,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
               BotaoAzul(text: "Continuar",onPressed: () {
-                print(widget.firstAccess);
-                if(widget.firstAccess == true){
-                  updatePasswordFirstAcess();
-                }else{
-                  updatePasssword();
-                }
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));
               },loading: carregando,),
             ],
           ),

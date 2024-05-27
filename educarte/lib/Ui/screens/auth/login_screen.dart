@@ -63,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
       String path = globals.routerPath(firstAccess: firstAccess);
 
       if(firstAccess){
+        print(firstAccess);
         return context.go(path, extra: {"firstAccess": firstAccess});
       }
 
