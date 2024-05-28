@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,10 +13,8 @@ import '../../../components/input.dart';
 
 class RedefinePassword extends StatefulWidget {
   const RedefinePassword({
-    super.key,
-    this.firstAccess = false
+    super.key
   });
-  final bool firstAccess;
 
   @override
   State<RedefinePassword> createState() => _RedefinePasswordState();
@@ -25,6 +24,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   TextEditingController novaSenha = TextEditingController();
   TextEditingController confirmarSenha = TextEditingController();
   bool carregando = false;
+  bool firstAccess = globals.firstAccess;
 
   void updatePasssword()async{
     setState(() {
@@ -36,7 +36,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       "confirmPassword": confirmarSenha.text
     };
 
-    var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/UpdateForgotPassword"),
+    var response = await http.post(Uri.parse("$baseUrl/Users/UpdateForgotPassword"),
       body: jsonEncode(corpo),
       headers: {
         "Content-Type":"application/json"
@@ -44,12 +44,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     );
     print(response.statusCode);
     if(response.statusCode == 200 && mounted){
-      if(widget.firstAccess == true){
-        context.go("/home");
-      }else{
-        context.go("/login");
-      }
-
+      context.go("/login");
 
       var snackBar = SnackBar(
         backgroundColor: const Color(0xff547B9A),
@@ -80,6 +75,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
     }
   }
+
   void updatePasswordFirstAcess()async{
     print("oi");
     setState(() {
@@ -91,13 +87,15 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       "confirmPassword": confirmarSenha.text
     };
 
-    var response = await http.post(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}/ResetPassword"),
-        body: jsonEncode(corpo),
-        headers: {
-          "Content-Type":"application/json"
-        }
+    var response = await http.patch(Uri.parse("$baseUrl/Users/${globals.id}/ResetPassword"),
+      body: jsonEncode(corpo),
+      headers: {
+        "Content-Type":"application/json",
+        "Authorization": "Bearer ${globals.token}"
+      }
     );
     print(response.statusCode);
+    print(corpo);
     if(response.statusCode == 200 && mounted){
       context.go("/home");
 
@@ -135,15 +133,15 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("primeiro acesso esta ${widget.firstAccess}");
+    print("primeiro acesso esta ${firstAccess}");
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        leading: widget.firstAccess ? IconButton(onPressed: (){
-          if(widget.firstAccess == false)
+        leading: firstAccess ? IconButton(onPressed: (){
+          if(!firstAccess)
           context.pushReplacement("/login");
         }, icon:  const Icon(Symbols.close,color:Color(0xff474C51),)):
             null,
@@ -184,7 +182,11 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
               BotaoAzul(text: "Continuar",onPressed: () {
-                //Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginScreen()));
+                if(firstAccess){
+                  return updatePasswordFirstAcess();
+                }
+
+                return updatePasssword();
               },loading: carregando,),
             ],
           ),

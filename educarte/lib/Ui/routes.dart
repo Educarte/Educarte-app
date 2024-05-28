@@ -44,22 +44,28 @@ class Routes {
           if(response.statusCode == 200){
             await persistenceRepository.update(key: SecureKey.token, value: jsonDecode(response.body)["token"]);
             Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonDecode(response.body)["token"]);
+            globals.token = jsonDecode(response.body)["token"];
             globals.id = decodedToken["sub"];
             globals.checkUserType(profileType: decodedToken["profile"]);
+            bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toLowerCase());
+            globals.firstAccess = firstAccess;
 
             if(globals.nome == null){
               // currentIndex = 2;
-              
-              path = globals.routerPath(firstAccess: bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase()));
+              path = globals.routerPath(firstAccess: false);
               
             }
           }else if(response.statusCode == 401){
             await persistenceRepository.delete(key: SecureKey.token);
+            globals.token = null;
+            globals.firstAccess = false;
 
             path = '/login';
           }
         } catch (e) {
           await persistenceRepository.delete(key: SecureKey.token);
+          globals.token = null;
+          globals.firstAccess = false;
 
           path = '/login';
         }
@@ -82,7 +88,7 @@ class Routes {
       ),
       GoRoute(
         path: "/redefinirSenha",
-        builder: (context, state) => RedefinePassword(firstAccess: false),
+        builder: (context, state) => const RedefinePassword(),
       ),
       GoRoute(
         path: "/timeControl",

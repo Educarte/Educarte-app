@@ -6,7 +6,7 @@ String? token;
 String? id;
 String? idStudent;
 int? profile;
-
+bool firstAccess = false;
 bool updateHomeScreen = false;
 
 String? emailEsqueciSenha;
@@ -24,6 +24,7 @@ int checkUserType({required String profileType}){
   };
 }
 String routerPath({required bool firstAccess}){
+  print(profile);
   if(firstAccess){
     return "/redefinirSenha";
   }else{
