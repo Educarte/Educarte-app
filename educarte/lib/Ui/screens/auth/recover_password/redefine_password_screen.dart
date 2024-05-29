@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:educarte/Interector/base/store.dart';
+import 'package:educarte/Interector/validations/validator.dart';
 import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -42,37 +44,17 @@ class _RedefinePasswordState extends State<RedefinePassword> {
         "Content-Type":"application/json"
       }
     );
-    print(response.statusCode);
+    print(corpo);
+    print(response.body);
     if(response.statusCode == 200 && mounted){
       context.go("/login");
 
-      var snackBar = SnackBar(
-        backgroundColor: const Color(0xff547B9A),
-        content: Center(
-          child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
-              color: Colors.white
-          ),),
-        )
-      );
-      
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
     }else{
       setState(() {
         carregando = false;
       });
-      var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-            child: Text("Erro ao tentar redefinir senha!",style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white
-            ),),
-          ));
-          
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Store().showErrorMessage(context, "Erro ao tentar redefinir senha!");
     }
   }
 
@@ -82,7 +64,6 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       carregando = true;
     });
     Map corpo = {
-      "userId": globals.id.toString(),
       "newPassword": novaSenha.text,
       "confirmPassword": confirmarSenha.text
     };
@@ -99,33 +80,12 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     if(response.statusCode == 200 && mounted){
       context.go("/home");
 
-      var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-            child: Text("Senha redefinida com sucesso!",style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white
-            ),),
-          )
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
     }else{
       setState(() {
         carregando = false;
       });
-      var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-            child: Text("Erro ao tentar redefinir senha!",style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white
-            ),),
-          ));
-
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Store().showErrorMessage(context, "Erro ao tentar redefinir senha!");
     }
   }
 
@@ -140,11 +100,10 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        leading: firstAccess ? IconButton(onPressed: (){
+        leading: firstAccess ? null :IconButton(onPressed: (){
           if(!firstAccess)
           context.pushReplacement("/login");
-        }, icon:  const Icon(Symbols.close,color:Color(0xff474C51),)):
-            null,
+        }, icon:  const Icon(Symbols.close,color:Color(0xff474C51),)),
         backgroundColor: const Color(0xffF5F5F5),
       ),
       body: Padding(
@@ -182,11 +141,17 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
               const SizedBox(height: 85,),
               BotaoAzul(text: "Continuar",onPressed: () {
-                if(firstAccess){
-                  return updatePasswordFirstAcess();
+                String validate = ValidatorDataSent.validateConfirmPassword(password: novaSenha.text,confirmPassword: confirmarSenha.text);
+                if(validate.isEmpty){
+                  if(firstAccess){
+                    return updatePasswordFirstAcess();
+                  }
+
+                  return updatePasssword();
+                }else{
+                  Store().showErrorMessage(context, validate);
                 }
 
-                return updatePasssword();
               },loading: carregando,),
             ],
           ),

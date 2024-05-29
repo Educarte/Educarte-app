@@ -52,7 +52,7 @@ class Routes {
 
             if(globals.nome == null){
               // currentIndex = 2;
-              path = globals.routerPath(firstAccess: false);
+              path = globals.routerPath(firstAccess: firstAccess);
               
             }
           }else if(response.statusCode == 401){

@@ -28,7 +28,7 @@ class Store extends ChangeNotifier {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8)
         ),
-        content: Text(message)
+        content: Text(message,style: const TextStyle(color: Colors.white),)
     );
   }
 }
