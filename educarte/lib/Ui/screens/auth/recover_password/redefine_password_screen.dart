@@ -33,7 +33,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       carregando = true;
     });
     Map corpo = {
-      "code": globals.code,
+      "code": globals.code.toString(),
       "newPassword": novaSenha.text,
       "confirmPassword": confirmarSenha.text
     };

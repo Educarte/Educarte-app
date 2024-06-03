@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
+import '../../../../Interector/base/store.dart';
 import '../../../global/global.dart' as globals;
 
 import '../../../components/bnt_azul.dart';
@@ -38,23 +39,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if(response.statusCode == 200){
       context.pushReplacement("/verifiqueEmail");
       setState(() {
-        globals.emailEsqueciSenha = email.toString();
+        globals.emailEsqueciSenha = email.text.toString();
       });
 
     }else{
       setState(() {
         carregando = false;
       });
-      var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-            child: Text("E-mail Inválido!",style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Colors.white
-            ),),
-          ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+     Store().showErrorMessage(context, "E-mail Inválido!");
     }
   }
   

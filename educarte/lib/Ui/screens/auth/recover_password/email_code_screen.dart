@@ -114,7 +114,7 @@ class _EmailCodeState extends State<EmailCode> {
                       ),
                     ),
                     TextSpan(
-                      text: "username@email.com",
+                      text: globals.emailEsqueciSenha,
                       style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
                           fontSize:14,

@@ -71,16 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
       setState(() {
         carregando = false;
       });
-      var snackBar = SnackBar(
-          backgroundColor: const Color(0xff547B9A),
-          content: Center(
-        child: Text("Credenciais Inválidas!",style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w700,
-            color: Colors.white
-        ),),
-      ));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Store().showErrorMessage(context, "Credenciais Inválidas!");
     }
   }
   @override
