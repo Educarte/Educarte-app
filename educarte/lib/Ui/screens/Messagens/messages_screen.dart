@@ -8,6 +8,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../Interector/models/api_diaries.dart';
 import '../../../Services/config/api_config.dart';
+import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/result_not_found.dart';
@@ -31,6 +32,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
   String id = "";
   List<ApiDiaries> listDiaries = [];
   Loadings loading = Loadings.none;
+  bool loadingDownload = false;
 
   void setLoading({required Loadings load}){
     setState(() {
@@ -63,7 +65,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     });
 
     var params = {
-      'StudentId': id,
+      'StudentId': globals.idStudent,
       "StartDate": startDate.toString(),
       "EndDate": endDate == null ? startDate.toString() : endDate.toString()
     };
@@ -238,8 +240,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                           ],
                                         ),
                                         if(listDiaries[index].fileUri != null)
-                                        GestureDetector(
+                                          GestureDetector(
                                           onTap: () {
+                                            print(listDiaries[index].fileUri);
                                             showModalBottomSheet(
                                               isDismissible: false,
                                               useRootNavigator: true,
@@ -278,7 +281,13 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                           ],
                                                         ),
                                                         const SizedBox(height: 32,),
-                                                        const BotaoAzul(text: "Visualizar"),
+                                                        BotaoAzul(text: "Visualizar", onPressed: () {
+                                                          print(listDiaries[index].fileUri.toString());
+                                                          if(loadingDownload == false){
+                                                            FileManagement.launchUri(link: listDiaries[index].fileUri
+                                                                .toString(), context: context);
+                                                          }
+                                                        },),
                                                         const SizedBox(height: 16,),
                                                         const BotaoBranco(text: "Baixar"),
                                                         const SizedBox(height: 16,),
@@ -301,6 +310,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                             child: Icon(Symbols.attach_file,color: colorScheme(context).surface,size: 20,),
                                           ),
                                         )
+
                                       ],
                                     )
                                   ],

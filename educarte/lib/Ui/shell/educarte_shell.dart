@@ -1,19 +1,25 @@
 import 'dart:convert';
 
 import 'package:educarte/Interector/models/students_model.dart';
+import 'package:educarte/Interector/usesCase/usesCase.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
+import 'package:educarte/Ui/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../Interector/base/constants.dart';
+import '../../Interector/models/api_diaries.dart';
 import '../../Interector/models/document.dart';
+import '../../Interector/validations/convertter.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 import '../components/input.dart';
+import '../global/global.dart';
 
 int selectedIndex = 0;
 
@@ -40,6 +46,8 @@ class _EducarteShellState extends State<EducarteShell> {
 
   Student dropdownValue = Student.empty();
   double iconSize = 30;
+  Overlay _overlay = Overlay(initialEntries: []);
+
 
   bool loadingDownload = false;
   // void setLoading({required bool load}){
@@ -74,8 +82,8 @@ class _EducarteShellState extends State<EducarteShell> {
 
             first = false;
           }
-        } 
-        
+        }
+        print(students);
         if(first) dropdownValue = students.first;
         studentId();
       });
@@ -111,7 +119,10 @@ class _EducarteShellState extends State<EducarteShell> {
           }
         }
         globals.idStudent = jsonData["id"];
-        responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
+        if(jsonData["classroom"]["teachers"].isNotEmpty){
+          print("professor esta ${jsonData["classroom"]["teachers"]}");
+          responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
+        }
         sala.text = jsonData["classroom"]["name"];
         globals.nomeSala = jsonData["classroom"]["name"];
         globals.nomeAluno = jsonData["name"];
@@ -249,6 +260,7 @@ class _EducarteShellState extends State<EducarteShell> {
         changeSelectedIndex(index);
 
         getStudents();
+        getStudents();
         showModalBottomSheet(
           useRootNavigator: false,
           isScrollControlled: true,
@@ -321,7 +333,6 @@ class _EducarteShellState extends State<EducarteShell> {
                           setState(() {
                             dropdownValue = value!;
                             currentStudent = students.where((element) => element == value).toList().first;
-
                             studentId();
                           });
                         },
@@ -340,9 +351,9 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 16,),
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
-                    BotaoAzul(text: "Atualizar informações",onPressed: (){
+                    BotaoAzul(text: "Atualizar informações",onPressed: ()async{
                       globals.currentStudent.value = Student.empty();
-                      globals.currentStudent.value = currentStudent;
+                      globals.currentStudent.value = await UseCaseStudent.getStudentId(globals.idStudent!);
                       Navigator.pop(context);
 
                       globals.updateHomeScreen = true;

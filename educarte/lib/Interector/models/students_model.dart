@@ -3,6 +3,7 @@ import 'package:educarte/Interector/models/contracted_hour_model.dart';
 import 'package:educarte/Interector/models/legal_guardians_model.dart';
 import 'package:equatable/equatable.dart';
 
+import 'api_diaries.dart';
 import 'classroom_model.dart';
 
 // ignore: must_be_immutable
@@ -26,8 +27,11 @@ class Student extends Equatable{
   String? birthDate;
   List<Classroom>? classrooms;
   LegalGuardian? legalGuardian;
+  List<ApiDiaries>? listDiaries;
   List<ContratedHour>? contratedHours;
   List<AcessControl>? accessControl;
+  String? horaEntrada;
+  List<String>? listData;
 
   Student({
     this.id,
@@ -49,8 +53,11 @@ class Student extends Equatable{
     this.birthDate,
     this.classrooms,
     this.legalGuardian,
+    this.listDiaries,
     this.contratedHours,
-    this.accessControl
+    this.accessControl,
+    this.horaEntrada,
+    this.listData
   });
   
   Student.empty();

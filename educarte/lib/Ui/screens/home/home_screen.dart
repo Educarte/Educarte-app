@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:educarte/Interector/enum/persistence_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
+import 'package:educarte/Interector/usesCase/usesCase.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/result_not_found.dart';
@@ -13,7 +14,9 @@ import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../Interector/models/api_diaries.dart';
+import '../../../Interector/models/document.dart';
 import '../../../Interector/validations/convertter.dart';
+import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../global/global.dart' as globals;
@@ -43,6 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String minSaida = "00";
   List<String> listData = [];
   bool carregando = false;
+  bool loadingDownload = false;
 
   void setLoading({required bool load}){
     setState(() {
@@ -72,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Student student = Student();
   void getStudentId() async{
     setState(() {
       listDiaries = [];
@@ -84,6 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       if(response.statusCode == 200){
         var decodeJson = jsonDecode(response.body);
+
         if(decodeJson["diaries"] != null){
           (decodeJson["diaries"] as List).where((diary) {
             listDiaries.add(ApiDiaries.fromJson(diary));
@@ -92,11 +98,13 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         setState(() {
           listDiariesFiltro = listDiaries;
-          listDiaries = listDiariesFiltro.where((element) => element.time == DateTime.now().toString()).toList();
+          print(listDiaries);
+          listDiaries = listDiariesFiltro.where((element) => DateFormat.yMd().format(DateTime.parse(element.time.toString())) == DateFormat.yMd().format(DateTime.now())).toList();
+          print(listDiaries);
           List accessControls = decodeJson["accessControls"] ?? [];
 
           if(accessControls.length == 1){
-            horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            student.horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
           }
@@ -108,10 +116,11 @@ class _HomeScreenState extends State<HomeScreen> {
             minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
         });
-
+        print(DateTime.now());
         if(decodeJson["currentMenu"] != null){
           listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }
+
 
         setState(() => updateHomeScreen = false);
         
@@ -122,27 +131,29 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void student()async{
+  void studentGet()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
       headers: {
         "Authorization": "Bearer ${globals.token}"
       }
     );
-
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
       setState(() {
         if(globals.currentStudent.value.isEmpty) globals.currentStudent.value = Student.fromJson(jsonData["items"][0]);
-
         id = globals.currentStudent.value.id!;
+        globals.nomeAluno = globals.currentStudent.value.name;
+
       });
+      getStudentId();
     }
-  }
+  } 
 
   void putDados()async{
     setState(() {
       carregando = true;
     });
+
 
     try{
       Map corpo = {
@@ -179,12 +190,30 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Document document = Document.empty();
+  void getMenu()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
+        headers: {
+          "Authorization": "Bearer ${globals.token}"
+        }
+    );
+
+    if(response.statusCode == 200){
+      Map<String,dynamic> decodeJson = jsonDecode(response.body);
+      setState(() {
+        document = Document(id: decodeJson["items"][0]["id"].toString(),name: decodeJson["items"][0]["name"].toString(),fileUri: decodeJson["items"][0]["uri"].toString());
+      });
+    }
+
+  }
+
   @override
   void initState() {
     super.initState();
     meusDados();
-    student();
+    studentGet();
     getStudentId();
+    getMenu();
   }
 
   @override
@@ -197,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return ValueListenableBuilder(
         valueListenable: globals.currentStudent,
         builder: (_, __, ___){
+          print(globals.currentStudent);
           return Scaffold(
             resizeToAvoidBottomInset: false ,
             backgroundColor: colorScheme(context).background,
@@ -621,47 +651,74 @@ class _HomeScreenState extends State<HomeScreen> {
                               context: context,
                               backgroundColor: Colors.black.withOpacity(0.3),
                               builder: (BuildContext context) {
-                                return Container(
-                                  width: screenWidth(context),
-                                  height: 277,
-                                  decoration: BoxDecoration(
-                                      color: colorScheme(context).onBackground,
-                                      borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(8),
-                                          topLeft: Radius.circular(8))
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 16),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            IconButton(onPressed: () {
-                                              Navigator.pop(context);
-                                            },
-                                                icon: Icon(Symbols.close,
-                                                  color: colorScheme(context)
-                                                      .surface,)),
-                                            Text("Cardápio em PDF",
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 22,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: colorScheme(context)
-                                                      .surface
-                                              ),)
-                                          ],
-                                        ),
-                                        const SizedBox(height: 32,),
-                                        const BotaoAzul(text: "Visualizar"),
-                                        const SizedBox(height: 16,),
-                                        const BotaoBranco(text: "Baixar"),
-                                        const SizedBox(height: 16,),
-                                        const BotaoBranco(text: "Compartilhar"),
-                                      ],
+                                return StatefulBuilder(builder: (context,setstate){
+                                  return Container(
+                                    width: screenWidth(context),
+                                    height: 277,
+                                    decoration: BoxDecoration(
+                                        color: colorScheme(context).onBackground,
+                                        borderRadius: const BorderRadius.only(
+                                            topRight: Radius.circular(8),
+                                            topLeft: Radius.circular(8))
                                     ),
-                                  ),
-                                );
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 16),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              IconButton(onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                                  icon: Icon(Symbols.close,
+                                                    color: colorScheme(context)
+                                                        .surface,)),
+                                              Text("Cardápio em PDF",
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 22,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorScheme(context)
+                                                        .surface
+                                                ),)
+                                            ],
+                                          ),
+                                          const SizedBox(height: 32,),
+                                          BotaoAzul(text: "Visualizar", onPressed: () {
+                                            if(loadingDownload == false){
+                                              FileManagement.launchUri(link: document.fileUri
+                                                  .toString(), context: context);
+                                            }
+                                          },),
+                                          const SizedBox(height: 16,),
+                                          BotaoBranco(text: "Baixar", onPressed: () {
+                                            setstate((){
+                                              loadingDownload = true;
+                                            });
+                                            FileManagement.download(url: document.fileUri
+                                                .toString(), fileName: "Cardápio");
+                                            Future.delayed(const Duration(seconds: 2)).then((value) {
+                                              setstate((){
+                                                loadingDownload = false;
+                                              });
+                                            });
+                                          },
+                                            loading: loadingDownload,
+                                          ),
+                                          const SizedBox(height: 16,),
+                                          BotaoBranco(text: "Compartilhar", onPressed:  () {
+                                            if(loadingDownload == false){
+                                              FileManagement.share(url: document.fileUri.toString(),
+                                                  document: document);
+                                            }
+                                          },
+
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                });
                               },
                             );
                           },
