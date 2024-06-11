@@ -1,6 +1,7 @@
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 class CardEntryAndExit extends StatelessWidget {
@@ -8,11 +9,46 @@ class CardEntryAndExit extends StatelessWidget {
     super.key,
     required this.horaEntrada, 
     this.horaSaida,
+    this.resumoDiario,
     required this.date
   });
   final String date;
   final String horaEntrada;
   final String? horaSaida;
+  final String? resumoDiario;
+  String dateConverte(String dateEntrada ,String dateSaida){
+    DateTime dateTime = DateTime.parse(dateEntrada);
+    DateTime dateTime2 = DateTime.parse(dateSaida);
+
+
+    String formattedDate1 = DateFormat('HH', 'pt_BR').format(dateTime);
+    String formattedTime1 = DateFormat('mm', 'pt_BR').format(dateTime);
+    String formattedDate2 = DateFormat('HH', 'pt_BR').format(dateTime2);
+    String formattedTime2 = DateFormat('mm', 'pt_BR').format(dateTime2);
+
+
+    // Concatenando a data formatada
+    String result = '${int.parse(formattedDate2) -  int.parse(formattedDate1)}h. ${int.parse(formattedTime2) -  int.parse(formattedTime1)} Min';
+
+    // Output
+    return result; // Saída: 18h. 08 Min
+
+  }
+
+  String dateConverteData(String date){
+    DateTime dateTime = DateTime.parse(date);
+
+
+    String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
+    String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
+
+    // Concatenando a data formatada
+    String result = '${formattedDate}h. $formattedTime Min';
+
+    // Output
+    return result; // Saída: 18h. 08 Min
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +96,7 @@ class CardEntryAndExit extends StatelessWidget {
               text: TextSpan(
                   children: [
                     TextSpan(text: "Entrada: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
-                    TextSpan(text: horaEntrada,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: dateConverteData(horaEntrada),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                   ]
               ),
             ),
@@ -71,16 +107,17 @@ class CardEntryAndExit extends StatelessWidget {
                     if(horaSaida == null)
                     TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                     if(horaSaida != null)
-                    TextSpan(text: horaSaida,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: dateConverteData(horaSaida!),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                   ]
               ),
             ),
             const SizedBox(height: 6,),
+            if(horaSaida != null)
             RichText(
               text: TextSpan(
                   children: [
                     TextSpan(text: "Resumo diário: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
-                    TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: "${resumoDiario!.substring(0,2)}h. ${resumoDiario!.substring(3,5)}Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
                   ]
               ),
             ),

@@ -26,6 +26,8 @@ enum Loadings {none,list}
 class _EntryAndExitPageState extends State<EntryAndExitPage> {
   Loadings loading = Loadings.none;
   List<EntryAndExit> listAccess = [];
+  String summary = "";
+
 
   void setLoading({required Loadings load}){
     setState(() {
@@ -36,10 +38,11 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
   Future<void> getAccessControls(DateTime startDate, DateTime? endDate)async{
     setLoading(load: Loadings.list);
     setState(() {
+      summary = "";
       listAccess = [];
     });
     var params = {
-      'Id': idStudent,
+      'Id': currentStudent.value.id,
       "StartDate": DateFormat.yMd().format(startDate).toString(),
       "EndDate": endDate == null ? DateFormat.yMd().format(startDate).toString() : DateFormat.yMd().format(endDate).toString()
     };
@@ -49,31 +52,19 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
         "Authorization": "Bearer ${globals.token}"
       },
     );
-    print(response.statusCode);
+    print(response.body);
     if(response.statusCode == 200){
       var decodeJson = jsonDecode(response.body);
       if(!decodeJson["accessControlsByDate"].isEmpty) {
         decodeJson["accessControlsByDate"].forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
+        summary = decodeJson["summary"];
+        print(summary);
       }
     }
     setLoading(load: Loadings.none);
     print(loading);
   }
 
-  String dateConverte(String date){
-    DateTime dateTime = DateTime.parse(date);
-
-
-    String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
-    String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
-
-    // Concatenando a data formatada
-    String result = '${formattedDate}h. $formattedTime Min';
-
-    // Output
-    return result; // Saída: 18h. 08 Min
-    
-  }
 
   @override
   void initState() {
@@ -110,8 +101,17 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                   margin: const EdgeInsets.symmetric(vertical: 16),
                   height: 38,
                   color: colorScheme(context).primary.withOpacity(0.5),
-                  child: Text(
-                    "Saldo de horas: +00h. 00min ",
+                  child: listAccess.isEmpty ?
+                  Text(
+                    "Saldo de horas: +00h. 00Min",
+                    style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme(context).onPrimary
+                    ),
+                  ):
+                  Text(
+                    "Saldo de horas: +${summary.substring(0,2)}h. ${summary.substring(3,5)}Min",
                     style: GoogleFonts.poppins(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -137,10 +137,11 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                       itemBuilder: (BuildContext context, int index) {
                         return CardEntryAndExit(
                           date: DateFormat.yMMMMd('pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
-                          horaEntrada: dateConverte(listAccess[index].accessControls![0].time.toString()),
+                          horaEntrada: listAccess[index].accessControls![0].time.toString(),
                           horaSaida: listAccess[index].accessControls!.length == 2 ?
-                          dateConverte(listAccess[index].accessControls![1].time.toString()):
+                          listAccess[index].accessControls![1].time.toString():
                           null,
+                          resumoDiario: listAccess[index].dailySummary!.substring(0,8),
                         );
                       },
                     ),

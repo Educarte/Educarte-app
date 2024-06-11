@@ -2,9 +2,10 @@ class EntryAndExit {
   String? date;
   List<AccessControls>? accessControls;
   ContractedHour? contractedHour;
+  String? dailySummary;
 
   EntryAndExit(
-      {this.date, this.accessControls, this.contractedHour});
+      {this.date, this.accessControls, this.contractedHour,this.dailySummary});
 
   EntryAndExit.fromJson(Map<String, dynamic> json) {
     date = json['date'];
@@ -17,6 +18,7 @@ class EntryAndExit {
     contractedHour = json['contractedHour'] != null
         ? ContractedHour.fromJson(json['contractedHour'])
         : null;
+    dailySummary = json["dailySummary"];
   }
 
   Map<String, dynamic> toJson() {
@@ -29,6 +31,7 @@ class EntryAndExit {
     if (contractedHour != null) {
       data['contractedHour'] = contractedHour!.toJson();
     }
+    data["dailySummary"] = dailySummary;
     return data;
   }
 }

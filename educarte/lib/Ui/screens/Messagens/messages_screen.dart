@@ -239,7 +239,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                             ),),
                                           ],
                                         ),
-                                        if(listDiaries[index].fileUri != null)
+                                        if(listDiaries[index].fileUri != "null")
                                           GestureDetector(
                                           onTap: () {
                                             print(listDiaries[index].fileUri);
