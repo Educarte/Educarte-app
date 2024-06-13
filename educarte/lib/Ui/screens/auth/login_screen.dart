@@ -23,7 +23,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
-  TextEditingController email = TextEditingController(text: "pai@email.com");
+  TextEditingController email = TextEditingController(text: "admin@email.com");
   TextEditingController senha = TextEditingController(text: "Asdf1234");
   PersistenceRepository persistenceRepository = PersistenceRepository();
   bool carregando = false;

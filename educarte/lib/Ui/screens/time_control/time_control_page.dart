@@ -50,6 +50,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   Classroom classroomSelected = Classroom.empty();
   List<Classroom> classrooms = List.empty(growable: true);
   List<Student> students = List.empty(growable: true);
+  List<Student> studentsFilter = [];
   Document? menu;
   bool carregando = false;
 
@@ -147,6 +148,9 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
           return true;
         }).toList();
+        setState(() {
+          studentsFilter = students;
+        });
 
         await getClassrooms();
       }
@@ -296,7 +300,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                             fontSize: 16,
                           ),),
                           Text(
-                            "Antonio",
+                            globals.nome.toString(),
                             style: GoogleFonts.poppins(
                               color: colorScheme(context).primary,
                               fontWeight: FontWeight.w800,
@@ -420,7 +424,9 @@ class _TimeControlPageState extends State<TimeControlPage> {
                 const SizedBox(height: 12),
                 CustomSearchInput(
                   controller: _search, 
-                  action: () => getStudents(timeControlPageLoading: TimeControlPageLoading.filter)
+                  action: () {
+                    students = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.toString().toLowerCase())).toList();
+                  }
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 12),
@@ -429,6 +435,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                     selected: classroomSelected,
                     callback: (result) => setState(() {
                       classroomSelected = result;
+                      print(classroomSelected);
                     }),
                   )
                 ),
