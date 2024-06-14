@@ -6,6 +6,7 @@ import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
@@ -78,7 +79,13 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     print(response.statusCode);
     print(corpo);
     if(response.statusCode == 200 && mounted){
-      context.go("/home");
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(globals.token!);
+      int profile = globals.checkUserType(profileType: decodedToken["profile"]);
+      if(profile == 1) {
+        context.go("/home");
+      }else{
+        context.go("/timeControl");
+      }
 
       Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
     }else{

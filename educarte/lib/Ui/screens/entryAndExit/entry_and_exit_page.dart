@@ -47,7 +47,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
       "EndDate": endDate == null ? DateFormat.yMd().format(startDate).toString() : DateFormat.yMd().format(endDate).toString()
     };
     print(idStudent);
-    var response = await http.get(Uri.parse("$baseUrl/Students/AccessControls/${globals.idStudent}").replace(queryParameters: params),
+    var response = await http.get(Uri.parse("$baseUrl/Students/AccessControls/${currentStudent.value.id}").replace(queryParameters: params),
       headers: {
         "Authorization": "Bearer ${globals.token}"
       },
@@ -61,6 +61,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
         print(summary);
       }
     }
+    print(listAccess);
     setLoading(load: Loadings.none);
     print(loading);
   }

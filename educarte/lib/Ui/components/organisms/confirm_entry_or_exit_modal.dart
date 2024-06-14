@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/enum/input_type.dart';
 import 'package:educarte/Interector/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
@@ -54,18 +57,30 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
   Future<void> registerHour() async{
     try {
       setLoading(load: true);
-
+      Map corpo = {};
+      print("$baseUrl/Students/AccessControls/${widget.student.id}");
       var response = await http.post(
-        Uri.parse("$baseUrl/AccessControls/${widget.student.id}"),
+        Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
         headers: {
           "Authorization": "Bearer $token",
+          "Content-Type":"application/json"
         },
-        body: {
-          "time": DateTime.now()
-        }
+        body: jsonEncode(corpo)
       );
+      setLoading(load: false);
+      context.pop();
       if(response.statusCode == 200){
-        setLoading(load: false);
+        Store().showSuccessMessage(context, "Entrada confirmada com sucesso!");
+      }else{
+        String errorMessage = "Erro ao confirmar entrada e saída!";
+        if(response.body != null){
+          setState(() {
+            var decodeJson = jsonDecode(response.body);
+            errorMessage = decodeJson["description"];
+          });
+        }
+        Store().showErrorMessage(context, errorMessage);
+
       }
     } catch (e) {
       setLoading(load: false);
@@ -115,7 +130,10 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               ),
               BotaoAzul(
                 text: "Registrar horário",
-                onPressed: () => widget.callback(true),
+                onPressed: () {
+                  registerHour();
+
+                },
                 // onPressed: () => registerHour(),
               ),
               Padding(

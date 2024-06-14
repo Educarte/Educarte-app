@@ -13,7 +13,7 @@ class CustomSearchInput extends StatefulWidget {
   });
   final String label;
   final TextEditingController controller;
-  final VoidCallback action;
+  final Function action;
 
   @override
   State<CustomSearchInput> createState() => _CustomSearchInputState();
@@ -37,7 +37,6 @@ class _CustomSearchInputState extends State<CustomSearchInput> {
 
     return TextFormField(
       controller: widget.controller,
-      onFieldSubmitted: (String value) => widget.action(),
       onChanged: (String value) => widget.action(),
       decoration: InputDecoration(
         fillColor: Colors.transparent,

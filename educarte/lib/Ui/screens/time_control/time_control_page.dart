@@ -15,6 +15,7 @@ import '../../../Interector/models/document.dart';
 import '../../../Interector/models/students_model.dart';
 import '../../../Services/config/api_config.dart';
 import '../../../Services/config/repositories/persistence_repository.dart';
+import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/custom_dropdown.dart';
@@ -83,47 +84,24 @@ class _TimeControlPageState extends State<TimeControlPage> {
       setLoading(load: TimeControlPageLoading.loaded);
     }
   }
+  bool loadingDownload = false;
 
-  Future<void> getMenu() async{
-    try {
-      setLoading(load: TimeControlPageLoading.initial);
+  Document document = Document.empty();
 
-      var params = {
-        'Status': "0"
-      };
-      
-      var response = await http.get(Uri.parse("$baseUrl/Menus").replace(queryParameters: params),
+  Future<void> getMenu()async{
+    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
         headers: {
-          "Authorization": "Bearer $token",
+          "Authorization": "Bearer ${globals.token}"
         }
-      );
+    );
 
-      if(response.statusCode == 200){
-        Map<String,dynamic> jsonData = jsonDecode(response.body);
-        List<Document> menus = List.empty(growable: true); 
-
-        (jsonData["items"] as List).where((element) {
-          menus.add(Document(
-            id: element["id"],
-            name: element["name"],
-            fileUri: element["uri"],
-            startDate: jsonData["startDate"] != null ? DateTime.parse(element["startDate"]) : null,
-            validUntil: jsonData["validUntil"] != null ? DateTime.parse(jsonData["validUntil"]) : null
-          ));
-
-          return true;
-        }).toList();
-
-        menus.sort((a, b) => b.startDate!.compareTo(a.startDate!));
-        menus.sort((a, b) => b.validUntil!.compareTo(a.validUntil!));
-        
-        menu =  menus.first;
-      }
-      
-      setLoading(load: TimeControlPageLoading.loaded);
-    } catch (e) {
-      setLoading(load: TimeControlPageLoading.loaded);
+    if(response.statusCode == 200){
+      Map<String,dynamic> decodeJson = jsonDecode(response.body);
+      setState(() {
+        document = Document(id: decodeJson["items"][0]["id"].toString(),name: decodeJson["items"][0]["name"].toString(),fileUri: decodeJson["items"][0]["uri"].toString());
+      });
     }
+
   }
 
   Future<void> getStudents({required TimeControlPageLoading timeControlPageLoading}) async{
@@ -185,7 +163,8 @@ class _TimeControlPageState extends State<TimeControlPage> {
   }
 
 
-  void meusDados()async{
+
+  Future<void> meusDados()async{
     setLoading(load: TimeControlPageLoading.loaded);
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Users/Me"),
         headers: {
@@ -208,7 +187,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   }
 
 
-  void putDados()async{
+  Future<void> putDados()async{
     setState(() {
       carregando = true;
     });
@@ -245,6 +224,12 @@ class _TimeControlPageState extends State<TimeControlPage> {
         carregando = false;
       });
     }
+  }
+
+  String id = "";
+
+  Future<void> postAccessControl()async{
+
   }
 
 
@@ -315,10 +300,87 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       child: Row(
                         children: [
                           GestureDetector(
-                            onTap: menu == null || menu!.id == null ? null : () => ModalEvent.build(
-                              context: context, 
-                              modalType: ModalType.menu
-                            ),
+                            onTap: (){
+                              showModalBottomSheet(
+                                context: context,
+                                isDismissible: false,
+                                useRootNavigator: true,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.black.withOpacity(0.3),
+                                builder: (BuildContext context){
+                                  return StatefulBuilder(builder: (context,setstate)
+                                  {
+                                    return Container(
+                                      width: screenWidth(context),
+                                      height: 277,
+                                      decoration: BoxDecoration(
+                                          color: colorScheme(context).onBackground,
+                                          borderRadius: const BorderRadius.only(
+                                              topRight: Radius.circular(8),
+                                              topLeft: Radius.circular(8))
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 16),
+                                        child:
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                IconButton(onPressed: () {
+                                                  if(loadingDownload == false){
+                                                    Navigator.pop(context);
+
+
+                                                  }
+                                                }, icon: Icon(Symbols.close, color: colorScheme(
+                                                    context).surface,)),
+                                                Text("Cardápio em PDF", style: GoogleFonts.poppins(
+                                                    fontSize: 22,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: colorScheme(context).surface
+                                                ),)
+                                              ],
+                                            ),
+                                            const SizedBox(height: 32,),
+                                            BotaoAzul(text: "Visualizar", onPressed: () {
+                                              if(loadingDownload == false){
+                                                FileManagement.launchUri(link: document.fileUri
+                                                    .toString(), context: context);
+                                              }
+                                            },),
+                                            const SizedBox(height: 16,),
+                                            BotaoBranco(text: "Baixar", onPressed: () {
+                                              setstate((){
+                                                loadingDownload = true;
+                                              });
+                                              FileManagement.download(url: document.fileUri
+                                                  .toString(), fileName: "Cardápio");
+                                              Future.delayed(const Duration(seconds: 2)).then((value) {
+                                                setstate((){
+                                                  loadingDownload = false;
+                                                });
+                                              });
+                                            },
+                                              loading: loadingDownload,
+                                            ),
+                                            const SizedBox(height: 16,),
+                                            BotaoBranco(text: "Compartilhar", onPressed:  () {
+                                              if(loadingDownload == false){
+                                                FileManagement.share(url: document.fileUri.toString(),
+                                                    document: document);
+                                              }
+                                            },
+
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                },
+                              );
+                            },
                             child: Icon(
                               Symbols.nutrition,
                               size: iconSize,
@@ -425,7 +487,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                 CustomSearchInput(
                   controller: _search, 
                   action: () {
-                    students = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.toString().toLowerCase())).toList();
+                    setState(() {
+                      students = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.text.toString().toLowerCase())).toList();
+
+                    });
                   }
                 ),
                 Padding(
@@ -435,6 +500,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                     selected: classroomSelected,
                     callback: (result) => setState(() {
                       classroomSelected = result;
+                      students = studentsFilter.where((element)=> element.classrooms!.contains(classroomSelected.id)).toList();
                       print(classroomSelected);
                     }),
                   )
@@ -446,11 +512,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                   itemCount: students.length,
                   itemBuilder:(_, index) {
                     return CardTimeControl(
-                      student: students[index], 
+                      student: students[index],
                       callback: (bool result) {  
                         if(result){
-                          context.pop();
-                          
+
                           getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
                         }
                       },
