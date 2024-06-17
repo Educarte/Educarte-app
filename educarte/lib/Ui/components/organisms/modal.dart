@@ -19,7 +19,7 @@ class ModalEvent {
     Widget modal;
 
     modal = switch(modalType){
-      ModalType.confirmEntry => ConfirmEntryOrExitModal(
+      ModalType.confirmEntry || ModalType.confirmExit => ConfirmEntryOrExitModal(
         modalType: modalType,
         cardTimeControl: cardTimeControl!,
         student: student!,

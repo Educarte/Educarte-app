@@ -89,7 +89,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   Document document = Document.empty();
 
   Future<void> getMenu()async{
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
+    var response = await http.get(Uri.parse("$baseUrl/Menus"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }

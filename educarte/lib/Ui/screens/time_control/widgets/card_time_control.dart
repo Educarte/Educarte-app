@@ -23,6 +23,13 @@ class CardTimeControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    bool verificationEntryandExit = false;
+    if(student.contratedHours?.length == 1){
+      verificationEntryandExit = true;
+    }else if(student.contratedHours?.length == 2){
+      verificationEntryandExit = false;
+    }
+
     return Card(
       elevation: 3,
       color: colorScheme(context).onPrimary,
@@ -67,7 +74,7 @@ class CardTimeControl extends StatelessWidget {
               text: "Registrar horário",
               onPressed: () => ModalEvent.build(
                 context: context, 
-                modalType: ModalType.confirmEntry,
+                modalType: verificationEntryandExit ? ModalType.confirmEntry : ModalType.confirmExit,
                 student: student,
                 callback: (result) => callback!(result),
                 cardTimeControl: CardTimeControl(

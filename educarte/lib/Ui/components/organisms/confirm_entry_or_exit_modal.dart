@@ -70,7 +70,11 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       setLoading(load: false);
       context.pop();
       if(response.statusCode == 200){
-        Store().showSuccessMessage(context, "Entrada confirmada com sucesso!");
+        if(widget.modalType == ModalType.confirmEntry){
+          Store().showSuccessMessage(context, "Entrada confirmada com sucesso!");
+        }else{
+          Store().showSuccessMessage(context, "Saída confirmada com sucesso!");
+        }
       }else{
         String errorMessage = "Erro ao confirmar entrada e saída!";
         if(response.body != null){
