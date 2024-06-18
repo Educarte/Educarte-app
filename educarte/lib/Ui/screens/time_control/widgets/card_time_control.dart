@@ -24,9 +24,10 @@ class CardTimeControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool verificationEntryandExit = false;
-    if(student.contratedHours?.length == 1){
+    print(student.birthDate);
+    if(student.contratedHours?.length == null){
       verificationEntryandExit = true;
-    }else if(student.contratedHours?.length == 2){
+    }else if(student.contratedHours?.length == 1){
       verificationEntryandExit = false;
     }
 
