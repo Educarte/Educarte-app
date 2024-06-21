@@ -116,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
             minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
         });
-        print(DateTime.now());
+        print(decodeJson["currentMenu"]);
         if(decodeJson["currentMenu"] != null){
           listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }

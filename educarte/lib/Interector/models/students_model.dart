@@ -7,7 +7,7 @@ import 'api_diaries.dart';
 import 'classroom_model.dart';
 
 // ignore: must_be_immutable
-class Student extends Equatable{
+class Student{
   String? id;
   String? name;
   String? naturalness;
@@ -25,7 +25,7 @@ class Student extends Equatable{
   int? time;
   int? status;
   String? birthDate;
-  List<Classroom>? classrooms;
+  Classroom? classrooms;
   LegalGuardian? legalGuardian;
   List<ApiDiaries>? listDiaries;
   List<ContratedHour>? contratedHours;
@@ -82,13 +82,8 @@ class Student extends Equatable{
     time = json['time'];
     status = json['status'];
     birthDate = json['birthDate'];
+    classrooms = Classroom.fromJson(json['classroom']);
     legalGuardian = LegalGuardian.fromJson(json['legalGuardian']);
-    if (json['classrooms'] != null) {
-      classrooms = [];
-      json['classrooms'].forEach((classroomJson) {
-        classrooms!.add(Classroom.fromJson(classroomJson));
-      });
-    }
     if (json['contratedHours'] != null) {
       contratedHours = [];
       json['contratedHours'].forEach((hourJson) {
@@ -123,9 +118,7 @@ class Student extends Equatable{
     data['status'] = status;
     data['birthDate'] = birthDate;
     data['legalGuardians'] = legalGuardian;
-    if (classrooms != null) {
-      data['classrooms'] = classrooms!.map((classroom) => classroom.toJson()).toList();
-    }
+    data['classrooms'] = classrooms;
     if (contratedHours != null) {
       data['contratedHours'] = contratedHours!.map((hour) => hour.toJson()).toList();
     }

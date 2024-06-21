@@ -142,7 +142,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                           horaSaida: listAccess[index].accessControls!.length == 2 ?
                           listAccess[index].accessControls![1].time.toString():
                           null,
-                          resumoDiario: listAccess[index].dailySummary!.substring(0,8),
+                          resumoDiario: listAccess[index].dailySummary?.substring(0,8),
                         );
                       },
                     ),

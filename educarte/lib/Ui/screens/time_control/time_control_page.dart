@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:educarte/Interector/enum/modal_type_enum.dart';
@@ -21,6 +22,7 @@ import '../../components/bnt_branco.dart';
 import '../../components/custom_dropdown.dart';
 import '../../components/input.dart';
 import '../../components/organisms/modal.dart';
+import '../../components/result_not_found.dart';
 import '../../components/search_input.dart';
 import '../../global/global.dart';
 import '../../global/global.dart'as globals;
@@ -48,17 +50,25 @@ class _TimeControlPageState extends State<TimeControlPage> {
   List<String> currentDate = List.empty(growable: true);
   final TextEditingController _search = TextEditingController();
   TimeControlPageLoading loading = TimeControlPageLoading.none;
-  Classroom classroomSelected = Classroom.empty();
+  late Classroom classroomSelected = Classroom.empty();
   List<Classroom> classrooms = List.empty(growable: true);
-  List<Student> students = List.empty(growable: true);
+  List<Student> students = [];
+  List<Student> students2 = [];
   List<Student> studentsFilter = [];
   Document? menu;
   bool carregando = false;
+  bool carregandoData = false;
 
   @override
   void initState() {
     getInitialData();
+    getClassrooms();
     meusDados();
+    Future.delayed(const Duration(milliseconds: 1200),(){
+      setState(() {
+        carregandoData = true;
+      });
+    });
     super.initState();
   }
 
@@ -109,11 +119,8 @@ class _TimeControlPageState extends State<TimeControlPage> {
       setLoading(load: timeControlPageLoading);
 
       students.clear();
-      var params = {
-        'Search': _search.text
-      };
 
-      var response = await http.get(Uri.parse("$baseUrl/Students").replace(queryParameters: params),
+      var response = await http.get(Uri.parse("$baseUrl/Students"),
         headers: {
           "Authorization": "Bearer $token",
         }
@@ -121,14 +128,13 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
-        (jsonData["items"] as List).where((element) {
-          students.add(Student.fromJson(element));
-
-          return true;
-        }).toList();
+        jsonData["items"].forEach((item)=> students.add(Student.fromJson(item)));
         setState(() {
           studentsFilter = students;
+          students2 = students;
         });
+
+
 
         await getClassrooms();
       }
@@ -138,6 +144,34 @@ class _TimeControlPageState extends State<TimeControlPage> {
     }
   }
 
+
+  Future<void> getStudentsReset() async{
+    try {
+      students.clear();
+
+      var response = await http.get(Uri.parse("$baseUrl/Students"),
+          headers: {
+            "Authorization": "Bearer $token",
+          }
+      );
+
+      if(response.statusCode == 200){
+        Map<String,dynamic> jsonData = jsonDecode(response.body);
+        jsonData["items"].forEach((item)=> students.add(Student.fromJson(item)));
+        setState(() {
+          studentsFilter = students;
+          students2 = students;
+        });
+
+
+
+        await getClassrooms();
+      }
+      setLoading(load: TimeControlPageLoading.loaded);
+    } catch (e) {
+      setLoading(load: TimeControlPageLoading.loaded);
+    }
+  }
   Future<void> getClassrooms() async{
     try {
       classrooms.clear();
@@ -150,12 +184,11 @@ class _TimeControlPageState extends State<TimeControlPage> {
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
         classrooms.add(Classroom.empty());
-        
-        (jsonData["items"] as List).where((element) {
-          classrooms.add(Classroom.fromJson(element));
 
-          return true;
-        }).toList();
+        jsonData["items"].forEach((item)=> classrooms.add(Classroom.fromJson(item)));
+        setState(() {
+
+        });
       }
     } catch (e) {
       setLoading(load: TimeControlPageLoading.loaded);
@@ -248,12 +281,14 @@ class _TimeControlPageState extends State<TimeControlPage> {
     } else {
       return Scaffold(
         resizeToAvoidBottomInset: false,
+        backgroundColor: colorScheme(context).onBackground,
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
               children: [
                 const SizedBox(height: 48),
+                if(currentDate.isNotEmpty)
                 RichText(
                   text: TextSpan(
                     children: [
@@ -354,6 +389,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                               setstate((){
                                                 loadingDownload = true;
                                               });
+                                              print(document.fileUri);
                                               FileManagement.download(url: document.fileUri
                                                   .toString(), fileName: "Cardápio");
                                               Future.delayed(const Duration(seconds: 2)).then((value) {
@@ -500,12 +536,24 @@ class _TimeControlPageState extends State<TimeControlPage> {
                     selected: classroomSelected,
                     callback: (result) => setState(() {
                       classroomSelected = result;
-                      students = studentsFilter.where((element)=> element.classrooms!.contains(classroomSelected.id)).toList();
-                      print(classroomSelected);
+                      print(classroomSelected.name);
+                      if(classroomSelected.name == null){
+                        students = students2;
+                      }else{
+                        students = studentsFilter.where((element) => element.classrooms!.name.toString().toLowerCase().contains(classroomSelected.name!.toLowerCase())).toList();
+                      }
                     }),
                   )
                 ),
-                students.isEmpty ? const Text("data") : ListView.builder(
+                students.isEmpty ?SizedBox(
+                  height: 500,
+                  child: Center(
+                    child: const ResultNotFound(
+                        description: "Nenhum usuário encontrado!",
+                        iconData: Symbols.error
+                    ),
+                  ),
+                ) : ListView.builder(
                   padding: EdgeInsets.zero,
                   primary: false,
                   shrinkWrap: true,
@@ -515,7 +563,6 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       student: students[index],
                       callback: (bool result) {  
                         if(result){
-
                           getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
                         }
                       },

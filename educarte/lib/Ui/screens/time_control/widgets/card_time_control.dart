@@ -1,4 +1,5 @@
 import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/classroom_model.dart';
 import 'package:educarte/Interector/models/legal_guardians_model.dart';
@@ -10,7 +11,7 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import 'dash_line.dart';
 
-class CardTimeControl extends StatelessWidget {
+class CardTimeControl extends StatefulWidget {
   const CardTimeControl({
     super.key, 
     required this.student,
@@ -22,15 +23,13 @@ class CardTimeControl extends StatelessWidget {
   final Function(bool result)? callback;
 
   @override
-  Widget build(BuildContext context) {
-    bool verificationEntryandExit = false;
-    print(student.birthDate);
-    if(student.contratedHours?.length == null){
-      verificationEntryandExit = true;
-    }else if(student.contratedHours?.length == 1){
-      verificationEntryandExit = false;
-    }
+  State<CardTimeControl> createState() => _CardTimeControlState();
+}
 
+class _CardTimeControlState extends State<CardTimeControl> {
+    bool verificationEntryandExit = false;
+  @override
+  Widget build(BuildContext context) {
     return Card(
       elevation: 3,
       color: colorScheme(context).onPrimary,
@@ -48,7 +47,7 @@ class CardTimeControl extends StatelessWidget {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  student.name!,
+                  widget.student.name!,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme(context).bodyLarge!.copyWith(
@@ -62,27 +61,34 @@ class CardTimeControl extends StatelessWidget {
               padding: EdgeInsets.symmetric(vertical: 8),
               child: DashedLine(),
             ),
-            if(student.classrooms != null)
+            if(widget.student.classrooms != null)
             InformationAboutTheStudents(
               title: "Sala",
-              classroom: student.classrooms!.first,
+              classroom: widget.student.classrooms!,
               first: 0
             ),
-            InformationAboutTheStudents(legalGuardian: student.legalGuardian),
+            InformationAboutTheStudents(legalGuardian: widget.student.legalGuardian),
             const SizedBox(height: 10),
-            if(showButton)
+            if(widget.showButton)
             BotaoAzul(
               text: "Registrar horário",
-              onPressed: () => ModalEvent.build(
-                context: context, 
-                modalType: verificationEntryandExit ? ModalType.confirmEntry : ModalType.confirmExit,
-                student: student,
-                callback: (result) => callback!(result),
-                cardTimeControl: CardTimeControl(
-                  student: student,
-                  showButton: false
-                )
-              ),
+              onPressed: () {
+                print(widget.student.accessControl!.length);
+                if(widget.student.accessControl!.length < 2){
+                  ModalEvent.build(
+                      context: context,
+                      modalType: widget.student.accessControl!.isEmpty ? ModalType.confirmEntry : ModalType.confirmExit,
+                      student: widget.student,
+                      callback: (result) => widget.callback!(result),
+                      cardTimeControl: CardTimeControl(
+                          student: widget.student,
+                          showButton: false
+                      )
+                  ); 
+                }else{
+                  Store().showErrorMessage(context, "Este usuário já registrou entrada e saída para o dia de hoje.");
+                }
+              },
             )
           ],
         ),

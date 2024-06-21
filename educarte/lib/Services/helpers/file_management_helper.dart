@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
@@ -9,6 +10,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../Interector/base/store.dart';
 import '../../Interector/models/document.dart';
+
 
 class FileManagement {
   static Future<XFile> createTemporaryXFile({required String url, required Document document}) async{
@@ -45,21 +47,40 @@ class FileManagement {
     }
   }
 
+  static Future<void> ensureDirectoryExists({required Directory directory}) async {
+    if (!directory.existsSync()) {
+      await directory.create();
+    }
+  }
+
   static Future<String> download({required String url, required String fileName}) async{
     try {
       String externalStorage = (await getApplicationDocumentsDirectory()).absolute.path;
-      final Directory savedDir = Directory(externalStorage);
+      final Directory directory = Directory(externalStorage);
+      final dio = Dio();
+      String filePath = '';
+      bool isIOS = Platform.isIOS;
 
-      if (!savedDir.existsSync()) {
-        await savedDir.create();
+      if (isIOS) {
+        filePath = '${directory.path}/$fileName.pdf';
+      }else{
+        filePath = directory.absolute.path;
       }
+      await ensureDirectoryExists(directory: directory);
 
-      await FlutterDownloader.enqueue(
-        url: url,
-        saveInPublicStorage: true,
-        savedDir: externalStorage,
-        fileName: fileName
-      );
+      if(isIOS){
+        await dio.download(
+          url,
+          filePath,
+        );
+      }else{
+        await FlutterDownloader.enqueue(
+            url: url,
+            saveInPublicStorage: true,
+            savedDir: filePath,
+            fileName: fileName
+        );
+      }
 
       return "Arquivo baixado com sucesso";
     } catch (e) {
