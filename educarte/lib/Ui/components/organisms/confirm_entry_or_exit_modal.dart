@@ -8,6 +8,7 @@ import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/molecules/modal_application_bar.dart';
 import 'package:educarte/Ui/global/global.dart';
+import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -136,7 +137,6 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
                 text: "Registrar horário",
                 onPressed: () {
                   registerHour();
-
                 },
                 // onPressed: () => registerHour(),
               ),

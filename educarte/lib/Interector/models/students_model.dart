@@ -79,6 +79,7 @@ class Student{
     workplace = json['workplace'];
     genre = json['genre'];
     bloodType = json['bloodType'];
+    listDiaries = json["diaries"] != null ? json["diaries"].map<ApiDiaries>((e) => ApiDiaries.fromJson(e)).toList() : [];
     time = json['time'];
     status = json['status'];
     birthDate = json['birthDate'];

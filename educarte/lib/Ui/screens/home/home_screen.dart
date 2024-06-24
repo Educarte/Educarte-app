@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:educarte/Interector/enum/persistence_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Interector/usesCase/usesCase.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/result_not_found.dart';
@@ -218,6 +217,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    TextStyle diaryStyle = GoogleFonts.poppins(
+        fontSize: 14,
+        color: colorScheme(context).surface,
+        fontWeight: FontWeight.w400
+    );
+
     bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
     if (loading) {
       return const Center(
@@ -226,7 +231,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return ValueListenableBuilder(
         valueListenable: globals.currentStudent,
         builder: (_, __, ___){
-          print(globals.currentStudent);
           return Scaffold(
             resizeToAvoidBottomInset: false ,
             backgroundColor: colorScheme(context).background,
@@ -416,7 +420,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           Expanded(
-                            child: listDiaries.isEmpty ?
+                            child: globals.currentStudent.value.listDiaries!.isEmpty ?
                             const ResultNotFound(
                               description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
                               iconData: Symbols.diagnosis
@@ -428,7 +432,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 alignment: Alignment.topCenter,
                                 child: ListView.builder(
                                   padding: const EdgeInsets.only(top: 10),
-                                  itemCount: listDiaries.length,
+                                  itemCount: globals.currentStudent.value.listDiaries!.length,
                                   itemBuilder: (BuildContext context, int index) {
                                     return Container(
                                       width: screenWidth(context),
@@ -445,50 +449,37 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children: [
                                           Row(
                                             children: [
-                                              Text("Para: ",
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 14,
-                                                    color: colorScheme(
-                                                        context).surface,
-                                                    fontWeight: FontWeight
-                                                        .w500
-                                                ),),
-                                              if(listDiaries[index].diaryType == 0)
-                                                Text(globals.nomeAluno
-                                                    .toString(),
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                              if(listDiaries[index].diaryType == 1)
-                                                Text(
+                                              Text(
+                                                  "Para: ",
+                                                style: diaryStyle.copyWith(
+                                                  fontWeight: FontWeight.w500
+                                                )
+                                              ),
+                                              switch(globals.currentStudent.value.listDiaries![index].diaryType){
+                                                0 => Text(
+                                                    globals.currentStudent.value.name!,
+                                                    style: diaryStyle
+                                                ),
+                                                1 =>  Text(
                                                   globals.nomeSala.toString(),
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
-                                              if(listDiaries[index].diaryType == 2)
-                                                Text("Escola",
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: colorScheme(context).surface,
-                                                      fontWeight: FontWeight.w400
-                                                  ),),
+                                                  style: diaryStyle
+                                                ),
+                                                _ => Text(
+                                                    "Escola",
+                                                    style: diaryStyle
+                                                )
+                                              }
                                             ],
                                           ),
                                           const SizedBox(height: 6,),
                                           Text(
-                                            listDiaries[index].description.toString(),
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: colorScheme(context).surface,
-                                              fontWeight: FontWeight.w300,
+                                            globals.currentStudent.value.listDiaries![index].description!,
+                                            style: diaryStyle.copyWith(
+                                                fontWeight: FontWeight.w300
                                             ),
                                             maxLines: 3,
                                             overflow: TextOverflow.ellipsis,),
-                                          const SizedBox(height: 12,),
+                                          const SizedBox(height: 12),
                                         ],
                                       ),
                                     );

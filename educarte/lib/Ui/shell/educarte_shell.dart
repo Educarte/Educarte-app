@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Interector/usesCase/usesCase.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/screens/home/home_screen.dart';
@@ -14,6 +13,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../Interector/base/constants.dart';
 import '../../Interector/models/api_diaries.dart';
 import '../../Interector/models/document.dart';
+import '../../Interector/useCase/usesCase.dart';
 import '../../Interector/validations/convertter.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
@@ -33,21 +33,20 @@ class EducarteShell extends StatefulWidget {
   @override
   State<EducarteShell> createState() => _EducarteShellState();
 }
-List<Student> students = List.empty(growable: true);
+
 class _EducarteShellState extends State<EducarteShell> {
+  List<Student> students = List.empty(growable: true);
   int selectedIndex = 2;
   TextEditingController nome = TextEditingController();
   TextEditingController sala = TextEditingController();
   TextEditingController responsavel = TextEditingController();
   TextEditingController auxiliar = TextEditingController();
   List<String> listId = [];
-  Student currentStudent = Student.empty();
   int pageIndex = 0;
 
   Student dropdownValue = Student.empty();
   double iconSize = 30;
   Overlay _overlay = Overlay(initialEntries: []);
-
 
   bool loadingDownload = false;
   // void setLoading({required bool load}){
@@ -68,22 +67,16 @@ class _EducarteShellState extends State<EducarteShell> {
 
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
+
       setState(() {
-       students.clear();
 
         for(var i=0;i < jsonData["items"].length; i++){
           Student newStudent = Student.fromJson(jsonData["items"][i]);
           students.add(newStudent);
 
-          if(newStudent == globals.currentStudent.value){
-            currentStudent = currentStudent;
-
-            dropdownValue = currentStudent;
-
-            first = false;
-          }
         }
-        print(students);
+        dropdownValue = students.first;
+
         if(first) dropdownValue = students.first;
         studentId();
       });
@@ -92,12 +85,8 @@ class _EducarteShellState extends State<EducarteShell> {
   }
 
   void studentId()async{
-    if(currentStudent.isEmpty){
-      currentStudent = globals.currentStudent.value;
-    }
-
     var response = await http.get(
-      Uri.parse("http://64.225.53.11:5000/Students/${currentStudent.id}"),
+      Uri.parse("http://64.225.53.11:5000/Students/${dropdownValue.id}"),
       headers: {
         "Authorization": "Bearer ${globals.token}"
       }
@@ -120,7 +109,6 @@ class _EducarteShellState extends State<EducarteShell> {
         }
         globals.idStudent = jsonData["id"];
         if(jsonData["classroom"]["teachers"].isNotEmpty){
-          print("professor esta ${jsonData["classroom"]["teachers"]}");
           responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
         }
         sala.text = jsonData["classroom"]["name"];
@@ -258,9 +246,6 @@ class _EducarteShellState extends State<EducarteShell> {
           pageIndex = selectedIndex;
         });
         changeSelectedIndex(index);
-
-        getStudents();
-        getStudents();
         showModalBottomSheet(
           useRootNavigator: false,
           isScrollControlled: true,
@@ -332,7 +317,7 @@ class _EducarteShellState extends State<EducarteShell> {
                           // This is called when the user selects an item.
                           setState(() {
                             dropdownValue = value!;
-                            currentStudent = students.where((element) => element == value).toList().first;
+                            //currentStudent = students.where((element) => element == value).toList().first;
                             studentId();
                           });
                         },
@@ -353,7 +338,7 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 32,),
                     BotaoAzul(text: "Atualizar informações",onPressed: ()async{
                       globals.currentStudent.value = Student.empty();
-                      globals.currentStudent.value = await UseCaseStudent.getStudentId(globals.idStudent!);
+                      globals.currentStudent.value = await UseCaseStudent.getStudentId(dropdownValue.id!);
                       Navigator.pop(context);
 
                       globals.updateHomeScreen = true;
