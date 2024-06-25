@@ -74,10 +74,8 @@ class _MessagesScreenState extends State<MessagesScreen> {
           "Authorization": "Bearer ${globals.token}"
         }
     );
-    print(startDate);
     if(response.statusCode == 200){
       var decodeJson = jsonDecode(response.body);
-      print(decodeJson);
       if(decodeJson["items"] != null){
         (decodeJson["items"] as List).where((diary) {
           listDiaries.add(ApiDiaries.fromJson(diary));

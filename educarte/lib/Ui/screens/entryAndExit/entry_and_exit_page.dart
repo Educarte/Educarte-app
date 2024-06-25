@@ -128,8 +128,8 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                 else
                   Expanded(
                     child:listAccess.isEmpty ? const ResultNotFound(
-                        description: "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
-                        iconData: Symbols.diagnosis
+                        description: "Sem registro de entrada e saída desse aluno!",
+                        iconData: Symbols.error
                     ) :
                     ListView.builder(
                       padding: const EdgeInsets.only(top: 10,left: 8,right: 8),

@@ -65,6 +65,10 @@ class _LoginScreenState extends State<LoginScreen> {
         globals.firstAccess = firstAccess;
         return context.go(path);
       }
+      print(path);
+      if(path == "/home"){
+
+      }
 
       return context.go(path);
     }else{

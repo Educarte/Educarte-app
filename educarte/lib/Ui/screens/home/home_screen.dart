@@ -78,10 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Student student = Student();
   void getStudentId() async{
     setState(() {
-      listDiaries = [];
+      listDiaries.clear();
+      globals.currentStudent.value.listDiaries!.clear();
     });
     try{
-      var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/$id"),
+      var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/${globals.currentStudent.value.id}"),
           headers: {
             "Authorization": "Bearer ${globals.token}"
           }
@@ -97,29 +98,26 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         setState(() {
           listDiariesFiltro = listDiaries;
-          print(listDiaries);
           listDiaries = listDiariesFiltro.where((element) => DateFormat.yMd().format(DateTime.parse(element.time.toString())) == DateFormat.yMd().format(DateTime.now())).toList();
-          print(listDiaries);
           List accessControls = decodeJson["accessControls"] ?? [];
-
+          globals.currentStudent.value.listDiaries = listDiaries;
           if(accessControls.length == 1){
             student.horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            horaEntrada = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            minEntrada = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
           }
           else if(accessControls.length == 2){
             dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            minEntrada = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            horaSaida = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
-            minSaida = DateFormat.m().format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
+            horaEntrada = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            minEntrada = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            horaSaida = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
+            minSaida = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
           }
         });
-        print(decodeJson["currentMenu"]);
         if(decodeJson["currentMenu"] != null){
           listData = await Convertter.getCurrentDate(isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }
-
 
         setState(() => updateHomeScreen = false);
         
@@ -206,12 +204,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
+  Future<void> logout()async{
+    PersistenceRepository persistenceRepository = PersistenceRepository();
+
+    await persistenceRepository.delete(key: SecureKey.token);
+    setState(() {
+      globals.currentStudent.value = Student.empty();
+      globals.id = "";
+      globals.nomeAluno = "";
+      globals.idStudent = "";
+      globals.nomeSala = "";
+      globals.token = "";
+    });
+    if(context.mounted){
+      context.go("/login");
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     meusDados();
     studentGet();
-    getStudentId();
     getMenu();
   }
 
@@ -231,6 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return ValueListenableBuilder(
         valueListenable: globals.currentStudent,
         builder: (_, __, ___){
+
           return Scaffold(
             resizeToAvoidBottomInset: false ,
             backgroundColor: colorScheme(context).background,
@@ -328,13 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         const SizedBox(height: 16,),
                                         BotaoBranco(text: "Sair do aplicativo",
                                           onPressed: () async{
-                                            PersistenceRepository persistenceRepository = PersistenceRepository();
-          
-                                            await persistenceRepository.delete(key: SecureKey.token);
-          
-                                            if(context.mounted){
-                                              context.go("/login");
-                                            }
+                                            logout();
                                           }
                                         )
                                       ],
@@ -419,6 +428,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
+                          if(globals.currentStudent.value.listDiaries != null)
                           Expanded(
                             child: globals.currentStudent.value.listDiaries!.isEmpty ?
                             const ResultNotFound(
