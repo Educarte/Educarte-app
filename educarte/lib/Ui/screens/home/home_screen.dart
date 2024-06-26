@@ -102,17 +102,11 @@ class _HomeScreenState extends State<HomeScreen> {
           List accessControls = decodeJson["accessControls"] ?? [];
           globals.currentStudent.value.listDiaries = listDiaries;
           if(accessControls.length == 1){
-            student.horaEntrada = DateFormat.H().format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            horaEntrada = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            minEntrada = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
+            globals.currentStudent.value.horaEntrada = decodeJson["accessControls"][0]["time"].toString();
           }
           else if(accessControls.length == 2){
-            dataEntrada = DateFormat.yMd("pt-BR").format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            horaEntrada = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            minEntrada = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][0]["time"].toString()));
-            horaSaida = DateFormat('HH', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
-            minSaida = DateFormat('mm', 'pt_BR').format(DateTime.parse(decodeJson["accessControls"][1]["time"].toString()));
+            globals.currentStudent.value.horaEntrada = decodeJson["accessControls"][0]["time"].toString();
+            globals.currentStudent.value.horaSaida = decodeJson["accessControls"][1]["time"].toString();
           }
         });
         if(decodeJson["currentMenu"] != null){
@@ -203,6 +197,20 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
   }
+  String dateConverteData(String date){
+    DateTime dateTime = DateTime.parse(date);
+
+
+    String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
+    String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
+
+    // Concatenando a data formatada
+    String result = '${formattedDate}h. ${formattedTime}min';
+
+    // Output
+    return result; // Saída: 18h. 08 Min
+
+  }
 
   Future<void> logout()async{
     PersistenceRepository persistenceRepository = PersistenceRepository();
@@ -245,6 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return ValueListenableBuilder(
         valueListenable: globals.currentStudent,
         builder: (_, __, ___){
+
 
           return Scaffold(
             resizeToAvoidBottomInset: false ,
@@ -592,13 +601,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: colorScheme(context)
                                                   .onSurface
                                           ),),
-                                          Text(dataEntrada,
+                                          if(globals.currentStudent.value.horaEntrada != null)
+                                          Text(DateFormat('yMd', 'pt_BR').format(DateTime.parse(globals.currentStudent.value.horaEntrada!)) ,
                                             style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 14,
                                                 color: colorScheme(context)
                                                     .onSurface
-                                            ),)
+                                            ),),
+                                          if(globals.currentStudent.value.horaEntrada == null)
+                                            Text("00/00/00",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14,
+                                                  color: colorScheme(context)
+                                                      .onSurface
+                                              ),),
                                         ],
                                       ),
                                       Row(
@@ -610,13 +628,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 color: colorScheme(context)
                                                     .onSurface
                                             ),),
-                                          Text("${horaEntrada}h ${minEntrada}min",
+                                          if(globals.currentStudent.value.horaEntrada != null)
+                                          Text(dateConverteData(globals.currentStudent.value.horaEntrada!),
                                             style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 14,
                                                 color: colorScheme(context)
                                                     .onSurface
-                                            ),)
+                                            ),),
+                                          if(globals.currentStudent.value.horaEntrada == null)
+                                            Text("00h 00min",
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14,
+                                                  color: colorScheme(context)
+                                                      .onSurface
+                                              ),),
                                         ],
                                       ),
                                       Row(
@@ -628,13 +655,22 @@ class _HomeScreenState extends State<HomeScreen> {
                                               color: colorScheme(context)
                                                   .onSurface
                                           ),),
-                                          Text("${horaSaida}h ${minSaida}min",
+                                          if(globals.currentStudent.value.horaSaida == null)
+                                          Text("00h 00min",
                                             style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 14,
                                                 color: colorScheme(context)
                                                     .onSurface
-                                            ),)
+                                            ),),
+                                          if(globals.currentStudent.value.horaSaida != null)
+                                            Text(dateConverteData(globals.currentStudent.value.horaSaida!),
+                                              style: GoogleFonts.poppins(
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 14,
+                                                  color: colorScheme(context)
+                                                      .onSurface
+                                              ),)
                                         ],
                                       ),
                                     ],

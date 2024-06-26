@@ -43,7 +43,7 @@ class CardEntryAndExit extends StatelessWidget {
     String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
 
     // Concatenando a data formatada
-    String result = '${formattedDate}h. $formattedTime Min';
+    String result = '${formattedDate}h. ${formattedTime}min';
 
     // Output
     return result; // Saída: 18h. 08 Min

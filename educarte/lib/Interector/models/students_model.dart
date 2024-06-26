@@ -31,6 +31,7 @@ class Student{
   List<ContratedHour>? contratedHours;
   List<AcessControl>? accessControl;
   String? horaEntrada;
+  String? horaSaida;
   List<String>? listData;
 
   Student({
@@ -57,6 +58,7 @@ class Student{
     this.contratedHours,
     this.accessControl,
     this.horaEntrada,
+    this.horaSaida,
     this.listData
   });
   

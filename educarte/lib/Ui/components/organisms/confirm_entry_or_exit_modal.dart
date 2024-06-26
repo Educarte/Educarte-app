@@ -4,6 +4,7 @@ import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/enum/input_type.dart';
 import 'package:educarte/Interector/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
+import 'package:educarte/Interector/useCase/usesCase.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/molecules/modal_application_bar.dart';
@@ -135,8 +136,10 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               ),
               BotaoAzul(
                 text: "Registrar horário",
-                onPressed: () {
+                onPressed: () async{
                   registerHour();
+                  listStudent.clear();
+                  listStudent = (await UseCaseStudent.getStudentsReset())!;
                 },
                 // onPressed: () => registerHour(),
               ),

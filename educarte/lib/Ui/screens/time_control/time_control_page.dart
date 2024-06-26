@@ -118,7 +118,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     try {
       setLoading(load: timeControlPageLoading);
 
-      students.clear();
+      globals.listStudent.clear();
 
       var response = await http.get(Uri.parse("$baseUrl/Students"),
         headers: {
@@ -128,10 +128,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach((item)=> students.add(Student.fromJson(item)));
+        jsonData["items"].forEach((item)=> globals.listStudent.add(Student.fromJson(item)));
         setState(() {
-          studentsFilter = students;
-          students2 = students;
+          studentsFilter = globals.listStudent;
+          students2 = globals.listStudent;
         });
 
 
@@ -147,7 +147,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
   Future<void> getStudentsReset() async{
     try {
-      students.clear();
+      globals.listStudent.clear();
 
       var response = await http.get(Uri.parse("$baseUrl/Students"),
           headers: {
@@ -157,10 +157,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach((item)=> students.add(Student.fromJson(item)));
+        jsonData["items"].forEach((item)=> globals.listStudent.add(Student.fromJson(item)));
         setState(() {
-          studentsFilter = students;
-          students2 = students;
+          studentsFilter = globals.listStudent;
+          students2 = globals.listStudent;
         });
 
 
@@ -521,10 +521,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                 ),
                 const SizedBox(height: 12),
                 CustomSearchInput(
-                  controller: _search, 
+                  controller: _search,
                   action: () {
                     setState(() {
-                      students = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.text.toString().toLowerCase())).toList();
+                      globals.listStudent = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.text.toString().toLowerCase())).toList();
 
                     });
                   }
@@ -538,14 +538,14 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       classroomSelected = result;
                       print(classroomSelected.name);
                       if(classroomSelected.name == null){
-                        students = students2;
+                        globals.listStudent = students2;
                       }else{
-                        students = studentsFilter.where((element) => element.classrooms!.name.toString().toLowerCase().contains(classroomSelected.name!.toLowerCase())).toList();
+                        globals.listStudent = studentsFilter.where((element) => element.classrooms!.name.toString().toLowerCase().contains(classroomSelected.name!.toLowerCase())).toList();
                       }
                     }),
                   )
                 ),
-                students.isEmpty ?SizedBox(
+                listStudent.isEmpty ?SizedBox(
                   height: 500,
                   child: Center(
                     child: const ResultNotFound(
@@ -557,11 +557,11 @@ class _TimeControlPageState extends State<TimeControlPage> {
                   padding: EdgeInsets.zero,
                   primary: false,
                   shrinkWrap: true,
-                  itemCount: students.length,
+                  itemCount: listStudent.length,
                   itemBuilder:(_, index) {
                     return CardTimeControl(
-                      student: students[index],
-                      callback: (bool result) {  
+                      student: listStudent[index],
+                      callback: (bool result) {
                         if(result){
                           getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
                         }

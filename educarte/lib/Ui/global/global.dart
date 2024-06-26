@@ -15,6 +15,8 @@ String? code;
 String? nomeAluno;
 String? nomeSala;
 
+List<Student> listStudent = [];
+
 final ValueNotifier<Student> currentStudent = ValueNotifier<Student>(Student.empty());
 
 int checkUserType({required String profileType}){
