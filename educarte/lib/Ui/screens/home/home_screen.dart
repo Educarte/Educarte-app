@@ -253,8 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return ValueListenableBuilder(
         valueListenable: globals.currentStudent,
         builder: (_, __, ___){
-
-
           return Scaffold(
             resizeToAvoidBottomInset: false ,
             backgroundColor: colorScheme(context).background,

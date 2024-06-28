@@ -4,6 +4,7 @@ import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/global/global.dart';
 import 'package:educarte/Ui/global/global.dart'as globals;
 import 'package:educarte/Ui/shell/educarte_shell.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -53,9 +54,9 @@ class UseCaseStudent{
     }
   }
 
-  static Future<List<Student>?> getStudentsReset() async{
+  static Future<void> getStudentsReset() async{
     try {
-      globals.listStudent.clear();
+      globals.listStudent.value.clear();
 
       var response = await http.get(Uri.parse("$baseUrl/Students"),
           headers: {
@@ -65,13 +66,13 @@ class UseCaseStudent{
 
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach((item)=> globals.listStudent.add(Student.fromJson(item)));
+        List<Student> newListStudent = jsonData["items"].map<Student>((e)=> Student.fromJson(e)).toList();
+        globals.listStudent.value = newListStudent;
+        print("lista atualizada");
 
       }
-      print("lista atualizada");
-     return globals.listStudent;
     } catch (e) {
-      return globals.listStudent;
+      debugPrint(e.toString());
     }
   }
 }

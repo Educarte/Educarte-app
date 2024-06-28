@@ -118,7 +118,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     try {
       setLoading(load: timeControlPageLoading);
 
-      globals.listStudent.clear();
+      globals.listStudent.value.clear();
 
       var response = await http.get(Uri.parse("$baseUrl/Students"),
         headers: {
@@ -128,10 +128,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
       if(response.statusCode == 200){
         Map<String,dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach((item)=> globals.listStudent.add(Student.fromJson(item)));
+        jsonData["items"].forEach((item)=> globals.listStudent.value.add(Student.fromJson(item)));
         setState(() {
-          studentsFilter = globals.listStudent;
-          students2 = globals.listStudent;
+          studentsFilter = globals.listStudent.value;
+          students2 = globals.listStudent.value;
         });
 
 
@@ -144,34 +144,6 @@ class _TimeControlPageState extends State<TimeControlPage> {
     }
   }
 
-
-  Future<void> getStudentsReset() async{
-    try {
-      globals.listStudent.clear();
-
-      var response = await http.get(Uri.parse("$baseUrl/Students"),
-          headers: {
-            "Authorization": "Bearer $token",
-          }
-      );
-
-      if(response.statusCode == 200){
-        Map<String,dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach((item)=> globals.listStudent.add(Student.fromJson(item)));
-        setState(() {
-          studentsFilter = globals.listStudent;
-          students2 = globals.listStudent;
-        });
-
-
-
-        await getClassrooms();
-      }
-      setLoading(load: TimeControlPageLoading.loaded);
-    } catch (e) {
-      setLoading(load: TimeControlPageLoading.loaded);
-    }
-  }
   Future<void> getClassrooms() async{
     try {
       classrooms.clear();
@@ -275,305 +247,309 @@ class _TimeControlPageState extends State<TimeControlPage> {
       color: colorScheme(context).surface,
       fontWeight: fontWeight ?? FontWeight.w300
     );
-
-    if (loading == TimeControlPageLoading.initial) {
-      return const Center(child: CircularProgressIndicator());
-    } else {
-      return Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: colorScheme(context).onBackground,
-        body: Padding(
-          padding: const EdgeInsets.all(16),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 48),
-                if(currentDate.isNotEmpty)
-                RichText(
-                  text: TextSpan(
+    return ValueListenableBuilder(
+      valueListenable: globals.listStudent,
+      builder: (_,__,___){
+        if (loading == TimeControlPageLoading.initial) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          return Scaffold(
+            resizeToAvoidBottomInset: false,
+            backgroundColor: colorScheme(context).onBackground,
+            body: Padding(
+              padding: const EdgeInsets.all(16),
+              child: SingleChildScrollView(
+                child: Column(
                     children: [
-                      TextSpan(
-                        text: currentDate[0],
-                        style: style()
-                      ),
-                      TextSpan(
-                        text: currentDate[1],
-                        style: style(fontWeight: FontWeight.w600)
-                      ),
-                      TextSpan(
-                        text: currentDate[2],
-                        style: style()
-                      )
-                    ]
-                  )
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("Olá,",style: GoogleFonts.poppins(
-                            color: colorScheme(context).surface,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                          ),),
-                          Text(
-                            globals.nome.toString(),
-                            style: GoogleFonts.poppins(
-                              color: colorScheme(context).primary,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 25,
+                      const SizedBox(height: 48),
+                      if(currentDate.isNotEmpty)
+                        RichText(
+                            text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                      text: currentDate[0],
+                                      style: style()
+                                  ),
+                                  TextSpan(
+                                      text: currentDate[1],
+                                      style: style(fontWeight: FontWeight.w600)
+                                  ),
+                                  TextSpan(
+                                      text: currentDate[2],
+                                      style: style()
+                                  )
+                                ]
                             )
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      flex: 0,
-                      child: Row(
+                        ),
+                      const SizedBox(height: 32),
+                      Row(
                         children: [
-                          GestureDetector(
-                            onTap: (){
-                              showModalBottomSheet(
-                                context: context,
-                                isDismissible: false,
-                                useRootNavigator: true,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.black.withOpacity(0.3),
-                                builder: (BuildContext context){
-                                  return StatefulBuilder(builder: (context,setstate)
-                                  {
-                                    return Container(
-                                      width: screenWidth(context),
-                                      height: 277,
-                                      decoration: BoxDecoration(
-                                          color: colorScheme(context).onBackground,
-                                          borderRadius: const BorderRadius.only(
-                                              topRight: Radius.circular(8),
-                                              topLeft: Radius.circular(8))
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 16),
-                                        child:
-                                        Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                IconButton(onPressed: () {
-                                                  if(loadingDownload == false){
-                                                    Navigator.pop(context);
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text("Olá,",style: GoogleFonts.poppins(
+                                  color: colorScheme(context).surface,
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 16,
+                                ),),
+                                Text(
+                                    globals.nome.toString(),
+                                    style: GoogleFonts.poppins(
+                                      color: colorScheme(context).primary,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 25,
+                                    )
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                              flex: 0,
+                              child: Row(
+                                  children: [
+                                    GestureDetector(
+                                        onTap: (){
+                                          showModalBottomSheet(
+                                            context: context,
+                                            isDismissible: false,
+                                            useRootNavigator: true,
+                                            isScrollControlled: true,
+                                            backgroundColor: Colors.black.withOpacity(0.3),
+                                            builder: (BuildContext context){
+                                              return StatefulBuilder(builder: (context,setstate)
+                                              {
+                                                return Container(
+                                                  width: screenWidth(context),
+                                                  height: 277,
+                                                  decoration: BoxDecoration(
+                                                      color: colorScheme(context).onBackground,
+                                                      borderRadius: const BorderRadius.only(
+                                                          topRight: Radius.circular(8),
+                                                          topLeft: Radius.circular(8))
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.symmetric(
+                                                        horizontal: 16, vertical: 16),
+                                                    child:
+                                                    Column(
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            IconButton(onPressed: () {
+                                                              if(loadingDownload == false){
+                                                                Navigator.pop(context);
 
 
-                                                  }
-                                                }, icon: Icon(Symbols.close, color: colorScheme(
-                                                    context).surface,)),
-                                                Text("Cardápio em PDF", style: GoogleFonts.poppins(
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: colorScheme(context).surface
-                                                ),)
-                                              ],
-                                            ),
-                                            const SizedBox(height: 32,),
-                                            BotaoAzul(text: "Visualizar", onPressed: () {
-                                              if(loadingDownload == false){
-                                                FileManagement.launchUri(link: document.fileUri
-                                                    .toString(), context: context);
-                                              }
-                                            },),
-                                            const SizedBox(height: 16,),
-                                            BotaoBranco(text: "Baixar", onPressed: () {
-                                              setstate((){
-                                                loadingDownload = true;
-                                              });
-                                              print(document.fileUri);
-                                              FileManagement.download(url: document.fileUri
-                                                  .toString(), fileName: "Cardápio");
-                                              Future.delayed(const Duration(seconds: 2)).then((value) {
-                                                setstate((){
-                                                  loadingDownload = false;
-                                                });
+                                                              }
+                                                            }, icon: Icon(Symbols.close, color: colorScheme(
+                                                                context).surface,)),
+                                                            Text("Cardápio em PDF", style: GoogleFonts.poppins(
+                                                                fontSize: 22,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: colorScheme(context).surface
+                                                            ),)
+                                                          ],
+                                                        ),
+                                                        const SizedBox(height: 32,),
+                                                        BotaoAzul(text: "Visualizar", onPressed: () {
+                                                          if(loadingDownload == false){
+                                                            FileManagement.launchUri(link: document.fileUri
+                                                                .toString(), context: context);
+                                                          }
+                                                        },),
+                                                        const SizedBox(height: 16,),
+                                                        BotaoBranco(text: "Baixar", onPressed: () {
+                                                          setstate((){
+                                                            loadingDownload = true;
+                                                          });
+                                                          print(document.fileUri);
+                                                          FileManagement.download(url: document.fileUri
+                                                              .toString(), fileName: "Cardápio");
+                                                          Future.delayed(const Duration(seconds: 2)).then((value) {
+                                                            setstate((){
+                                                              loadingDownload = false;
+                                                            });
+                                                          });
+                                                        },
+                                                          loading: loadingDownload,
+                                                        ),
+                                                        const SizedBox(height: 16,),
+                                                        BotaoBranco(text: "Compartilhar", onPressed:  () {
+                                                          if(loadingDownload == false){
+                                                            FileManagement.share(url: document.fileUri.toString(),
+                                                                document: document);
+                                                          }
+                                                        },
+
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
                                               });
                                             },
-                                              loading: loadingDownload,
-                                            ),
-                                            const SizedBox(height: 16,),
-                                            BotaoBranco(text: "Compartilhar", onPressed:  () {
-                                              if(loadingDownload == false){
-                                                FileManagement.share(url: document.fileUri.toString(),
-                                                    document: document);
-                                              }
-                                            },
-
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  });
-                                },
-                              );
-                            },
-                            child: Icon(
-                              Symbols.nutrition,
-                              size: iconSize,
-                              color: colorIcon
-                            )
-                          ),
-                          const SizedBox(width: 32),
-                          GestureDetector(
-                            onTap: () {
-                              showModalBottomSheet(
-                                useRootNavigator: true,
-                                isScrollControlled: true,
-                                isDismissible: false,
-                                context: context,
-                                backgroundColor: Colors.black.withOpacity(0.3),
-                                builder: (BuildContext context) {
-                                  return Container(
-                                    width: screenWidth(context),
-                                    height: focusInput? 900 : 449,
-                                    decoration: BoxDecoration(
-                                        color: colorScheme(context).onBackground,
-                                        borderRadius: const BorderRadius.only(
-                                            topRight: Radius.circular(8),
-                                            topLeft: Radius.circular(8)
+                                          );
+                                        },
+                                        child: Icon(
+                                            Symbols.nutrition,
+                                            size: iconSize,
+                                            color: colorIcon
                                         )
                                     ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 16),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                              children: [
-                                                IconButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    icon: Icon(
-                                                        Symbols.close,
-                                                        color: colorScheme(context).surface
+                                    const SizedBox(width: 32),
+                                    GestureDetector(
+                                        onTap: () {
+                                          showModalBottomSheet(
+                                            useRootNavigator: true,
+                                            isScrollControlled: true,
+                                            isDismissible: false,
+                                            context: context,
+                                            backgroundColor: Colors.black.withOpacity(0.3),
+                                            builder: (BuildContext context) {
+                                              return Container(
+                                                width: screenWidth(context),
+                                                height: focusInput? 900 : 449,
+                                                decoration: BoxDecoration(
+                                                    color: colorScheme(context).onBackground,
+                                                    borderRadius: const BorderRadius.only(
+                                                        topRight: Radius.circular(8),
+                                                        topLeft: Radius.circular(8)
                                                     )
                                                 ),
-                                                Text("Meus dados",
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 22,
-                                                        fontWeight: FontWeight.w600,
-                                                        color: colorScheme(context).surface
-                                                    )
-                                                )
-                                              ]
-                                          ),
-                                          const SizedBox(height: 32,),
-                                          Input(name: "Nome",
-                                            obscureText: false,
-                                            onChange: nome,
-                                          ),
-                                          const SizedBox(height: 16,),
-                                          Input(name: "E-mail",
-                                              obscureText: false,
-                                              onChange: email),
-                                          const SizedBox(height: 16,),
-                                          Input(name: "Telefone",
-                                              obscureText: false,
-                                              onChange: telefone!),
-                                          const SizedBox(height: 32,),
-                                          BotaoAzul(text: "Atualizar informações",
-                                            onPressed: () {
-                                              putDados();
-                                              Navigator.pop(context);
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(
+                                                      horizontal: 16, vertical: 16),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                          children: [
+                                                            IconButton(
+                                                                onPressed: () {
+                                                                  Navigator.pop(context);
+                                                                },
+                                                                icon: Icon(
+                                                                    Symbols.close,
+                                                                    color: colorScheme(context).surface
+                                                                )
+                                                            ),
+                                                            Text("Meus dados",
+                                                                style: GoogleFonts.poppins(
+                                                                    fontSize: 22,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    color: colorScheme(context).surface
+                                                                )
+                                                            )
+                                                          ]
+                                                      ),
+                                                      const SizedBox(height: 32,),
+                                                      Input(name: "Nome",
+                                                        obscureText: false,
+                                                        onChange: nome,
+                                                      ),
+                                                      const SizedBox(height: 16,),
+                                                      Input(name: "E-mail",
+                                                          obscureText: false,
+                                                          onChange: email),
+                                                      const SizedBox(height: 16,),
+                                                      Input(name: "Telefone",
+                                                          obscureText: false,
+                                                          onChange: telefone!),
+                                                      const SizedBox(height: 32,),
+                                                      BotaoAzul(text: "Atualizar informações",
+                                                        onPressed: () {
+                                                          putDados();
+                                                          Navigator.pop(context);
+                                                        },
+                                                        loading: carregando,
+                                                      ),
+                                                      const SizedBox(height: 16,),
+                                                      BotaoBranco(text: "Sair do aplicativo",
+                                                          onPressed: () async{
+                                                            PersistenceRepository persistenceRepository = PersistenceRepository();
+
+                                                            await persistenceRepository.delete(key: SecureKey.token);
+
+                                                            if(context.mounted){
+                                                              context.go("/login");
+                                                            }
+                                                          }
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
                                             },
-                                            loading: carregando,
-                                          ),
-                                          const SizedBox(height: 16,),
-                                          BotaoBranco(text: "Sair do aplicativo",
-                                              onPressed: () async{
-                                                PersistenceRepository persistenceRepository = PersistenceRepository();
-
-                                                await persistenceRepository.delete(key: SecureKey.token);
-
-                                                if(context.mounted){
-                                                  context.go("/login");
-                                                }
-                                              }
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                            child: Icon(
-                              Symbols.account_circle_rounded,
-                              size: iconSize,
-                              color: colorIcon
-                            )
+                                          );
+                                        },
+                                        child: Icon(
+                                            Symbols.account_circle_rounded,
+                                            size: iconSize,
+                                            color: colorIcon
+                                        )
+                                    )
+                                  ]
+                              )
                           )
-                        ]
-                      )
-                    )
-                  ],
-                ),
-                const SizedBox(height: 12),
-                CustomSearchInput(
-                  controller: _search,
-                  action: () {
-                    setState(() {
-                      globals.listStudent = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.text.toString().toLowerCase())).toList();
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      CustomSearchInput(
+                          controller: _search,
+                          action: () {
+                            setState(() {
+                              globals.listStudent.value = studentsFilter.where((element) => element.name!.toLowerCase().contains(_search.text.toString().toLowerCase())).toList();
 
-                    });
-                  }
+                            });
+                          }
+                      ),
+                      Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: CustomDropdown(
+                            list: classrooms,
+                            selected: classroomSelected,
+                            callback: (result) => setState(() {
+                              classroomSelected = result;
+                              print(classroomSelected.name);
+                              if(classroomSelected.name == null){
+                                globals.listStudent.value = students2;
+                              }else{
+                                globals.listStudent.value = studentsFilter.where((element) => element.classrooms!.name.toString().toLowerCase().contains(classroomSelected.name!.toLowerCase())).toList();
+                              }
+                            }),
+                          )
+                      ),
+                      listStudent.value.isEmpty ?const SizedBox(
+                        height: 500,
+                        child: Center(
+                          child: const ResultNotFound(
+                              description: "Nenhum usuário encontrado!",
+                              iconData: Symbols.error
+                          ),
+                        ),
+                      ) : ListView.builder(
+                          padding: EdgeInsets.zero,
+                          primary: false,
+                          shrinkWrap: true,
+                          itemCount: listStudent.value.length,
+                          itemBuilder:(_, index) {
+                            return CardTimeControl(
+                              student: listStudent.value[index],
+                              callback: (bool result) {
+                                if(result){
+                                  getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
+                                }
+                              },
+                            );
+                          }
+                      )
+                    ]
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: CustomDropdown(
-                    list: classrooms,
-                    selected: classroomSelected,
-                    callback: (result) => setState(() {
-                      classroomSelected = result;
-                      print(classroomSelected.name);
-                      if(classroomSelected.name == null){
-                        globals.listStudent = students2;
-                      }else{
-                        globals.listStudent = studentsFilter.where((element) => element.classrooms!.name.toString().toLowerCase().contains(classroomSelected.name!.toLowerCase())).toList();
-                      }
-                    }),
-                  )
-                ),
-                listStudent.isEmpty ?SizedBox(
-                  height: 500,
-                  child: Center(
-                    child: const ResultNotFound(
-                        description: "Nenhum usuário encontrado!",
-                        iconData: Symbols.error
-                    ),
-                  ),
-                ) : ListView.builder(
-                  padding: EdgeInsets.zero,
-                  primary: false,
-                  shrinkWrap: true,
-                  itemCount: listStudent.length,
-                  itemBuilder:(_, index) {
-                    return CardTimeControl(
-                      student: listStudent[index],
-                      callback: (bool result) {
-                        if(result){
-                          getStudents(timeControlPageLoading: TimeControlPageLoading.filter);
-                        }
-                      },
-                    );
-                  }
-                )
-              ]
+              ),
             ),
-          ),
-        ),
-      );
-    }
+          );
+        }
+      },
+    );
   }
 }

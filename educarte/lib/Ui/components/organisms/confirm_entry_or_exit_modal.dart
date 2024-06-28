@@ -137,9 +137,8 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               BotaoAzul(
                 text: "Registrar horário",
                 onPressed: () async{
-                  registerHour();
-                  listStudent.clear();
-                  listStudent = (await UseCaseStudent.getStudentsReset())!;
+                  await registerHour();
+                  await UseCaseStudent.getStudentsReset();
                 },
                 // onPressed: () => registerHour(),
               ),
