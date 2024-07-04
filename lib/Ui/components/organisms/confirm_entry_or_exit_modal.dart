@@ -9,7 +9,6 @@ import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/molecules/modal_application_bar.dart';
 import 'package:educarte/Ui/global/global.dart';
-import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
@@ -21,20 +20,20 @@ import '../../screens/time_control/widgets/card_time_control.dart';
 import '../bnt_azul.dart';
 
 class ConfirmEntryOrExitModal extends StatefulWidget {
-  const ConfirmEntryOrExitModal({
-    super.key, 
-    required this.modalType, 
-    required this.cardTimeControl, 
-    required this.student, 
-    required this.callback
-  });
+  const ConfirmEntryOrExitModal(
+      {super.key,
+      required this.modalType,
+      required this.cardTimeControl,
+      required this.student,
+      required this.callback});
   final ModalType modalType;
   final CardTimeControl cardTimeControl;
   final Student student;
   final Function(bool result) callback;
 
   @override
-  State<ConfirmEntryOrExitModal> createState() => _ConfirmEntryOrExitModalState();
+  State<ConfirmEntryOrExitModal> createState() =>
+      _ConfirmEntryOrExitModalState();
 }
 
 class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
@@ -42,7 +41,7 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
   DateTime dateTimeNow = DateTime.now();
   final TextEditingController _hour = TextEditingController();
   final TextEditingController _date = TextEditingController();
-  
+
   @override
   void initState() {
     _hour.text = DateFormat("dd/MM/yyyy").format(dateTimeNow);
@@ -50,43 +49,41 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
     super.initState();
   }
 
-  void setLoading({required bool load}){
+  void setLoading({required bool load}) {
     setState(() {
       loading = load;
     });
   }
 
-  Future<void> registerHour() async{
+  Future<void> registerHour() async {
     try {
       setLoading(load: true);
       Map corpo = {};
-      print("$baseUrl/Students/AccessControls/${widget.student.id}");
       var response = await http.post(
-        Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
-        headers: {
-          "Authorization": "Bearer $token",
-          "Content-Type":"application/json"
-        },
-        body: jsonEncode(corpo)
-      );
+          Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
+          headers: {
+            "Authorization": "Bearer $token",
+            "Content-Type": "application/json"
+          },
+          body: jsonEncode(corpo));
       setLoading(load: false);
       context.pop();
-      if(response.statusCode == 200){
-        if(widget.modalType == ModalType.confirmEntry){
-          Store().showSuccessMessage(context, "Entrada confirmada com sucesso!");
-        }else{
+      if (response.statusCode == 200) {
+        if (widget.modalType == ModalType.confirmEntry) {
+          Store()
+              .showSuccessMessage(context, "Entrada confirmada com sucesso!");
+        } else {
           Store().showSuccessMessage(context, "Saída confirmada com sucesso!");
         }
-      }else{
+      } else {
         String errorMessage = "Erro ao confirmar entrada e saída!";
-        if(response.body != null){
+        if (response.body != null) {
           setState(() {
             var decodeJson = jsonDecode(response.body);
             errorMessage = decodeJson["description"];
           });
         }
         Store().showErrorMessage(context, errorMessage);
-
       }
     } catch (e) {
       setLoading(load: false);
@@ -99,44 +96,37 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       width: screenWidth(context),
       height: widget.modalType.height,
       decoration: BoxDecoration(
-        color: colorScheme(context).onBackground,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(8),
-          topLeft: Radius.circular(8)
-        )
-      ),
+          color: colorScheme(context).onBackground,
+          borderRadius: const BorderRadius.only(
+              topRight: Radius.circular(8), topLeft: Radius.circular(8))),
       child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: SingleChildScrollView(
           child: Column(
             children: [
               ModalApplicationBar(title: widget.modalType.title),
               const SizedBox(height: 32),
               Input(
-                name: "Horário", 
-                obscureText: false, 
-                enabled: false,
-                isInputModal: true,
-                inputType: InputType.hour,
-                onChange: _hour
-              ),
+                  name: "Horário",
+                  obscureText: false,
+                  enabled: false,
+                  isInputModal: true,
+                  inputType: InputType.hour,
+                  onChange: _hour),
               const SizedBox(height: 16),
               Input(
-                name: "Data", 
-                enabled: false,
-                obscureText: false, 
-                isInputModal: true,
-                inputType: InputType.date,
-                onChange: _date
-              ),
+                  name: "Data",
+                  enabled: false,
+                  obscureText: false,
+                  isInputModal: true,
+                  inputType: InputType.date,
+                  onChange: _date),
               Padding(
-                padding: const EdgeInsets.symmetric(vertical: 32),
-                child: widget.cardTimeControl
-              ),
+                  padding: const EdgeInsets.symmetric(vertical: 32),
+                  child: widget.cardTimeControl),
               BotaoAzul(
                 text: "Registrar horário",
-                onPressed: () async{
+                onPressed: () async {
                   await registerHour();
                   await UseCaseStudent.getStudentsReset();
                 },

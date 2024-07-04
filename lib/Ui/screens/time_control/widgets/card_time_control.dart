@@ -73,7 +73,6 @@ class _CardTimeControlState extends State<CardTimeControl> {
             BotaoAzul(
               text: "Registrar horário",
               onPressed: () {
-                print(widget.student.accessControl!.length);
                 if(widget.student.accessControl!.length < 2){
                   ModalEvent.build(
                       context: context,

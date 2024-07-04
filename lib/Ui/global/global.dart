@@ -15,24 +15,25 @@ String? code;
 String? nomeAluno;
 String? nomeSala;
 
+final ValueNotifier<Student> currentStudent =
+    ValueNotifier<Student>(Student.empty());
+final ValueNotifier<List<Student>> listStudent =
+    ValueNotifier<List<Student>>([]);
 
-final ValueNotifier<Student> currentStudent = ValueNotifier<Student>(Student.empty());
-final ValueNotifier<List<Student>> listStudent = ValueNotifier<List<Student>>([]);
-
-int checkUserType({required String profileType}){
-  return switch(profileType){
+int checkUserType({required String profileType}) {
+  return switch (profileType) {
     "Employee" || "Teacher" || "Admin" => profile = 2,
     _ => profile = 1
   };
 }
-String routerPath({required bool firstAccess}){
-  print(profile);
-  if(firstAccess){
+
+String routerPath({required bool firstAccess}) {
+  if (firstAccess) {
     return "/redefinirSenha";
-  }else{
-    if(profile == 1){
+  } else {
+    if (profile == 1) {
       return "/home";
-    }else{
+    } else {
       return "/timeControl";
     }
   }

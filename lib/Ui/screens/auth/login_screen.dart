@@ -28,27 +28,26 @@ class _LoginScreenState extends State<LoginScreen> {
   PersistenceRepository persistenceRepository = PersistenceRepository();
   bool carregando = false;
 
-  void logar()async{
+  void logar() async {
     setState(() {
       carregando = true;
     });
-    Map corpo = {
-      "email": email.text,
-      "password": senha.text
-    };
-    
-    var response = await http.post(Uri.parse("http://64.225.53.11:5000/Auth"),
+    Map corpo = {"email": email.text, "password": senha.text};
+
+    var response = await http.post(
+      Uri.parse("http://64.225.53.11:5000/Auth"),
       body: jsonEncode(corpo),
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     );
-    
-    if(response.statusCode == 200){
-      Map<String,dynamic> jsonData = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
       Map<String, dynamic> decodedToken = JwtDecoder.decode(jsonData["token"]);
 
-      await persistenceRepository.update(key: SecureKey.token, value: jsonData["token"]);
+      await persistenceRepository.update(
+          key: SecureKey.token, value: jsonData["token"]);
 
       setState(() {
         globals.nome = decodedToken["name"];
@@ -57,27 +56,26 @@ class _LoginScreenState extends State<LoginScreen> {
 
         globals.checkUserType(profileType: decodedToken["profile"]);
       });
-      bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase());
+      bool firstAccess =
+          bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase());
 
       String path = globals.routerPath(firstAccess: firstAccess);
 
-      if(firstAccess){
+      if (firstAccess) {
         globals.firstAccess = firstAccess;
         return context.go(path);
       }
-      print(path);
-      if(path == "/home"){
-
-      }
+      if (path == "/home") {}
 
       return context.go(path);
-    }else{
+    } else {
       setState(() {
         carregando = false;
       });
       Store().showErrorMessage(context, "Credenciais Inválidas!");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
@@ -87,18 +85,18 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         children: [
           Expanded(
-            flex: focusInput ?1 : 4,
+            flex: focusInput ? 1 : 4,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const SizedBox(height: 60,),
-
-                  if(!focusInput)
-                  Center(child: Image.asset("assets/logo.png")),
-
+                  const SizedBox(
+                    height: 60,
+                  ),
+                  if (!focusInput)
+                    Center(child: Image.asset("assets/logo.png")),
                   SizedBox(
                     height: 62,
                     child: SingleChildScrollView(
@@ -106,17 +104,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text("Aqui começa a",style: GoogleFonts.poppins(
-                            fontSize: 19,
-                            fontWeight: FontWeight.w400,
-                            color: const Color(0xffF5F5F5),
-                          ),),
-                          Text("SUA HISTÓRIA",style: GoogleFonts.poppins(
-                              fontSize: 48,
-                              fontWeight: FontWeight.w800,
+                          Text(
+                            "Aqui começa a",
+                            style: GoogleFonts.poppins(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w400,
                               color: const Color(0xffF5F5F5),
-                            height: 0.8
-                          ),),
+                            ),
+                          ),
+                          Text(
+                            "SUA HISTÓRIA",
+                            style: GoogleFonts.poppins(
+                                fontSize: 48,
+                                fontWeight: FontWeight.w800,
+                                color: const Color(0xffF5F5F5),
+                                height: 0.8),
+                          ),
                         ],
                       ),
                     ),
@@ -126,21 +129,34 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
           Expanded(
-              flex: focusInput ?4 : 3,
+              flex: focusInput ? 4 : 3,
               child: Container(
                 width: MediaQuery.of(context).size.width,
                 decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(topRight: Radius.circular(16),topLeft: Radius.circular(16)),
+                  borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(16),
+                      topLeft: Radius.circular(16)),
                   color: Colors.white,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Column(
                     children: [
-                      const SizedBox(height: 48,),
-                      Input(name: "E-mail", obscureText: false,onChange: email,),
-                      const SizedBox(height: 16,),
-                      InputPassword(onChange: senha,name: "Senha",),
+                      const SizedBox(
+                        height: 48,
+                      ),
+                      Input(
+                        name: "E-mail",
+                        obscureText: false,
+                        onChange: email,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      InputPassword(
+                        onChange: senha,
+                        name: "Senha",
+                      ),
                       // lascar os inputs
                       SizedBox(
                         width: MediaQuery.of(context).size.width,
@@ -148,18 +164,28 @@ class _LoginScreenState extends State<LoginScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
-                            TextButton(onPressed: (){
-                             context.pushReplacement("/esqueciSenha");
-                            }, child: Text("Esqueceu a senha?",style: GoogleFonts.poppins(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                              color: const Color(0xff474C51)
-                            ),))
+                            TextButton(
+                                onPressed: () {
+                                  context.pushReplacement("/esqueciSenha");
+                                },
+                                child: Text(
+                                  "Esqueceu a senha?",
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: const Color(0xff474C51)),
+                                ))
                           ],
                         ),
                       ),
-                      const SizedBox(height: 48,),
-                      BotaoAzul(text: "Entrar",onPressed: ()=> logar(),loading: carregando,),
+                      const SizedBox(
+                        height: 48,
+                      ),
+                      BotaoAzul(
+                        text: "Entrar",
+                        onPressed: () => logar(),
+                        loading: carregando,
+                      ),
                     ],
                   ),
                 ),

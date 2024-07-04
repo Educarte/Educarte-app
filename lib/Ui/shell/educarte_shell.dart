@@ -3,23 +3,18 @@ import 'dart:convert';
 import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
-import 'package:educarte/Ui/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../Interector/base/constants.dart';
-import '../../Interector/models/api_diaries.dart';
 import '../../Interector/models/document.dart';
 import '../../Interector/useCase/usesCase.dart';
-import '../../Interector/validations/convertter.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
 import '../components/input.dart';
-import '../global/global.dart';
 
 int selectedIndex = 0;
 
@@ -46,7 +41,7 @@ class _EducarteShellState extends State<EducarteShell> {
 
   Student dropdownValue = Student.empty();
   double iconSize = 30;
-  Overlay _overlay = Overlay(initialEntries: []);
+  final Overlay _overlay = const Overlay(initialEntries: []);
 
   bool loadingDownload = false;
   // void setLoading({required bool load}){

@@ -22,20 +22,20 @@ class EntryAndExitPage extends StatefulWidget {
   State<EntryAndExitPage> createState() => _EntryAndExitPageState();
 }
 
-enum Loadings {none,list}
+enum Loadings { none, list }
+
 class _EntryAndExitPageState extends State<EntryAndExitPage> {
   Loadings loading = Loadings.none;
   List<EntryAndExit> listAccess = [];
   String summary = "";
 
-
-  void setLoading({required Loadings load}){
+  void setLoading({required Loadings load}) {
     setState(() {
       loading = load;
     });
   }
 
-  Future<void> getAccessControls(DateTime startDate, DateTime? endDate)async{
+  Future<void> getAccessControls(DateTime startDate, DateTime? endDate) async {
     setLoading(load: Loadings.list);
     setState(() {
       summary = "";
@@ -44,113 +44,120 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
     var params = {
       'Id': currentStudent.value.id,
       "StartDate": DateFormat.yMd().format(startDate).toString(),
-      "EndDate": endDate == null ? DateFormat.yMd().format(startDate).toString() : DateFormat.yMd().format(endDate).toString()
+      "EndDate": endDate == null
+          ? DateFormat.yMd().format(startDate).toString()
+          : DateFormat.yMd().format(endDate).toString()
     };
-    print(idStudent);
-    var response = await http.get(Uri.parse("$baseUrl/Students/AccessControls/${currentStudent.value.id}").replace(queryParameters: params),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      },
+
+    var response = await http.get(
+      Uri.parse("$baseUrl/Students/AccessControls/${currentStudent.value.id}")
+          .replace(queryParameters: params),
+      headers: {"Authorization": "Bearer ${globals.token}"},
     );
-    print(response.body);
-    if(response.statusCode == 200){
+    if (response.statusCode == 200) {
       var decodeJson = jsonDecode(response.body);
-      if(!decodeJson["accessControlsByDate"].isEmpty) {
-        decodeJson["accessControlsByDate"].forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
+      if (!decodeJson["accessControlsByDate"].isEmpty) {
+        decodeJson["accessControlsByDate"]
+            .forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
         summary = decodeJson["summary"];
-        print(summary);
       }
     }
-    print(listAccess);
     setLoading(load: Loadings.none);
-    print(loading);
   }
-
 
   @override
   void initState() {
     super.initState();
-    getAccessControls(DateTime.now(),DateTime.now());
+    getAccessControls(DateTime.now(), DateTime.now());
   }
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-        body: Container(
-          width: screenWidth(context),
-          height: screenHeight(context),
-          color: colorScheme(context).background,
-          alignment: Alignment.center,
-          child: SafeArea(
-            child: Column(
-              children: [
-                CustomTableCalendar(
-                    paddingTop: 16,
-                    callback: (DateTime? startDate, DateTime? endDate) {
-                      if (endDate != null) {
-                        if (startDate != null && startDate.isAfter(endDate)) {
-                          DateTime temp = startDate;
-                          startDate = endDate;
-                          endDate = temp;
-                        }
+    return Scaffold(
+      body: Container(
+        width: screenWidth(context),
+        height: screenHeight(context),
+        color: colorScheme(context).background,
+        alignment: Alignment.center,
+        child: SafeArea(
+          child: Column(
+            children: [
+              CustomTableCalendar(
+                  paddingTop: 16,
+                  callback: (DateTime? startDate, DateTime? endDate) {
+                    if (endDate != null) {
+                      if (startDate != null && startDate.isAfter(endDate)) {
+                        DateTime temp = startDate;
+                        startDate = endDate;
+                        endDate = temp;
                       }
-                      getAccessControls(startDate!, endDate);
                     }
+                    getAccessControls(startDate!, endDate);
+                  }),
+              Container(
+                alignment: Alignment.center,
+                margin: const EdgeInsets.symmetric(vertical: 16),
+                height: 38,
+                color: colorScheme(context).primary.withOpacity(0.5),
+                child: listAccess.isEmpty
+                    ? Text(
+                        "Saldo de horas: +00h. 00Min",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme(context).onPrimary),
+                      )
+                    : Text(
+                        "Saldo de horas: +${summary.substring(0, 2)}h. ${summary.substring(3, 5)}Min",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme(context).onPrimary),
+                      ),
+              ),
+              if (loading == Loadings.list)
+                const Expanded(
+                  child: Center(child: CircularProgressIndicator()),
+                )
+              else
+                Expanded(
+                  child: listAccess.isEmpty
+                      ? const ResultNotFound(
+                          description:
+                              "Sem registro de entrada e saída desse aluno!",
+                          iconData: Symbols.error)
+                      : ListView.builder(
+                          padding:
+                              const EdgeInsets.only(top: 10, left: 8, right: 8),
+                          shrinkWrap: true,
+                          itemCount: listAccess.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CardEntryAndExit(
+                              date: DateFormat.yMMMMd('pt_BR').format(
+                                  DateTime.parse(
+                                      listAccess[index].date.toString())),
+                              horaEntrada: listAccess[index]
+                                  .accessControls![0]
+                                  .time
+                                  .toString(),
+                              horaSaida:
+                                  listAccess[index].accessControls!.length == 2
+                                      ? listAccess[index]
+                                          .accessControls![1]
+                                          .time
+                                          .toString()
+                                      : null,
+                              resumoDiario: listAccess[index]
+                                  .dailySummary
+                                  ?.substring(0, 8),
+                            );
+                          },
+                        ),
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.symmetric(vertical: 16),
-                  height: 38,
-                  color: colorScheme(context).primary.withOpacity(0.5),
-                  child: listAccess.isEmpty ?
-                  Text(
-                    "Saldo de horas: +00h. 00Min",
-                    style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme(context).onPrimary
-                    ),
-                  ):
-                  Text(
-                    "Saldo de horas: +${summary.substring(0,2)}h. ${summary.substring(3,5)}Min",
-                    style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme(context).onPrimary
-                    ),
-                  ),
-                ),
-                if(loading == Loadings.list)
-                  const Expanded(
-                    child: Center(
-                        child: CircularProgressIndicator()),
-                  )
-                else
-                  Expanded(
-                    child:listAccess.isEmpty ? const ResultNotFound(
-                        description: "Sem registro de entrada e saída desse aluno!",
-                        iconData: Symbols.error
-                    ) :
-                    ListView.builder(
-                      padding: const EdgeInsets.only(top: 10,left: 8,right: 8),
-                      shrinkWrap: true,
-                      itemCount: listAccess.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return CardEntryAndExit(
-                          date: DateFormat.yMMMMd('pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
-                          horaEntrada: listAccess[index].accessControls![0].time.toString(),
-                          horaSaida: listAccess[index].accessControls!.length == 2 ?
-                          listAccess[index].accessControls![1].time.toString():
-                          null,
-                          resumoDiario: listAccess[index].dailySummary?.substring(0,8),
-                        );
-                      },
-                    ),
-                  ),
-              ],
-            ),
+            ],
           ),
         ),
-      );
+      ),
+    );
   }
 }

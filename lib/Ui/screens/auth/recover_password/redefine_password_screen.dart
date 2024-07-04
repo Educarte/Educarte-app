@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:educarte/Interector/base/store.dart';
 import 'package:educarte/Interector/validations/validator.dart';
 import 'package:educarte/Services/config/api_config.dart';
-import 'package:educarte/Ui/screens/auth/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,9 +14,7 @@ import '../../../components/bnt_azul.dart';
 import '../../../components/input.dart';
 
 class RedefinePassword extends StatefulWidget {
-  const RedefinePassword({
-    super.key
-  });
+  const RedefinePassword({super.key});
 
   @override
   State<RedefinePassword> createState() => _RedefinePasswordState();
@@ -29,7 +26,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   bool carregando = false;
   bool firstAccess = globals.firstAccess;
 
-  void updatePasssword()async{
+  void updatePasssword() async {
     setState(() {
       carregando = true;
     });
@@ -39,19 +36,16 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       "confirmPassword": confirmarSenha.text
     };
 
-    var response = await http.post(Uri.parse("$baseUrl/Users/UpdateForgotPassword"),
-      body: jsonEncode(corpo),
-      headers: {
-        "Content-Type":"application/json"
-      }
-    );
-    print(corpo);
-    print(response.body);
-    if(response.statusCode == 200 && mounted){
+    var response = await http.post(
+        Uri.parse("$baseUrl/Users/UpdateForgotPassword"),
+        body: jsonEncode(corpo),
+        headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200 && mounted) {
       context.go("/login");
 
       Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
-    }else{
+    } else {
       setState(() {
         carregando = false;
       });
@@ -59,8 +53,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     }
   }
 
-  void updatePasswordFirstAcess()async{
-    print("oi");
+  void updatePasswordFirstAcess() async {
     setState(() {
       carregando = true;
     });
@@ -69,26 +62,25 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       "confirmPassword": confirmarSenha.text
     };
 
-    var response = await http.patch(Uri.parse("$baseUrl/Users/${globals.id}/ResetPassword"),
-      body: jsonEncode(corpo),
-      headers: {
-        "Content-Type":"application/json",
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
-    print(response.statusCode);
-    print(corpo);
-    if(response.statusCode == 200 && mounted){
+    var response = await http.patch(
+        Uri.parse("$baseUrl/Users/${globals.id}/ResetPassword"),
+        body: jsonEncode(corpo),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer ${globals.token}"
+        });
+
+    if (response.statusCode == 200 && mounted) {
       Map<String, dynamic> decodedToken = JwtDecoder.decode(globals.token!);
       int profile = globals.checkUserType(profileType: decodedToken["profile"]);
-      if(profile == 1) {
+      if (profile == 1) {
         context.go("/home");
-      }else{
+      } else {
         context.go("/timeControl");
       }
 
       Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
-    }else{
+    } else {
       setState(() {
         carregando = false;
       });
@@ -100,17 +92,23 @@ class _RedefinePasswordState extends State<RedefinePassword> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    print("primeiro acesso esta ${firstAccess}");
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffF5F5F5),
       appBar: AppBar(
-        leading: firstAccess ? null :IconButton(onPressed: (){
-          if(!firstAccess)
-          context.pushReplacement("/login");
-        }, icon:  const Icon(Symbols.close,color:Color(0xff474C51),)),
+        leading: firstAccess
+            ? null
+            : IconButton(
+                onPressed: () {
+                  if (!firstAccess) context.pushReplacement("/login");
+                },
+                icon: const Icon(
+                  Symbols.close,
+                  color: Color(0xff474C51),
+                )),
         backgroundColor: const Color(0xffF5F5F5),
       ),
       body: Padding(
@@ -122,44 +120,69 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               const SizedBox(
                 height: 132,
               ),
-              Icon(Symbols.password,color: const Color(0xff547B9A).withOpacity(0.7),size: 95,),
-              const SizedBox(height: 48,),
-              Text("REDEFINIR SENHA",style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.bold,
-                  fontSize:24,
-                  color: const Color(0xff474C51),
-                  height: 1.5
-              ),),
-              RichText(text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: "Insira e confirme a sua nova senha",
-                      style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w400,
-                          fontSize:14,
-                          color: const Color(0xff474C51)
-                      ),
-                    ),
-                  ]
-              )),
-              const SizedBox(height: 45,),
-              Input(name: "Nova Senha", obscureText: true,onChange: novaSenha,),
-              const SizedBox(height: 24,),
-              Input(name: "Confirmar nova senha", obscureText: true,onChange: confirmarSenha,),
-              const SizedBox(height: 85,),
-              BotaoAzul(text: "Continuar",onPressed: () {
-                String validate = ValidatorDataSent.validateConfirmPassword(password: novaSenha.text,confirmPassword: confirmarSenha.text);
-                if(validate.isEmpty){
-                  if(firstAccess){
-                    return updatePasswordFirstAcess();
+              Icon(
+                Symbols.password,
+                color: const Color(0xff547B9A).withOpacity(0.7),
+                size: 95,
+              ),
+              const SizedBox(
+                height: 48,
+              ),
+              Text(
+                "REDEFINIR SENHA",
+                style: GoogleFonts.poppins(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 24,
+                    color: const Color(0xff474C51),
+                    height: 1.5),
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                  text: "Insira e confirme a sua nova senha",
+                  style: GoogleFonts.poppins(
+                      fontWeight: FontWeight.w400,
+                      fontSize: 14,
+                      color: const Color(0xff474C51)),
+                ),
+              ])),
+              const SizedBox(
+                height: 45,
+              ),
+              Input(
+                name: "Nova Senha",
+                obscureText: true,
+                onChange: novaSenha,
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              Input(
+                name: "Confirmar nova senha",
+                obscureText: true,
+                onChange: confirmarSenha,
+              ),
+              const SizedBox(
+                height: 85,
+              ),
+              BotaoAzul(
+                text: "Continuar",
+                onPressed: () {
+                  String validate = ValidatorDataSent.validateConfirmPassword(
+                      password: novaSenha.text,
+                      confirmPassword: confirmarSenha.text);
+                  if (validate.isEmpty) {
+                    if (firstAccess) {
+                      return updatePasswordFirstAcess();
+                    }
+
+                    return updatePasssword();
+                  } else {
+                    Store().showErrorMessage(context, validate);
                   }
-
-                  return updatePasssword();
-                }else{
-                  Store().showErrorMessage(context, validate);
-                }
-
-              },loading: carregando,),
+                },
+                loading: carregando,
+              ),
             ],
           ),
         ),
