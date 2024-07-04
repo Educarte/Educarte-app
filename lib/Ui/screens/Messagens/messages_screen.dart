@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:educarte/Interector/base/constants.dart';
 import 'package:educarte/Ui/components/card_messages.dart';
+import 'package:educarte/Ui/components/custom_table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -12,7 +13,6 @@ import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/result_not_found.dart';
-import '../../components/table_calendar.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
 
