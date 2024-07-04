@@ -77,13 +77,11 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
         }
       } else {
         String errorMessage = "Erro ao confirmar entrada e saída!";
-        if (response.body != null) {
-          setState(() {
-            var decodeJson = jsonDecode(response.body);
-            errorMessage = decodeJson["description"];
-          });
-        }
-        Store().showErrorMessage(context, errorMessage);
+        setState(() {
+          var decodeJson = jsonDecode(response.body);
+          errorMessage = decodeJson["description"];
+        });
+              Store().showErrorMessage(context, errorMessage);
       }
     } catch (e) {
       setLoading(load: false);

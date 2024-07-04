@@ -544,7 +544,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       ? const SizedBox(
                           height: 500,
                           child: Center(
-                            child: const ResultNotFound(
+                            child: ResultNotFound(
                                 description: "Nenhum usuário encontrado!",
                                 iconData: Symbols.error),
                           ),
