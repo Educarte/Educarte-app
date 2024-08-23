@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
-import '../../../../Interector/base/store.dart';
+import '../../../../core/base/store.dart';
 import '../../../global/global.dart' as globals;
 
 import '../../../components/bnt_azul.dart';

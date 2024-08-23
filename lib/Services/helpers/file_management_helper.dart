@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import '../../Interector/base/store.dart';
+import '../../core/base/store.dart';
 import '../../Interector/models/document.dart';
 
 

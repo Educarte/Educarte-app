@@ -2,8 +2,8 @@
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../../../Interector/enum/persistence_enum.dart';
-import '../../../Interector/interfaces/persistence_interface.dart';
+import '../../../core/enum/persistence_enum.dart';
+import '../../interfaces/persistence_interface.dart';
 
 class PersistenceRepository implements IPersistence {
   static const _storage = FlutterSecureStorage();

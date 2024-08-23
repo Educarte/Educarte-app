@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/global/global.dart';
 import 'package:educarte/Ui/global/global.dart' as globals;
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
@@ -10,7 +12,7 @@ import '../../Services/config/api_config.dart';
 import '../models/api_diaries.dart';
 import '../validations/convertter.dart';
 
-class UseCaseStudent {
+class StudentUseCase {
   static Future<Student> getStudentId(String idStudent) async {
     Student student = Student(listDiaries: List.empty(growable: true));
 
@@ -55,7 +57,7 @@ class UseCaseStudent {
     }
   }
 
-  static Future<void> getStudentsReset() async {
+  static Future<void> getStudentsReset({required BuildContext context}) async {
     try {
       globals.listStudent.value.clear();
 
@@ -69,6 +71,8 @@ class UseCaseStudent {
             jsonData["items"].map<Student>((e) => Student.fromJson(e)).toList();
         globals.listStudent.value = newListStudent;
       }
-    } catch (e) {}
+    } catch (e) {
+      Store().showErrorMessage(context, "Erro ao tentar buscar alunos!");
+    }
   }
 }

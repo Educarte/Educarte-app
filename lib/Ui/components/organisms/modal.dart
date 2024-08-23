@@ -2,7 +2,7 @@ import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/organisms/confirm_entry_or_exit_modal.dart';
 import 'package:flutter/material.dart';
 
-import '../../../Interector/enum/modal_type_enum.dart';
+import '../../../core/enum/modal_type_enum.dart';
 import '../../../Interector/models/document.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
 import 'file_modal.dart';

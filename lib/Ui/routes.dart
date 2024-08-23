@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/search_by_voice.dart';

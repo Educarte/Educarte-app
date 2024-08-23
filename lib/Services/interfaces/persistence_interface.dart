@@ -1,4 +1,4 @@
-import '../enum/persistence_enum.dart';
+import '../../core/enum/persistence_enum.dart';
 
 abstract class IPersistence {
   Future<void> update({required SecureKey key, required String value});

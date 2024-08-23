@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-import '../../Interector/base/constants.dart';
+import '../../core/base/constants.dart';
 
 class CustomTableCalendar extends StatefulWidget {
   const CustomTableCalendar(

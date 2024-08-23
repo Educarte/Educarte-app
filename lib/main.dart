@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import 'Interector/interfaces/persistence_interface.dart';
+import 'Services/interfaces/persistence_interface.dart';
 import 'Services/config/repositories/persistence_repository.dart';
 import 'Ui/screens/my_app.dart';
 

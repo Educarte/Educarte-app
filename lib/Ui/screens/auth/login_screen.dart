@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/store.dart';
-import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/core/base/store.dart';
+import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

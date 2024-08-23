@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/constants.dart';
-import 'package:educarte/Interector/enum/persistence_enum.dart';
+import 'package:educarte/core/base/constants.dart';
+import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/components/input.dart';

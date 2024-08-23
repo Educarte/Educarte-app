@@ -130,7 +130,4 @@ class Student{
 
     return data;
   }
-
-  @override
-  List<Object> get props => [id ?? ""];
 }

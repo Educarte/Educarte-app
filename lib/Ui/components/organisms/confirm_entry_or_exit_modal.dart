@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/store.dart';
-import 'package:educarte/Interector/enum/input_type.dart';
-import 'package:educarte/Interector/enum/modal_type_enum.dart';
+import 'package:educarte/core/base/store.dart';
+import 'package:educarte/core/enum/input_type.dart';
+import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Interector/useCase/usesCase.dart';
+import 'package:educarte/Interector/useCase/student_use_case.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/molecules/modal_application_bar.dart';
@@ -14,7 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../../../Interector/base/constants.dart';
+import '../../../core/base/constants.dart';
 import '../../../Services/config/api_config.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
 import '../bnt_azul.dart';
@@ -60,28 +60,32 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       setLoading(load: true);
       Map corpo = {};
       var response = await http.post(
-          Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
-          headers: {
-            "Authorization": "Bearer $token",
-            "Content-Type": "application/json"
-          },
-          body: jsonEncode(corpo));
+        Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(corpo)
+      );
       setLoading(load: false);
-      context.pop();
+      
+      if(context.mounted) context.pop();
+
       if (response.statusCode == 200) {
         if (widget.modalType == ModalType.confirmEntry) {
-          Store()
-              .showSuccessMessage(context, "Entrada confirmada com sucesso!");
+          Store() .showSuccessMessage(context, "Entrada confirmada com sucesso!");
         } else {
           Store().showSuccessMessage(context, "Saída confirmada com sucesso!");
         }
       } else {
         String errorMessage = "Erro ao confirmar entrada e saída!";
+
         setState(() {
           var decodeJson = jsonDecode(response.body);
           errorMessage = decodeJson["description"];
         });
-              Store().showErrorMessage(context, errorMessage);
+        
+        Store().showErrorMessage(context, errorMessage);
       }
     } catch (e) {
       setLoading(load: false);
@@ -120,15 +124,16 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
                   inputType: InputType.date,
                   onChange: _date),
               Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 32),
-                  child: widget.cardTimeControl),
+                padding: const EdgeInsets.symmetric(vertical: 32),
+                child: widget.cardTimeControl
+              ),
               BotaoAzul(
                 text: "Registrar horário",
                 onPressed: () async {
                   await registerHour();
-                  await UseCaseStudent.getStudentsReset();
-                },
-                // onPressed: () => registerHour(),
+
+                  if(context.mounted) await StudentUseCase.getStudentsReset(context: context);
+                }
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16),

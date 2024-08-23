@@ -8,9 +8,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../Interector/base/constants.dart';
+import '../../core/base/constants.dart';
 import '../../Interector/models/document.dart';
-import '../../Interector/useCase/usesCase.dart';
+import '../../Interector/useCase/student_use_case.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
@@ -41,30 +41,22 @@ class _EducarteShellState extends State<EducarteShell> {
 
   Student dropdownValue = Student.empty();
   double iconSize = 30;
-  final Overlay _overlay = const Overlay(initialEntries: []);
-
   bool loadingDownload = false;
-  // void setLoading({required bool load}){
-  //   setState(() {
-  //     loading = load;
-  //   });
-  // }
 
   String id = "";
   void getStudents() async{
     bool first = true;
 
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
-        headers: {
-          "Authorization": "Bearer ${globals.token}"
-        }
+      headers: {
+        "Authorization": "Bearer ${globals.token}"
+      }
     );
 
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
 
       setState(() {
-
         for(var i=0;i < jsonData["items"].length; i++){
           Student newStudent = Student.fromJson(jsonData["items"][i]);
           students.add(newStudent);
@@ -137,9 +129,6 @@ class _EducarteShellState extends State<EducarteShell> {
 
   }
 
-  Future<bool> _onWillPop() async {
-    return false;
-  }
   Widget selectedIcon({
     required IconData icon,
     required double iconSize,
@@ -331,14 +320,20 @@ class _EducarteShellState extends State<EducarteShell> {
                     const SizedBox(height: 16,),
                     Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
                     const SizedBox(height: 32,),
-                    BotaoAzul(text: "Atualizar informações",onPressed: ()async{
-                      globals.currentStudent.value = Student.empty();
-                      globals.currentStudent.value = await UseCaseStudent.getStudentId(dropdownValue.id!);
-                      Navigator.pop(context);
+                    BotaoAzul(
+                      text: "Atualizar informações",
+                      onPressed: () async{
+                        globals.currentStudent.value = Student.empty();
+                        globals.currentStudent.value = await StudentUseCase.getStudentId(dropdownValue.id!);
 
-                      globals.updateHomeScreen = true;
-                      _ontItemTapped(2, context);
-                    },)
+                        if(context.mounted){
+                          Navigator.pop(context);
+
+                          globals.updateHomeScreen = true;
+                          _ontItemTapped(2, context);
+                        } 
+                      }
+                    )
                   ],
                 ),
               ),

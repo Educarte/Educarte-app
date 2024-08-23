@@ -1,9 +1,9 @@
-import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/core/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../Interector/enum/input_type.dart';
+import '../../core/enum/input_type.dart';
 import '../../Interector/masks/date_mask.dart';
 import '../../Interector/masks/hour_mask.dart';
 

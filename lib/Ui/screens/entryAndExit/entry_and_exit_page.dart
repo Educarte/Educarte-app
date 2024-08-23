@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/Interector/models/entry_and_exit_modal.dart';
 import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/Ui/components/custom_table_calendar.dart';

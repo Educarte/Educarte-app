@@ -1,6 +1,7 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/core/base/constants.dart';
+import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Ui/components/card_messages.dart';
 import 'package:educarte/Ui/components/custom_table_calendar.dart';
 import 'package:flutter/material.dart';
@@ -103,7 +104,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
         setLoading(load: Loadings.none);
       }
-    } catch (e) {}
+    } catch (e) {
+      Store().showErrorMessage(context, "Erro ao tentar carregar recados!");
+    }
   }
 
   @override

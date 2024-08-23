@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:educarte/Interector/base/store.dart';
+import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Interector/validations/validator.dart';
 import 'package:educarte/Services/config/api_config.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +49,8 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       setState(() {
         carregando = false;
       });
+      
+      
       Store().showErrorMessage(context, "Erro ao tentar redefinir senha!");
     }
   }
@@ -84,13 +86,13 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       setState(() {
         carregando = false;
       });
+
       Store().showErrorMessage(context, "Erro ao tentar redefinir senha!");
     }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 

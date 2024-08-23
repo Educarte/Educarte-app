@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../Interector/base/constants.dart';
+import '../../core/base/constants.dart';
 
 class CustomSearchInput extends StatefulWidget {
   const CustomSearchInput({

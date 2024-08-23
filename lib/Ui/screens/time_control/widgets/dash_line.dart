@@ -1,4 +1,4 @@
-import 'package:educarte/Interector/base/constants.dart';
+import 'package:educarte/core/base/constants.dart';
 import 'package:flutter/material.dart';
 
 class DashedLine extends StatelessWidget {

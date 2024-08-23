@@ -9,8 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Interector/base/constants.dart';
-import '../../../Interector/enum/persistence_enum.dart';
+import '../../../core/base/constants.dart';
+import '../../../core/enum/persistence_enum.dart';
 import '../../../Interector/models/document.dart';
 import '../../../Interector/models/students_model.dart';
 import '../../../Services/config/api_config.dart';

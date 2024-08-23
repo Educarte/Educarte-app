@@ -1,6 +1,6 @@
-import 'package:educarte/Interector/base/constants.dart';
-import 'package:educarte/Interector/base/store.dart';
-import 'package:educarte/Interector/enum/modal_type_enum.dart';
+import 'package:educarte/core/base/constants.dart';
+import 'package:educarte/core/base/store.dart';
+import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Interector/models/classroom_model.dart';
 import 'package:educarte/Interector/models/legal_guardians_model.dart';
 import 'package:educarte/Interector/models/students_model.dart';
