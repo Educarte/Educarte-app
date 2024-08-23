@@ -83,26 +83,28 @@ class _EducarteShellState extends State<EducarteShell> {
     if(response.statusCode == 200){
       var jsonData = jsonDecode(response.body);
 
-      setState(() {
-        var listTeachers = jsonData["classroom"]["teachers"];
-        if(listTeachers.length != 0){
-          for(var i=0; i< listTeachers.length; i++){
-            if(listTeachers[i]["profile"] == 3){
-              responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
-            }
-            if(listTeachers[i]["profile"] == 2){
-              responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
+      if(jsonData["classroom"] != null){
+        setState(() {
+          var listTeachers = jsonData["classroom"]["teachers"];
+          if(listTeachers.length != 0){
+            for(var i=0; i< listTeachers.length; i++){
+              if(listTeachers[i]["profile"] == 3){
+                responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
+              }
+              if(listTeachers[i]["profile"] == 2){
+                responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
+              }
             }
           }
-        }
-        globals.idStudent = jsonData["id"];
-        if(jsonData["classroom"]["teachers"].isNotEmpty){
-          responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
-        }
-        sala.text = jsonData["classroom"]["name"];
-        globals.nomeSala = jsonData["classroom"]["name"];
-        globals.nomeAluno = jsonData["name"];
-      });
+          globals.idStudent = jsonData["id"];
+          if(jsonData["classroom"]["teachers"].isNotEmpty){
+            responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
+          }
+          sala.text = jsonData["classroom"]["name"];
+          globals.nomeSala = jsonData["classroom"]["name"];
+          globals.nomeAluno = jsonData["name"];
+        });
+      }
     }
   }
 

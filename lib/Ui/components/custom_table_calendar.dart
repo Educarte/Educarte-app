@@ -34,6 +34,13 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
   }
 
   void showCalendar({required DateTime init, required DateTime last}) {
+    Color iconColor = colorScheme(context).outline;
+    double iconSize = 24;
+    TextStyle controlsTextStyle = textTheme(context).bodyLarge!.copyWith(
+      color: iconColor,
+      fontWeight: FontWeight.w700
+    );
+
     showCalendarDatePicker2Dialog(
         context: context,
         dialogSize: const Size(325, 400),
@@ -41,12 +48,28 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
         config: CalendarDatePicker2WithActionButtonsConfig(
           firstDayOfWeek: 1,
           calendarType: CalendarDatePicker2Type.range,
-          selectedDayTextStyle: textTheme(context)
-              .displayLarge!
-              .copyWith(color: colorScheme(context).onSurface),
-          selectedDayHighlightColor: Colors.purple[800],
+          weekdayLabelTextStyle: controlsTextStyle,
+          yearTextStyle: controlsTextStyle.copyWith(
+            fontWeight: FontWeight.w500
+          ),
+          nextMonthIcon: Icon(
+            Icons.arrow_forward_ios,
+            size: iconSize,
+            color: iconColor
+          ),
+          lastMonthIcon: Icon(
+            Icons.arrow_back_ios,
+            size: iconSize,
+            color: iconColor
+          ),
+          controlsTextStyle: controlsTextStyle,
+          selectedDayTextStyle: controlsTextStyle.copyWith(
+            color: colorScheme(context).onSurface
+          ),
+          dayTextStyle: TextStyle(color: colorScheme(context).onInverseSurface),
+          selectedDayHighlightColor: colorScheme(context).primary,
           centerAlignModePicker: true,
-          customModePickerIcon: const SizedBox(),
+          customModePickerIcon: const SizedBox()
         ),
         value: const []).then((value) {
       if (value == null) {

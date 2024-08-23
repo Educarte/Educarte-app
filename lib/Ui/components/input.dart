@@ -59,7 +59,7 @@ class _InputState extends State<Input> {
               if(widget.inputType == InputType.hour) HourMask(),
               if(widget.inputType == InputType.hour) LengthLimitingTextInputFormatter(5)
             ],
-             obscureText: isPassword ? showPassword.value : false,
+            obscureText: isPassword ? showPassword.value : false,
             cursorColor: const Color(0xff547B9A),
             controller: widget.onChange,
             style: GoogleFonts.poppins(
@@ -72,7 +72,7 @@ class _InputState extends State<Input> {
                 onPressed: () => showPassword.value = !showPassword.value,
                 icon: Icon(
                   !showPassword.value ? Icons.remove_red_eye_outlined : Icons.remove_red_eye,
-                  color: colorScheme(context).outlineVariant
+                  color: colorScheme(context).outline
                 ),
               ),
               labelText: widget.name,

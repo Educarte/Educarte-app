@@ -85,17 +85,17 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
             child: Column(
               children: [
                 CustomTableCalendar(
-                    paddingTop: 16,
-                    callback: (DateTime? startDate, DateTime? endDate) {
-                      if (endDate != null) {
-                        if (startDate != null && startDate.isAfter(endDate)) {
-                          DateTime temp = startDate;
-                          startDate = endDate;
-                          endDate = temp;
-                        }
+                  paddingTop: 16,
+                  callback: (DateTime? startDate, DateTime? endDate) {
+                    if (endDate != null) {
+                      if (startDate != null && startDate.isAfter(endDate)) {
+                        DateTime temp = startDate;
+                        startDate = endDate;
+                        endDate = temp;
                       }
-                      getAccessControls(startDate!, endDate);
-                    }),
+                    }
+                    getAccessControls(startDate!, endDate);
+                  }),
                 Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.symmetric(vertical: 16),

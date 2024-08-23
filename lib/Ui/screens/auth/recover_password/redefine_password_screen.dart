@@ -165,7 +165,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
                 name: "Confirmar nova senha",
                 inputType: InputType.password,
                 obscureText: true,
-                onChange: confirmarSenha,
+                onChange: confirmarSenha
               ),
               const SizedBox(
                 height: 85,

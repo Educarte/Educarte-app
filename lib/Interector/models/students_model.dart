@@ -84,7 +84,7 @@ class Student{
     time = json['time'];
     status = json['status'];
     birthDate = json['birthDate'];
-    classrooms = Classroom.fromJson(json['classroom']);
+    classrooms = json['classroom'] != null ? Classroom.fromJson(json['classroom']) : null;
     legalGuardian = LegalGuardian.fromJson(json['legalGuardian']);
     if (json['contratedHours'] != null) {
       contratedHours = [];
