@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../components/custom_pop_scope.dart';
 import '../../components/result_not_found.dart';
 import '../../global/global.dart';
 import 'package:http/http.dart' as http;
@@ -73,88 +74,90 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        width: screenWidth(context),
-        height: screenHeight(context),
-        color: colorScheme(context).background,
-        alignment: Alignment.center,
-        child: SafeArea(
-          child: Column(
-            children: [
-              CustomTableCalendar(
-                  paddingTop: 16,
-                  callback: (DateTime? startDate, DateTime? endDate) {
-                    if (endDate != null) {
-                      if (startDate != null && startDate.isAfter(endDate)) {
-                        DateTime temp = startDate;
-                        startDate = endDate;
-                        endDate = temp;
+    return CustomPopScope(
+      child: Scaffold(
+        body: Container(
+          width: screenWidth(context),
+          height: screenHeight(context),
+          color: colorScheme(context).surface,
+          alignment: Alignment.center,
+          child: SafeArea(
+            child: Column(
+              children: [
+                CustomTableCalendar(
+                    paddingTop: 16,
+                    callback: (DateTime? startDate, DateTime? endDate) {
+                      if (endDate != null) {
+                        if (startDate != null && startDate.isAfter(endDate)) {
+                          DateTime temp = startDate;
+                          startDate = endDate;
+                          endDate = temp;
+                        }
                       }
-                    }
-                    getAccessControls(startDate!, endDate);
-                  }),
-              Container(
-                alignment: Alignment.center,
-                margin: const EdgeInsets.symmetric(vertical: 16),
-                height: 38,
-                color: colorScheme(context).primary.withOpacity(0.5),
-                child: listAccess.isEmpty
-                    ? Text(
-                        "Saldo de horas: +00h. 00Min",
-                        style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme(context).onPrimary),
-                      )
-                    : Text(
-                        "Saldo de horas: +${summary.substring(0, 2)}h. ${summary.substring(3, 5)}Min",
-                        style: GoogleFonts.poppins(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme(context).onPrimary),
-                      ),
-              ),
-              if (loading == Loadings.list)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
-                )
-              else
-                Expanded(
+                      getAccessControls(startDate!, endDate);
+                    }),
+                Container(
+                  alignment: Alignment.center,
+                  margin: const EdgeInsets.symmetric(vertical: 16),
+                  height: 38,
+                  color: colorScheme(context).primary.withOpacity(0.5),
                   child: listAccess.isEmpty
-                      ? const ResultNotFound(
-                          description:
-                              "Sem registro de entrada e saída desse aluno!",
-                          iconData: Symbols.error)
-                      : ListView.builder(
-                          padding:
-                              const EdgeInsets.only(top: 10, left: 8, right: 8),
-                          shrinkWrap: true,
-                          itemCount: listAccess.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return CardEntryAndExit(
-                              date: DateFormat.yMMMMd('pt_BR').format(
-                                  DateTime.parse(
-                                      listAccess[index].date.toString())),
-                              horaEntrada: listAccess[index]
-                                  .accessControls![0]
-                                  .time
-                                  .toString(),
-                              horaSaida:
-                                  listAccess[index].accessControls!.length == 2
-                                      ? listAccess[index]
-                                          .accessControls![1]
-                                          .time
-                                          .toString()
-                                      : null,
-                              resumoDiario: listAccess[index]
-                                  .dailySummary
-                                  ?.substring(0, 8),
-                            );
-                          },
+                      ? Text(
+                          "Saldo de horas: +00h. 00Min",
+                          style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: colorScheme(context).onPrimary),
+                        )
+                      : Text(
+                          "Saldo de horas: +${summary.substring(0, 2)}h. ${summary.substring(3, 5)}Min",
+                          style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: colorScheme(context).onPrimary),
                         ),
                 ),
-            ],
+                if (loading == Loadings.list)
+                  const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else
+                  Expanded(
+                    child: listAccess.isEmpty
+                        ? const ResultNotFound(
+                            description:
+                                "Sem registro de entrada e saída desse aluno!",
+                            iconData: Symbols.error)
+                        : ListView.builder(
+                            padding:
+                                const EdgeInsets.only(top: 10, left: 8, right: 8),
+                            shrinkWrap: true,
+                            itemCount: listAccess.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CardEntryAndExit(
+                                date: DateFormat.yMMMMd('pt_BR').format(
+                                    DateTime.parse(
+                                        listAccess[index].date.toString())),
+                                horaEntrada: listAccess[index]
+                                    .accessControls![0]
+                                    .time
+                                    .toString(),
+                                horaSaida:
+                                    listAccess[index].accessControls!.length == 2
+                                        ? listAccess[index]
+                                            .accessControls![1]
+                                            .time
+                                            .toString()
+                                        : null,
+                                resumoDiario: listAccess[index]
+                                    .dailySummary
+                                    ?.substring(0, 8),
+                              );
+                            },
+                          ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

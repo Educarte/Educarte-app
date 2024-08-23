@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Ui/components/card_messages.dart';
@@ -123,272 +124,274 @@ class _MessagesScreenState extends State<MessagesScreen> {
     if (loading == Loadings.initial) {
       return const Center(child: CircularProgressIndicator());
     } else {
-      return Scaffold(
-        body: SafeArea(
-          child: Container(
-            width: screenWidth(context),
-            height: screenHeight(context),
-            color: colorScheme(context).background,
-            alignment: Alignment.center,
-            child: Column(
-              children: [
-                CustomTableCalendar(
-                  paddingTop: 16,
-                  callback: (DateTime? startDate, DateTime? endDate) {
-                    if (endDate != null) {
-                      if (startDate != null && startDate.isAfter(endDate)) {
-                        DateTime temp = startDate;
-                        startDate = endDate;
-                        endDate = temp;
+      return CustomPopScope(
+        child: Scaffold(
+          body: SafeArea(
+            child: Container(
+              width: screenWidth(context),
+              height: screenHeight(context),
+              color: colorScheme(context).surface,
+              alignment: Alignment.center,
+              child: Column(
+                children: [
+                  CustomTableCalendar(
+                    paddingTop: 16,
+                    callback: (DateTime? startDate, DateTime? endDate) {
+                      if (endDate != null) {
+                        if (startDate != null && startDate.isAfter(endDate)) {
+                          DateTime temp = startDate;
+                          startDate = endDate;
+                          endDate = temp;
+                        }
                       }
-                    }
-                    diaryId(startDate!, endDate);
-                  },
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                if (loading == Loadings.list)
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else
-                  Expanded(
-                    child: listDiaries.isEmpty
-                        ? const ResultNotFound(
-                            description:
-                                "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
-                            iconData: Symbols.diagnosis)
-                        : ListView.builder(
-                            padding: const EdgeInsets.only(
-                                top: 10, right: 8, left: 8),
-                            shrinkWrap: true,
-                            itemCount: listDiaries.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                width: screenWidth(context),
-                                margin: const EdgeInsets.only(
-                                    bottom: 16, left: 8, right: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: colorScheme(context).onPrimary,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
-                                      spreadRadius: 0,
-                                      blurRadius: 4,
-                                      offset: const Offset(
-                                          0, 4), // changes position of shadow
-                                    ),
-                                  ],
-                                ),
-                                alignment: Alignment.center,
-                                child: Column(
-                                  children: [
-                                    if (listDiaries[index].diaryType == 2)
-                                      CardMessages(
-                                          encaminhado: "ESCOLA",
-                                          color:
-                                              colorScheme(context).onSecondary,
-                                          assets: "assets/imgRecados1.png"),
-                                    if (listDiaries[index].diaryType == 1)
-                                      CardMessages(
-                                          encaminhado: globals.nomeSala
-                                              .toString()
-                                              .toUpperCase(),
-                                          color: colorScheme(context).primary,
-                                          assets: "assets/imgRecados2.png"),
-                                    if (listDiaries[index].diaryType == 0)
-                                      CardMessages(
-                                          encaminhado: globals.nomeAluno
-                                              .toString()
-                                              .toUpperCase(),
-                                          color: colorScheme(context).secondary,
-                                          assets: "assets/imgRecados3.png"),
-                                    Container(
-                                      width: screenWidth(context),
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 12, vertical: 12),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              listDiaries[index]
-                                                  .description
-                                                  .toString(),
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400),
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            const SizedBox(
-                                              height: 15,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      "Atenciosamente,",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                    ),
-                                                    Text(
-                                                      "A Direção",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 14,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w400),
-                                                    ),
-                                                  ],
-                                                ),
-                                                if (listDiaries[index]
-                                                        .fileUri !=
-                                                    "null")
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      showModalBottomSheet(
-                                                        isDismissible: false,
-                                                        useRootNavigator: true,
-                                                        context: context,
-                                                        backgroundColor: Colors
-                                                            .black
-                                                            .withOpacity(0.3),
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return Container(
-                                                            width: screenWidth(
-                                                                context),
-                                                            height: 277,
-                                                            decoration: BoxDecoration(
-                                                                color: colorScheme(
-                                                                        context)
-                                                                    .onBackground,
-                                                                borderRadius: const BorderRadius
-                                                                    .only(
-                                                                    topRight: Radius
-                                                                        .circular(
-                                                                            8),
-                                                                    topLeft: Radius
-                                                                        .circular(
-                                                                            8))),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16,
-                                                                      vertical:
-                                                                          16),
-                                                              child: Column(
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      IconButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          icon:
-                                                                              Icon(
-                                                                            Symbols.close,
-                                                                            color:
-                                                                                colorScheme(context).surface,
-                                                                          )),
-                                                                      Text(
-                                                                        "Arquivo em PDF",
-                                                                        style: GoogleFonts.poppins(
-                                                                            fontSize:
-                                                                                22,
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            color: colorScheme(context).surface),
-                                                                      )
-                                                                    ],
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 32,
-                                                                  ),
-                                                                  BotaoAzul(
-                                                                    text:
-                                                                        "Visualizar",
-                                                                    onPressed:
-                                                                        () {
-                                                                      if (loadingDownload ==
-                                                                          false) {
-                                                                        FileManagement.launchUri(
-                                                                            link:
-                                                                                listDiaries[index].fileUri.toString(),
-                                                                            context: context);
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 16,
-                                                                  ),
-                                                                  const BotaoBranco(
-                                                                      text:
-                                                                          "Baixar"),
-                                                                  const SizedBox(
-                                                                    height: 16,
-                                                                  ),
-                                                                  const BotaoBranco(
-                                                                      text:
-                                                                          "Compartilhar"),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Container(
-                                                      width: 36,
-                                                      height: 36,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color:
-                                                            colorScheme(context)
-                                                                .secondary,
-                                                      ),
-                                                      alignment:
-                                                          Alignment.center,
-                                                      child: Icon(
-                                                        Symbols.attach_file,
-                                                        color:
-                                                            colorScheme(context)
-                                                                .surface,
-                                                        size: 20,
-                                                      ),
-                                                    ),
-                                                  )
-                                              ],
-                                            )
-                                          ],
-                                        ),
+                      diaryId(startDate!, endDate);
+                    },
+                  ),
+                  const SizedBox(
+                    height: 16,
+                  ),
+                  if (loading == Loadings.list)
+                    const Expanded(
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else
+                    Expanded(
+                      child: listDiaries.isEmpty
+                          ? const ResultNotFound(
+                              description:
+                                  "O dia passou tranquilo por aqui, sem recados. Mas agradecemos por lembrar de nós!",
+                              iconData: Symbols.diagnosis)
+                          : ListView.builder(
+                              padding: const EdgeInsets.only(
+                                  top: 10, right: 8, left: 8),
+                              shrinkWrap: true,
+                              itemCount: listDiaries.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Container(
+                                  width: screenWidth(context),
+                                  margin: const EdgeInsets.only(
+                                      bottom: 16, left: 8, right: 8),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: colorScheme(context).onPrimary,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.3),
+                                        spreadRadius: 0,
+                                        blurRadius: 4,
+                                        offset: const Offset(
+                                            0, 4), // changes position of shadow
                                       ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            },
-                          ),
-                  )
-              ],
+                                    ],
+                                  ),
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    children: [
+                                      if (listDiaries[index].diaryType == 2)
+                                        CardMessages(
+                                            encaminhado: "ESCOLA",
+                                            color:
+                                                colorScheme(context).onSecondary,
+                                            assets: "assets/imgRecados1.png"),
+                                      if (listDiaries[index].diaryType == 1)
+                                        CardMessages(
+                                            encaminhado: globals.nomeSala
+                                                .toString()
+                                                .toUpperCase(),
+                                            color: colorScheme(context).primary,
+                                            assets: "assets/imgRecados2.png"),
+                                      if (listDiaries[index].diaryType == 0)
+                                        CardMessages(
+                                            encaminhado: globals.nomeAluno
+                                                .toString()
+                                                .toUpperCase(),
+                                            color: colorScheme(context).secondary,
+                                            assets: "assets/imgRecados3.png"),
+                                      Container(
+                                        width: screenWidth(context),
+                                        alignment: Alignment.centerLeft,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 12, vertical: 12),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                listDiaries[index]
+                                                    .description
+                                                    .toString(),
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w400),
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        "Atenciosamente,",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                      ),
+                                                      Text(
+                                                        "A Direção",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  if (listDiaries[index]
+                                                          .fileUri !=
+                                                      "null")
+                                                    GestureDetector(
+                                                      onTap: () {
+                                                        showModalBottomSheet(
+                                                          isDismissible: false,
+                                                          useRootNavigator: true,
+                                                          context: context,
+                                                          backgroundColor: Colors
+                                                              .black
+                                                              .withOpacity(0.3),
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return Container(
+                                                              width: screenWidth(
+                                                                  context),
+                                                              height: 277,
+                                                              decoration: BoxDecoration(
+                                                                  color: colorScheme(
+                                                                          context)
+                                                                      .onSurface,
+                                                                  borderRadius: const BorderRadius
+                                                                      .only(
+                                                                      topRight: Radius
+                                                                          .circular(
+                                                                              8),
+                                                                      topLeft: Radius
+                                                                          .circular(
+                                                                              8))),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .symmetric(
+                                                                        horizontal:
+                                                                            16,
+                                                                        vertical:
+                                                                            16),
+                                                                child: Column(
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        IconButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              Navigator.pop(context);
+                                                                            },
+                                                                            icon:
+                                                                                Icon(
+                                                                              Symbols.close,
+                                                                              color:
+                                                                                  colorScheme(context).onInverseSurface,
+                                                                            )),
+                                                                        Text(
+                                                                          "Arquivo em PDF",
+                                                                          style: GoogleFonts.poppins(
+                                                                              fontSize:
+                                                                                  22,
+                                                                              fontWeight:
+                                                                                  FontWeight.w600,
+                                                                              color: colorScheme(context).onInverseSurface),
+                                                                        )
+                                                                      ],
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 32,
+                                                                    ),
+                                                                    BotaoAzul(
+                                                                      text:
+                                                                          "Visualizar",
+                                                                      onPressed:
+                                                                          () {
+                                                                        if (loadingDownload ==
+                                                                            false) {
+                                                                          FileManagement.launchUri(
+                                                                              link:
+                                                                                  listDiaries[index].fileUri.toString(),
+                                                                              context: context);
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                    const SizedBox(
+                                                                      height: 16,
+                                                                    ),
+                                                                    const BotaoBranco(
+                                                                        text:
+                                                                            "Baixar"),
+                                                                    const SizedBox(
+                                                                      height: 16,
+                                                                    ),
+                                                                    const BotaoBranco(
+                                                                        text:
+                                                                            "Compartilhar"),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      child: Container(
+                                                        width: 36,
+                                                        height: 36,
+                                                        decoration: BoxDecoration(
+                                                          shape: BoxShape.circle,
+                                                          color:
+                                                              colorScheme(context)
+                                                                  .secondary,
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Icon(
+                                                          Symbols.attach_file,
+                                                          color:
+                                                              colorScheme(context)
+                                                                  .onInverseSurface,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                    )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                    )
+                ],
+              ),
             ),
           ),
         ),

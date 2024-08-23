@@ -17,6 +17,7 @@ import 'package:http/http.dart' as http;
 import '../components/input.dart';
 
 int selectedIndex = 0;
+int? previousIndex;
 
 class EducarteShell extends StatefulWidget {
   const EducarteShell({
@@ -107,6 +108,7 @@ class _EducarteShellState extends State<EducarteShell> {
 
   void changeSelectedIndex(int index){
     setState(() {
+      previousIndex = selectedIndex;
       selectedIndex = index;
     });
   }
@@ -241,7 +243,7 @@ class _EducarteShellState extends State<EducarteShell> {
               width: screenWidth(context),
               height: 465,
               decoration: BoxDecoration(
-                  color: colorScheme(context).onBackground,
+                  color: colorScheme(context).onSurface,
                   borderRadius: const BorderRadius.only(topRight: Radius.circular(8),topLeft: Radius.circular(8))
               ),
               child: Padding(
@@ -254,11 +256,11 @@ class _EducarteShellState extends State<EducarteShell> {
                           _ontItemTapped(pageIndex, context);
 
                           Navigator.pop(context);
-                        }, icon: Icon(Symbols.close,color: colorScheme(context).surface,)),
+                        }, icon: Icon(Symbols.close,color: colorScheme(context).onInverseSurface,)),
                         Text("Trocar Guarda",style: GoogleFonts.poppins(
                             fontSize: 22,
                             fontWeight: FontWeight.w600,
-                            color: colorScheme(context).surface
+                            color: colorScheme(context).onInverseSurface
                         ),)
                       ],
                     ),
@@ -314,11 +316,11 @@ class _EducarteShellState extends State<EducarteShell> {
                       ),
                     ),
                     const SizedBox(height: 16,),
-                    Input(name: "Sala", obscureText: false, onChange: sala),
+                    Input(name: "Sala", onChange: sala),
                     const SizedBox(height: 16,),
-                    Input(name: "Responsável pela sala", obscureText: false, onChange: responsavel),
+                    Input(name: "Responsável pela sala", onChange: responsavel),
                     const SizedBox(height: 16,),
-                    Input(name: "Auxiliar", obscureText: false, onChange: auxiliar),
+                    Input(name: "Auxiliar", onChange: auxiliar),
                     const SizedBox(height: 32,),
                     BotaoAzul(
                       text: "Atualizar informações",
@@ -365,7 +367,7 @@ class _EducarteShellState extends State<EducarteShell> {
                 width: screenWidth(context),
                 height: 277,
                 decoration: BoxDecoration(
-                    color: colorScheme(context).onBackground,
+                    color: colorScheme(context).onSurface,
                     borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(8),
                         topLeft: Radius.circular(8))
@@ -386,11 +388,11 @@ class _EducarteShellState extends State<EducarteShell> {
 
                             }
                           }, icon: Icon(Symbols.close, color: colorScheme(
-                              context).surface,)),
+                              context).onInverseSurface,)),
                           Text("Cardápio em PDF", style: GoogleFonts.poppins(
                               fontSize: 22,
                               fontWeight: FontWeight.w600,
-                              color: colorScheme(context).surface
+                              color: colorScheme(context).onInverseSurface
                           ),)
                         ],
                       ),

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Interector/validations/validator.dart';
 import 'package:educarte/Services/config/api_config.dart';
+import 'package:educarte/core/enum/input_type.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -153,6 +154,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               ),
               Input(
                 name: "Nova Senha",
+                inputType: InputType.password,
                 obscureText: true,
                 onChange: novaSenha,
               ),
@@ -161,6 +163,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
               ),
               Input(
                 name: "Confirmar nova senha",
+                inputType: InputType.password,
                 obscureText: true,
                 onChange: confirmarSenha,
               ),

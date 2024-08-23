@@ -51,7 +51,7 @@ class _CardTimeControlState extends State<CardTimeControl> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: textTheme(context).bodyLarge!.copyWith(
-                    color: colorScheme(context).surface,
+                    color: colorScheme(context).onInverseSurface,
                     fontWeight: FontWeight.w600
                   )
                 )
@@ -111,7 +111,7 @@ class InformationAboutTheStudents extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color textColor = colorScheme(context).surface;
+    Color textColor = colorScheme(context).onInverseSurface;
     String? description = legalGuardian != null ? legalGuardian!.name : classroom!.name ?? "";
 
     return Expanded(

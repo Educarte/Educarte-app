@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:educarte/core/base/store.dart';
@@ -9,9 +11,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../core/enum/input_type.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/input.dart';
-import '../../components/input_password.dart';
 import '../../global/global.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
@@ -23,8 +25,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
-  TextEditingController email = TextEditingController(text: "admin@email.com");
-  TextEditingController senha = TextEditingController(text: "Asdf1234");
+  TextEditingController email = TextEditingController(text: "isticplaystore@gmail.com");
+  TextEditingController senha = TextEditingController(text: "6caeafa6");
   PersistenceRepository persistenceRepository = PersistenceRepository();
   bool carregando = false;
 
@@ -63,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (firstAccess) {
         globals.firstAccess = firstAccess;
+        
         return context.go(path);
       }
       if (path == "/home") {}
@@ -147,15 +150,16 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       Input(
                         name: "E-mail",
-                        obscureText: false,
                         onChange: email,
                       ),
                       const SizedBox(
                         height: 16,
                       ),
-                      InputPassword(
+                      Input(
                         onChange: senha,
-                        name: "Senha",
+                        name: "Senha", 
+                        inputType: InputType.password,
+                        obscureText: true,
                       ),
                       // lascar os inputs
                       SizedBox(

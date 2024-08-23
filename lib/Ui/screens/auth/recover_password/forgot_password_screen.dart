@@ -100,7 +100,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ]
               )),
               const SizedBox(height: 24,),
-              Input(name: "E-mail", obscureText: false, onChange: email,),
+              Input(
+                name: "E-mail",
+                onChange: email
+              ),
               const SizedBox(height: 165,),
               BotaoAzul(text: "Continuar",onPressed: () => enviarCodigo(),loading: carregando,),
             ],

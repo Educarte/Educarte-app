@@ -224,7 +224,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     double iconSize = 30;
     Color colorIcon = const Color(0xFFA0A4A8);
     TextStyle style({FontWeight? fontWeight}) => GoogleFonts.poppins(
-        color: colorScheme(context).surface,
+        color: colorScheme(context).onInverseSurface,
         fontWeight: fontWeight ?? FontWeight.w300);
     return ValueListenableBuilder(
       valueListenable: globals.listStudent,
@@ -234,7 +234,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
         } else {
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: colorScheme(context).onBackground,
+            backgroundColor: colorScheme(context).onSurface,
             body: Padding(
               padding: const EdgeInsets.all(16),
               child: SingleChildScrollView(
@@ -259,7 +259,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                             Text(
                               "Olá,",
                               style: GoogleFonts.poppins(
-                                color: colorScheme(context).surface,
+                                color: colorScheme(context).onInverseSurface,
                                 fontWeight: FontWeight.w400,
                                 fontSize: 16,
                               ),
@@ -293,7 +293,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                           height: 277,
                                           decoration: BoxDecoration(
                                               color: colorScheme(context)
-                                                  .onBackground,
+                                                  .onSurface,
                                               borderRadius:
                                                   const BorderRadius.only(
                                                       topRight:
@@ -319,7 +319,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                           Symbols.close,
                                                           color: colorScheme(
                                                                   context)
-                                                              .surface,
+                                                              .onInverseSurface,
                                                         )),
                                                     Text(
                                                       "Cardápio em PDF",
@@ -329,7 +329,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                               FontWeight.w600,
                                                           color: colorScheme(
                                                                   context)
-                                                              .surface),
+                                                              .onInverseSurface),
                                                     )
                                                   ],
                                                 ),
@@ -413,7 +413,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                         height: focusInput ? 900 : 449,
                                         decoration: BoxDecoration(
                                             color: colorScheme(context)
-                                                .onBackground,
+                                                .onSurface,
                                             borderRadius:
                                                 const BorderRadius.only(
                                                     topRight:
@@ -433,7 +433,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                     icon: Icon(Symbols.close,
                                                         color:
                                                             colorScheme(context)
-                                                                .surface)),
+                                                                .onInverseSurface)),
                                                 Text("Meus dados",
                                                     style: GoogleFonts.poppins(
                                                         fontSize: 22,
@@ -441,30 +441,29 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                             FontWeight.w600,
                                                         color:
                                                             colorScheme(context)
-                                                                .surface))
+                                                                .onInverseSurface))
                                               ]),
                                               const SizedBox(
                                                 height: 32,
                                               ),
                                               Input(
                                                 name: "Nome",
-                                                obscureText: false,
                                                 onChange: nome,
                                               ),
                                               const SizedBox(
                                                 height: 16,
                                               ),
                                               Input(
-                                                  name: "E-mail",
-                                                  obscureText: false,
-                                                  onChange: email),
+                                                name: "E-mail",
+                                                onChange: email
+                                              ),
                                               const SizedBox(
                                                 height: 16,
                                               ),
                                               Input(
-                                                  name: "Telefone",
-                                                  obscureText: false,
-                                                  onChange: telefone!),
+                                                name: "Telefone",
+                                                onChange: telefone!
+                                              ),
                                               const SizedBox(
                                                 height: 32,
                                               ),

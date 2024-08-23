@@ -46,7 +46,7 @@ class _CustomSearchInputState extends State<CustomSearchInput> {
           child: Icon(
             Symbols.keyboard_voice,
             size: 24,
-            color: colorScheme(context).surface,
+            color: colorScheme(context).onInverseSurface,
           ),
         ),
         enabledBorder: border(borderColor: colorScheme(context).outline),
@@ -55,7 +55,7 @@ class _CustomSearchInputState extends State<CustomSearchInput> {
         label: Text(
           widget.label,
           style: textTheme(context).bodyLarge!.copyWith(
-            color: colorScheme(context).surface,
+            color: colorScheme(context).onInverseSurface,
             fontWeight: FontWeight.w400
           ),
         ),

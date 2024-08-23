@@ -31,7 +31,7 @@ class _FileModalState extends State<FileModal> {
       width: screenWidth(context),
       height: widget.modalType.height,
       decoration: BoxDecoration(
-        color: colorScheme(context).onBackground,
+        color: colorScheme(context).onSurface,
         borderRadius: const BorderRadius.only(
           topRight: Radius.circular(8),
           topLeft: Radius.circular(8)

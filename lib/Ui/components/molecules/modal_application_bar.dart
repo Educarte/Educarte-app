@@ -20,14 +20,14 @@ class ModalApplicationBar extends StatelessWidget {
           Navigator.pop(context);
         },
         icon: Icon(Symbols.close,
-          color: colorScheme(context).surface)
+          color: colorScheme(context).onInverseSurface)
         ),
         Text(
           title,
           style: GoogleFonts.poppins(
             fontSize: 22,
             fontWeight: FontWeight.w600,
-            color: colorScheme(context).surface
+            color: colorScheme(context).onInverseSurface
           )
         )
       ],

@@ -46,7 +46,7 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: colorScheme(widget.context).background,
+      backgroundColor: colorScheme(widget.context).surface,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         leading: InkWell(
@@ -113,7 +113,7 @@ class _SearchByVoicePageState extends State<SearchByVoicePage> {
                           child: Icon(
                             speechProvider.status == SpeechProviderState.started ? Symbols.mic_off : Symbols.mic,
                             size: 48,
-                            color: colorScheme(widget.context).background
+                            color: colorScheme(widget.context).surface
                           ),
                         ),
                       ),

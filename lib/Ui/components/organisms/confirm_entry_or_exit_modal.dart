@@ -98,7 +98,7 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       width: screenWidth(context),
       height: widget.modalType.height,
       decoration: BoxDecoration(
-          color: colorScheme(context).onBackground,
+          color: colorScheme(context).onSurface,
           borderRadius: const BorderRadius.only(
               topRight: Radius.circular(8), topLeft: Radius.circular(8))),
       child: Padding(
@@ -110,7 +110,6 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               const SizedBox(height: 32),
               Input(
                   name: "Horário",
-                  obscureText: false,
                   enabled: false,
                   isInputModal: true,
                   inputType: InputType.hour,
@@ -119,7 +118,6 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               Input(
                   name: "Data",
                   enabled: false,
-                  obscureText: false,
                   isInputModal: true,
                   inputType: InputType.date,
                   onChange: _date),

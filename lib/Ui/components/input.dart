@@ -11,10 +11,11 @@ class Input extends StatefulWidget {
   const Input({
     super.key,
     required this.name,
-    required this.obscureText,
+    this.obscureText = false,
     required this.onChange,
     this.isInputModal = false, 
     this.inputType = InputType.text,
+    this.suffixIcon,
     this.enabled = true
   });
   final String name;
@@ -23,12 +24,15 @@ class Input extends StatefulWidget {
   final bool isInputModal;
   final bool enabled;
   final InputType inputType;
+  final Widget? suffixIcon;
 
   @override
   State<Input> createState() => _InputState();
 }
 
 class _InputState extends State<Input> {
+  ValueNotifier showPassword = ValueNotifier<bool>(false);
+
   @override
   Widget build(BuildContext context) {
     OutlineInputBorder border = OutlineInputBorder(
@@ -38,39 +42,53 @@ class _InputState extends State<Input> {
       )
     );
 
-    return SizedBox(
-      width: screenWidth(context),
-      height: 55,
-      child: TextFormField(
-        enabled: widget.enabled,
-        inputFormatters: [
-          if(widget.inputType == InputType.date) DateMask(),
-          if(widget.inputType == InputType.date) LengthLimitingTextInputFormatter(10),
+    return ValueListenableBuilder(
+      valueListenable: showPassword,
+      builder: (_, __, ___) {
+        bool isPassword = widget.inputType == InputType.password;
 
-          if(widget.inputType == InputType.hour) HourMask(),
-          if(widget.inputType == InputType.hour) LengthLimitingTextInputFormatter(5)
-        ],
-        obscureText: widget.obscureText,
-        cursorColor: const Color(0xff547B9A),
-        controller: widget.onChange,
-        style: GoogleFonts.poppins(
-            fontWeight: FontWeight.w400,
-            fontSize: 16,
-            color: const Color(0xff474C51)
-        ),
-        decoration: InputDecoration(
-            labelText: widget.name,
-            labelStyle: GoogleFonts.poppins(
+        return SizedBox(
+          width: screenWidth(context),
+          height: 55,
+          child: TextFormField(
+            enabled: widget.enabled,
+            inputFormatters: [
+              if(widget.inputType == InputType.date) DateMask(),
+              if(widget.inputType == InputType.date) LengthLimitingTextInputFormatter(10),
+        
+              if(widget.inputType == InputType.hour) HourMask(),
+              if(widget.inputType == InputType.hour) LengthLimitingTextInputFormatter(5)
+            ],
+             obscureText: isPassword ? showPassword.value : false,
+            cursorColor: const Color(0xff547B9A),
+            controller: widget.onChange,
+            style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w400,
                 fontSize: 16,
                 color: const Color(0xff474C51)
             ),
-            border: const OutlineInputBorder(),
-            focusedBorder: border,
-            disabledBorder: border,
-            enabledBorder: border
-        ),
-      ),
+            decoration: InputDecoration(
+              suffixIcon: !isPassword ? widget.suffixIcon : IconButton(
+                onPressed: () => showPassword.value = !showPassword.value,
+                icon: Icon(
+                  !showPassword.value ? Icons.remove_red_eye_outlined : Icons.remove_red_eye,
+                  color: colorScheme(context).outlineVariant
+                ),
+              ),
+              labelText: widget.name,
+              labelStyle: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                  color: const Color(0xff474C51)
+              ),
+              border: const OutlineInputBorder(),
+              focusedBorder: border,
+              disabledBorder: border,
+              enabledBorder: border
+            ),
+          ),
+        );
+      }
     );
   }
 }

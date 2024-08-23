@@ -1,5 +1,6 @@
 enum InputType {
   date, 
   hour,
-  text
+  text,
+  password
 }

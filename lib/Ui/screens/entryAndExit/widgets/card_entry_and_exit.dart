@@ -57,7 +57,7 @@ class CardEntryAndExit extends StatelessWidget {
       height: 127,
       margin: const EdgeInsets.only(bottom: 20,left: 8,right: 8),
       decoration: BoxDecoration(
-        color: colorScheme(context).background,
+        color: colorScheme(context).surface,
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.25),
@@ -79,9 +79,9 @@ class CardEntryAndExit extends StatelessWidget {
                 RichText(
                   text: TextSpan(
                     children: [
-                      TextSpan(text: date,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
-                      // TextSpan(text: "Janeiro ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: colorScheme(context).surface)),
-                      // TextSpan(text: "de 2024",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).surface)),
+                      TextSpan(text: date,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).onInverseSurface)),
+                      // TextSpan(text: "Janeiro ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: colorScheme(context).onInverseSurface)),
+                      // TextSpan(text: "de 2024",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).onInverseSurface)),
                       //
                     ]
                   ),
@@ -95,19 +95,19 @@ class CardEntryAndExit extends StatelessWidget {
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Entrada: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
-                    TextSpan(text: dateConverteData(horaEntrada),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: "Entrada: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(text: dateConverteData(horaEntrada),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
                   ]
               ),
             ),
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Saida: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
+                    TextSpan(text: "Saida: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
                     if(horaSaida == null)
-                    TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
                     if(horaSaida != null)
-                    TextSpan(text: dateConverteData(horaSaida!),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: dateConverteData(horaSaida!),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
                   ]
               ),
             ),
@@ -116,8 +116,8 @@ class CardEntryAndExit extends StatelessWidget {
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Resumo diário: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).surface)),
-                    TextSpan(text: "${resumoDiario!.substring(0,2)}h. ${resumoDiario!.substring(3,5)}Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).surface)),
+                    TextSpan(text: "Resumo diário: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(text: "${resumoDiario!.substring(0,2)}h. ${resumoDiario!.substring(3,5)}Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
                   ]
               ),
             ),

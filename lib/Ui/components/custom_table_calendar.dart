@@ -43,7 +43,7 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
           calendarType: CalendarDatePicker2Type.range,
           selectedDayTextStyle: textTheme(context)
               .displayLarge!
-              .copyWith(color: colorScheme(context).onBackground),
+              .copyWith(color: colorScheme(context).onSurface),
           selectedDayHighlightColor: Colors.purple[800],
           centerAlignModePicker: true,
           customModePickerIcon: const SizedBox(),
@@ -123,7 +123,7 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
                       style: GoogleFonts.roboto(
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: colorScheme(context).surface),
+                          color: colorScheme(context).onInverseSurface),
                     )),
                 Expanded(
                     flex: 0,
@@ -133,21 +133,21 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
                             showCalendar(init: initDate, last: lastDate),
                         child: Icon(Icons.calendar_month_outlined,
                             size: iconSize,
-                            color: colorScheme(context).surface),
+                            color: colorScheme(context).onInverseSurface),
                       ),
                       const SizedBox(width: 24),
                       GestureDetector(
                         onTap: () => previousPage(),
                         child: Icon(Icons.arrow_back_ios,
                             size: iconSize,
-                            color: colorScheme(context).surface),
+                            color: colorScheme(context).onInverseSurface),
                       ),
                       const SizedBox(width: 4),
                       GestureDetector(
                         onTap: () => nextPage(),
                         child: Icon(Icons.arrow_forward_ios,
                             size: iconSize,
-                            color: colorScheme(context).surface),
+                            color: colorScheme(context).onInverseSurface),
                       )
                     ]))
               ],
