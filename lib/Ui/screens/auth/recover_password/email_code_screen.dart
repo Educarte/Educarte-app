@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,8 +10,6 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:http/http.dart' as http;
 import '../../../global/global.dart' as globals;
-
-import '../../../components/bnt_azul.dart';
 
 class EmailCode extends StatefulWidget {
   const EmailCode({super.key});
@@ -165,16 +164,25 @@ class _EmailCodeState extends State<EmailCode> {
                 ),
               ),
               const SizedBox(height: 120,),
-              BotaoAzul(text: "Continuar",onPressed: ()=> verificarCode(),loading: carregando,),
+              CustomButton(
+                title: "Continuar",
+                loading: carregando,
+                onPressed: ()=> verificarCode()
+              ),
               const SizedBox(height: 8,),
               Align(
                 alignment: Alignment.center,
-                child: TextButton(onPressed: () =>  enviarCodigo(), 
-                child: Text("Reenviar Código",style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xff474C51)
-                ))),
+                child: TextButton(
+                  onPressed: () =>  enviarCodigo(), 
+                  child: Text(
+                    "Reenviar Código",
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: const Color(0xff474C51)
+                    )
+                  )
+                )
               )
             ],
           ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,9 +13,8 @@ import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
 import '../../../core/enum/modal_type_enum.dart';
 import '../../../core/enum/persistence_enum.dart';
-import '../bnt_azul.dart';
 import '../bnt_branco.dart';
-import '../input.dart';
+import '../atoms/input.dart';
 import '../../global/global.dart' as globals;
 
 class MyDataModal extends StatefulWidget {
@@ -172,8 +172,8 @@ class _MyDataModalState extends State<MyDataModal> {
             onChange: telefoneController!
           ),
           const SizedBox(height: 32),
-          BotaoAzul(
-            text: "Atualizar informações",
+          CustomButton(
+            title: "Atualizar informações",
             onPressed: () async {
               await putDados();
       

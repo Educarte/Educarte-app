@@ -1,10 +1,9 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/config/api_config.dart';
-import 'package:educarte/ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
-import 'package:educarte/ui/components/result_not_found.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -15,8 +14,9 @@ import '../../../Interactor/models/api_diaries.dart';
 import '../../../Interactor/models/document.dart';
 import '../../../Interactor/validations/convertter.dart';
 import '../../../Services/helpers/file_management_helper.dart';
+import '../../../Ui/components/atoms/custom_pop_scope.dart';
+import '../../../Ui/components/atoms/result_not_found.dart';
 import '../../../core/enum/modal_type_enum.dart';
-import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
 import '../../components/organisms/modal.dart';
 import '../../global/global.dart' as globals;
@@ -565,12 +565,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 ],
                                               ),
                                               const SizedBox(height: 32,),
-                                              BotaoAzul(text: "Visualizar", onPressed: () {
-                                                if(loadingDownload == false){
-                                                  FileManagement.launchUri(link: document.fileUri
-                                                      .toString(), context: context);
-                                                }
-                                              },),
+                                              CustomButton(
+                                                title: "Visualizar", 
+                                                loading: loadingDownload,
+                                                onPressed: () async => await FileManagement.launchUri(
+                                                  link: document.fileUri.toString(), 
+                                                  context: context
+                                                )
+                                              ),
                                               const SizedBox(height: 16,),
                                               BotaoBranco(text: "Baixar", onPressed: () {
                                                 setstate((){

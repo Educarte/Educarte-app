@@ -1,15 +1,14 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 import '../../../../core/base/store.dart';
+import '../../../components/atoms/input.dart';
 import '../../../global/global.dart' as globals;
-
-import '../../../components/bnt_azul.dart';
-import '../../../components/input.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -105,7 +104,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 onChange: email
               ),
               const SizedBox(height: 165,),
-              BotaoAzul(text: "Continuar",onPressed: () => enviarCodigo(),loading: carregando,),
+              CustomButton(
+                title: "Continuar",
+                loading: carregando,
+                onPressed: () => enviarCodigo()
+              )
             ],
           ),
         ),

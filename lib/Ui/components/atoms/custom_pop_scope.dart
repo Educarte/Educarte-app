@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../shell/educarte_shell.dart';
+import '../../shell/educarte_shell.dart';
 
 class CustomPopScope extends StatelessWidget {
   final Widget child;

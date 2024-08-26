@@ -1,14 +1,14 @@
-import 'package:educarte/Interactor/models/students_model.dart';
+import 'package:educarte/Ui/components/molecules/changing_of_the_guard_modal.dart';
+import 'package:educarte/Ui/components/molecules/confirm_entry_or_exit_modal.dart';
+import 'package:educarte/Ui/components/molecules/file_modal.dart';
+import 'package:educarte/Ui/components/molecules/my_data_modal.dart';
 import 'package:flutter/material.dart';
 
+import '../../../Interactor/models/document.dart';
+import '../../../Interactor/models/students_model.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/enum/modal_type_enum.dart';
-import '../../../Interactor/models/document.dart';
-import '../../../Ui/components/organisms/changing_of_the_guard_modal.dart';
-import '../../../Ui/components/organisms/confirm_entry_or_exit_modal.dart';
-import '../../../Ui/components/organisms/my_data_modal.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
-import 'file_modal.dart';
 
 class ModalEvent {
   static build({

@@ -1,3 +1,4 @@
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
@@ -7,7 +8,6 @@ import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../../Ui/components/bnt_azul.dart';
 import '../../../../Ui/components/organisms/modal.dart';
 import 'dash_line.dart';
 
@@ -27,7 +27,8 @@ class CardTimeControl extends StatefulWidget {
 }
 
 class _CardTimeControlState extends State<CardTimeControl> {
-    bool verificationEntryandExit = false;
+  bool verificationEntryandExit = false;
+  
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -61,36 +62,40 @@ class _CardTimeControlState extends State<CardTimeControl> {
               padding: EdgeInsets.symmetric(vertical: 8),
               child: DashedLine(),
             ),
-            if(widget.student.classrooms != null)
+            if(widget.student.classrooms != null)...[
+              InformationAboutTheStudents(
+                title: "Sala",
+                classroom: widget.student.classrooms!,
+                first: 0
+              )
+            ],
             InformationAboutTheStudents(
-              title: "Sala",
-              classroom: widget.student.classrooms!,
-              first: 0
+              legalGuardian: widget.student.legalGuardian
             ),
-            InformationAboutTheStudents(legalGuardian: widget.student.legalGuardian),
             const SizedBox(height: 10),
-            if(widget.showButton)
-            BotaoAzul(
-              text: "Registrar horário",
-              onPressed: () {
-                if(widget.student.accessControl!.length < 2){
-                  ModalEvent.build(
-                    context: context,
-                    modalType: widget.student.accessControl!.isEmpty ? ModalType.confirmEntry : ModalType.confirmExit,
-                    student: widget.student,
-                    callback: (result) => widget.callback!(result),
-                    cardTimeControl: CardTimeControl(
+            if(widget.showButton)...[
+              CustomButton(
+                title: "Registrar horário",
+                onPressed: () {
+                  if(widget.student.accessControl!.length < 2){
+                    ModalEvent.build(
+                      context: context,
+                      modalType: widget.student.accessControl!.isEmpty ? ModalType.confirmEntry : ModalType.confirmExit,
+                      student: widget.student,
+                      callback: (result) => widget.callback!(result),
+                      cardTimeControl: CardTimeControl(
                         student: widget.student,
                         showButton: false
-                    )
-                  ); 
-                }else{
-                  Store().showErrorMessage(context, "Este usuário já registrou entrada e saída para o dia de hoje.");
-                }
-              },
-            )
-          ],
-        ),
+                      )
+                    ); 
+                  }else{
+                    Store().showErrorMessage(context, "Este usuário já registrou entrada e saída para o dia de hoje.");
+                  }
+                },
+              )
+            ]
+          ]
+        )
       ),
     );
   }

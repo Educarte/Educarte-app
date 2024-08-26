@@ -2,16 +2,16 @@ import 'dart:convert';
 
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/Interactor/models/entry_and_exit_modal.dart';
-import 'package:educarte/Services/config/api_config.dart';
-import 'package:educarte/ui/components/custom_table_calendar.dart';
-import 'package:educarte/ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
+import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../components/custom_pop_scope.dart';
-import '../../components/result_not_found.dart';
+import '../../../Ui/components/atoms/custom_pop_scope.dart';
+import '../../../Ui/components/atoms/custom_table_calendar.dart';
+import '../../../Ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
+import '../../components/atoms/result_not_found.dart';
 import '../../global/global.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
@@ -51,7 +51,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
     };
 
     var response = await http.get(
-      Uri.parse("$baseUrl/Students/AccessControls/${currentStudent.value.id}")
+      Uri.parse("$apiUrl/Students/AccessControls/${currentStudent.value.id}")
           .replace(queryParameters: params),
       headers: {"Authorization": "Bearer ${globals.token}"},
     );

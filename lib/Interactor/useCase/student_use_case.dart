@@ -2,13 +2,13 @@ import 'dart:convert';
 
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
-import 'package:educarte/ui/global/global.dart';
-import 'package:educarte/ui/global/global.dart' as globals;
+import 'package:educarte/Ui/global/global.dart';
+import 'package:educarte/Ui/global/global.dart' as globals;
+import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../../Services/config/api_config.dart';
 import '../models/api_diaries.dart';
 import '../validations/convertter.dart';
 
@@ -61,7 +61,7 @@ class StudentUseCase {
     try {
       globals.listStudent.value.clear();
 
-      var response = await http.get(Uri.parse("$baseUrl/Students"), headers: {
+      var response = await http.get(Uri.parse("$apiUrl/Students"), headers: {
         "Authorization": "Bearer $token",
       });
 

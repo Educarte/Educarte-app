@@ -1,20 +1,20 @@
 import 'dart:convert';
 
-import 'package:educarte/ui/components/custom_pop_scope.dart';
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/base/store.dart';
-import 'package:educarte/ui/components/card_messages.dart';
-import 'package:educarte/ui/components/custom_table_calendar.dart';
+import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../../Interactor/models/api_diaries.dart';
-import '../../../Services/config/api_config.dart';
 import '../../../Services/helpers/file_management_helper.dart';
-import '../../components/bnt_azul.dart';
+import '../../../Ui/components/atoms/card_messages.dart';
+import '../../../Ui/components/atoms/custom_pop_scope.dart';
+import '../../../Ui/components/atoms/custom_table_calendar.dart';
 import '../../components/bnt_branco.dart';
-import '../../components/result_not_found.dart';
+import '../../components/atoms/result_not_found.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
 
@@ -68,7 +68,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       "EndDate": endDate == null ? startDate.toString() : endDate.toString()
     };
     var response = await http.get(
-        Uri.parse("$baseUrl/Diary").replace(queryParameters: params),
+        Uri.parse("$apiUrl/Diary").replace(queryParameters: params),
         headers: {"Authorization": "Bearer ${globals.token}"});
     if (response.statusCode == 200) {
       var decodeJson = jsonDecode(response.body);
@@ -325,17 +325,14 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                                     const SizedBox(
                                                                       height: 32,
                                                                     ),
-                                                                    BotaoAzul(
-                                                                      text:
-                                                                          "Visualizar",
-                                                                      onPressed:
-                                                                          () {
-                                                                        if (loadingDownload ==
-                                                                            false) {
+                                                                    CustomButton(
+                                                                      title: "Visualizar",
+                                                                      onPressed: () {
+                                                                        if (!loadingDownload) {
                                                                           FileManagement.launchUri(
-                                                                              link:
-                                                                                  listDiaries[index].fileUri.toString(),
-                                                                              context: context);
+                                                                            link: listDiaries[index].fileUri.toString(),
+                                                                            context: context
+                                                                          );
                                                                         }
                                                                       },
                                                                     ),

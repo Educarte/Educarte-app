@@ -1,15 +1,15 @@
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Services/helpers/file_management_helper.dart';
-import 'package:educarte/ui/components/bnt_branco.dart';
+import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../atoms/modal_application_bar.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
 import '../../../Interactor/models/document.dart';
-import '../bnt_azul.dart';
-import '../molecules/modal_application_bar.dart';
 
 class FileModal extends StatefulWidget {
   const FileModal({
@@ -45,17 +45,13 @@ class _FileModalState extends State<FileModal> {
             children: [
               ModalApplicationBar(title: widget.modalType.title),
               const SizedBox(height: 32),
-              BotaoAzul(
-                text: "Visualizar",
+              CustomButton(
+                title: "Visualizar",
                 onPressed: () async{
-                  XFile xFile = await FileManagement.createTemporaryXFile(
-                    url: "http://www.pdf995.com/samples/pdf.pdf",
+                   XFile xFile = await FileManagement.createTemporaryXFile(
+                    url: widget.document.fileUri!,
                     document: widget.document
                   );
-                  //  XFile xFile = await FileManage.createTemporaryXFile(
-                  //   url: document.fileUri!,
-                  //   document: document
-                  // );
 
                   if(context.mounted){
                     context.push("/pdfViewer", extra: {

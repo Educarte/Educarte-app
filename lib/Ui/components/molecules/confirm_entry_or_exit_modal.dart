@@ -1,23 +1,23 @@
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/base/store.dart';
+import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/core/enum/input_type.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:educarte/Interactor/useCase/student_use_case.dart';
-import 'package:educarte/ui/components/bnt_branco.dart';
-import 'package:educarte/ui/components/input.dart';
-import 'package:educarte/ui/components/molecules/modal_application_bar.dart';
-import 'package:educarte/ui/global/global.dart';
+import 'package:educarte/Ui/components/bnt_branco.dart';
+import 'package:educarte/Ui/global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../atoms/input.dart';
+import '../atoms/modal_application_bar.dart';
 import '../../../core/base/constants.dart';
-import '../../../Services/config/api_config.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
-import '../bnt_azul.dart';
 
 class ConfirmEntryOrExitModal extends StatefulWidget {
   const ConfirmEntryOrExitModal(
@@ -60,7 +60,7 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       setLoading(load: true);
       Map corpo = {};
       var response = await http.post(
-        Uri.parse("$baseUrl/Students/AccessControl/${widget.student.id}"),
+        Uri.parse("$apiUrl/Students/AccessControl/${widget.student.id}"),
         headers: {
           "Authorization": "Bearer $token",
           "Content-Type": "application/json"
@@ -125,8 +125,8 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
                 padding: const EdgeInsets.symmetric(vertical: 32),
                 child: widget.cardTimeControl
               ),
-              BotaoAzul(
-                text: "Registrar horário",
+              CustomButton(
+                title: "Registrar horário",
                 onPressed: () async {
                   await registerHour();
 

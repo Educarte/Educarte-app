@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'Services/interfaces/persistence_interface.dart';
 import 'Services/config/repositories/persistence_repository.dart';
-import 'ui/screens/my_app.dart';
+import 'Ui/screens/my_app.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);

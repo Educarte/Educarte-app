@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
@@ -12,8 +13,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../core/enum/input_type.dart';
-import '../../components/bnt_azul.dart';
-import '../../components/input.dart';
+import '../../components/atoms/input.dart';
 import '../../global/global.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
@@ -169,26 +169,26 @@ class _LoginScreenState extends State<LoginScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             TextButton(
-                                onPressed: () {
-                                  context.pushReplacement("/esqueciSenha");
-                                },
-                                child: Text(
-                                  "Esqueceu a senha?",
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: const Color(0xff474C51)),
-                                ))
+                              onPressed: () => context.pushReplacement("/esqueciSenha"),
+                              child: Text(
+                                "Esqueceu a senha?",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color(0xff474C51)
+                                ),
+                              )
+                            )
                           ],
                         ),
                       ),
                       const SizedBox(
                         height: 48,
                       ),
-                      BotaoAzul(
-                        text: "Entrar",
-                        onPressed: () => logar(),
+                      CustomButton(
+                        title: "Entrar",
                         loading: carregando,
+                        onPressed: () => logar()
                       ),
                     ],
                   ),

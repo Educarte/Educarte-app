@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:educarte/ui/components/bnt_azul.dart';
-import 'package:educarte/ui/components/bnt_branco.dart';
-import 'package:educarte/ui/components/organisms/modal.dart';
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
+import 'package:educarte/Ui/components/bnt_branco.dart';
+import 'package:educarte/Ui/components/organisms/modal.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -223,12 +223,13 @@ class _EducarteShellState extends State<EducarteShell> {
                         ],
                       ),
                       const SizedBox(height: 32,),
-                      BotaoAzul(text: "Visualizar", onPressed: () {
-                        if(loadingDownload == false){
-                          FileManagement.launchUri(link: document.fileUri
-                              .toString(), context: context);
-                        }
-                      },),
+                      CustomButton(
+                        title: "Visualizar", 
+                        onPressed: () async => await FileManagement.launchUri(
+                          link: document.fileUri.toString(), 
+                          context: context
+                        ),
+                      ),
                       const SizedBox(height: 16,),
                       BotaoBranco(text: "Baixar", onPressed: () {
                         setstate((){

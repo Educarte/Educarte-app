@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:educarte/Interactor/models/classroom_model.dart';
 import 'package:educarte/Interactor/validations/convertter.dart';
+import 'package:educarte/Ui/components/atoms/custom_button.dart';
+import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,15 +15,13 @@ import '../../../core/base/constants.dart';
 import '../../../core/enum/persistence_enum.dart';
 import '../../../Interactor/models/document.dart';
 import '../../../Interactor/models/students_model.dart';
-import '../../../Services/config/api_config.dart';
 import '../../../Services/config/repositories/persistence_repository.dart';
 import '../../../Services/helpers/file_management_helper.dart';
-import '../../components/bnt_azul.dart';
+import '../../components/atoms/custom_dropdown.dart';
+import '../../components/atoms/input.dart';
+import '../../components/atoms/result_not_found.dart';
+import '../../components/atoms/search_input.dart';
 import '../../components/bnt_branco.dart';
-import '../../components/custom_dropdown.dart';
-import '../../components/input.dart';
-import '../../components/result_not_found.dart';
-import '../../components/search_input.dart';
 import '../../global/global.dart';
 import '../../global/global.dart' as globals;
 import 'widgets/card_time_control.dart';
@@ -92,8 +92,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
   Document document = Document.empty();
 
   Future<void> getMenu() async {
-    var response = await http.get(Uri.parse("$baseUrl/Menus"),
-        headers: {"Authorization": "Bearer ${globals.token}"});
+    var response = await http.get(
+      Uri.parse("$apiUrl/Menus"),
+      headers: {"Authorization": "Bearer ${globals.token}"}
+    );
 
     if (response.statusCode == 200) {
       Map<String, dynamic> decodeJson = jsonDecode(response.body);
@@ -113,14 +115,16 @@ class _TimeControlPageState extends State<TimeControlPage> {
 
       globals.listStudent.value.clear();
 
-      var response = await http.get(Uri.parse("$baseUrl/Students"), headers: {
+      var response = await http.get(Uri.parse("$apiUrl/Students"), headers: {
         "Authorization": "Bearer $token",
       });
 
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = jsonDecode(response.body);
         jsonData["items"].forEach(
-            (item) => globals.listStudent.value.add(Student.fromJson(item)));
+          (item) => globals.listStudent.value.add(Student.fromJson(item))
+        );
+
         setState(() {
           studentsFilter = globals.listStudent.value;
           students2 = globals.listStudent.value;
@@ -138,7 +142,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     try {
       classrooms.clear();
 
-      var response = await http.get(Uri.parse("$baseUrl/Classroom"), headers: {
+      var response = await http.get(Uri.parse("$apiUrl/Classroom"), headers: {
         "Authorization": "Bearer $token",
       });
       if (response.statusCode == 200) {
@@ -336,17 +340,13 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                 const SizedBox(
                                                   height: 32,
                                                 ),
-                                                BotaoAzul(
-                                                  text: "Visualizar",
-                                                  onPressed: () {
-                                                    if (loadingDownload ==
-                                                        false) {
-                                                      FileManagement.launchUri(
-                                                          link: document.fileUri
-                                                              .toString(),
-                                                          context: context);
-                                                    }
-                                                  },
+                                                CustomButton(
+                                                  title: "Visualizar",
+                                                  loading: loadingDownload,
+                                                  onPressed: () async => await FileManagement.launchUri(
+                                                    link: document.fileUri.toString(),
+                                                    context: context
+                                                  )
                                                 ),
                                                 const SizedBox(
                                                   height: 16,
@@ -467,13 +467,14 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                               const SizedBox(
                                                 height: 32,
                                               ),
-                                              BotaoAzul(
-                                                text: "Atualizar informações",
-                                                onPressed: () {
-                                                  putDados();
-                                                  Navigator.pop(context);
-                                                },
+                                              CustomButton(
+                                                title: "Atualizar informações",
                                                 loading: carregando,
+                                                onPressed: () async{
+                                                  await putDados();
+
+                                                  Navigator.pop(context);
+                                                }
                                               ),
                                               const SizedBox(
                                                 height: 16,
@@ -508,63 +509,67 @@ class _TimeControlPageState extends State<TimeControlPage> {
                   ),
                   const SizedBox(height: 12),
                   CustomSearchInput(
-                      controller: _search,
-                      action: () {
-                        setState(() {
+                    controller: _search,
+                    action: () {
+                      setState(() {
+                        globals.listStudent.value = studentsFilter
+                            .where((element) => element.name!
+                                .toLowerCase()
+                                .contains(
+                                    _search.text.toString().toLowerCase()))
+                            .toList();
+                      });
+                    }
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    child: CustomDropdown(
+                      list: classrooms,
+                      selected: classroomSelected,
+                      callback: (result) => setState(() {
+                        classroomSelected = result;
+                        if (classroomSelected.name == null) {
+                          globals.listStudent.value = students2;
+                        } else {
                           globals.listStudent.value = studentsFilter
-                              .where((element) => element.name!
+                              .where((element) => element.classrooms!.name
+                                  .toString()
                                   .toLowerCase()
                                   .contains(
-                                      _search.text.toString().toLowerCase()))
+                                      classroomSelected.name!.toLowerCase()))
                               .toList();
-                        });
+                        }
                       }),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                      child: CustomDropdown(
-                        list: classrooms,
-                        selected: classroomSelected,
-                        callback: (result) => setState(() {
-                          classroomSelected = result;
-                          if (classroomSelected.name == null) {
-                            globals.listStudent.value = students2;
-                          } else {
-                            globals.listStudent.value = studentsFilter
-                                .where((element) => element.classrooms!.name
-                                    .toString()
-                                    .toLowerCase()
-                                    .contains(
-                                        classroomSelected.name!.toLowerCase()))
-                                .toList();
+                    )),
+                  if(listStudent.value.isEmpty)...[
+                    const SizedBox(
+                      height: 500,
+                      child: Center(
+                        child: ResultNotFound(
+                            description: "Nenhum usuário encontrado!",
+                            iconData: Symbols.error),
+                      ),
+                    )
+                  ]else...[
+                    ListView.builder(
+                      padding: EdgeInsets.zero,
+                      primary: false,
+                      shrinkWrap: true,
+                      itemCount: listStudent.value.length,
+                      itemBuilder: (_, index) {
+                        return CardTimeControl(
+                          student: listStudent.value[index],
+                          callback: (bool result) {
+                            if (result) {
+                              getStudents(
+                                  timeControlPageLoading:
+                                      TimeControlPageLoading.filter);
+                            }
                           }
-                        }),
-                      )),
-                  listStudent.value.isEmpty
-                      ? const SizedBox(
-                          height: 500,
-                          child: Center(
-                            child: ResultNotFound(
-                                description: "Nenhum usuário encontrado!",
-                                iconData: Symbols.error),
-                          ),
-                        )
-                      : ListView.builder(
-                          padding: EdgeInsets.zero,
-                          primary: false,
-                          shrinkWrap: true,
-                          itemCount: listStudent.value.length,
-                          itemBuilder: (_, index) {
-                            return CardTimeControl(
-                              student: listStudent.value[index],
-                              callback: (bool result) {
-                                if (result) {
-                                  getStudents(
-                                      timeControlPageLoading:
-                                          TimeControlPageLoading.filter);
-                                }
-                              },
-                            );
-                          })
+                        );
+                      }
+                    )
+                  ]
                 ]),
               ),
             ),

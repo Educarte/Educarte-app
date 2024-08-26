@@ -1,23 +1,23 @@
 import 'dart:convert';
 
+import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/core/enum/persistence_enum.dart';
-import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/Services/config/repositories/persistence_repository.dart';
-import 'package:educarte/ui/components/search_by_voice.dart';
-import 'package:educarte/ui/global/global.dart' as globals;
-import 'package:educarte/ui/screens/auth/recover_password/email_code_screen.dart';
-import 'package:educarte/ui/screens/auth/recover_password/forgot_password_screen.dart';
-import 'package:educarte/ui/screens/entry_and_exit/entry_and_exit_page.dart';
-import 'package:educarte/ui/screens/home/home_screen.dart';
-import 'package:educarte/ui/screens/auth/login_screen.dart';
-import 'package:educarte/ui/screens/messages/messages_screen.dart';
-import 'package:educarte/ui/screens/auth/recover_password/redefine_password_screen.dart';
-import 'package:educarte/ui/screens/time_control/time_control_page.dart';
-import 'package:educarte/ui/shell/educarte_shell.dart';
+import 'package:educarte/Ui/global/global.dart' as globals;
+import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart';
+import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
+import 'package:educarte/Ui/screens/entry_and_exit/entry_and_exit_page.dart';
+import 'package:educarte/Ui/screens/home/home_screen.dart';
+import 'package:educarte/Ui/screens/auth/login_screen.dart';
+import 'package:educarte/Ui/screens/messages/messages_screen.dart';
+import 'package:educarte/Ui/screens/auth/recover_password/redefine_password_screen.dart';
+import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
+import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:jwt_decoder/jwt_decoder.dart';
 
+import '../Ui/components/atoms/search_by_voice.dart';
 import 'styles/transitions/fade_transition.dart';
 
 class Routes {
@@ -34,7 +34,7 @@ class Routes {
       if (globals.token != null) {
         try {
           var response =
-              await http.post(Uri.parse("$baseUrl/Auth/refresh"), headers: {
+              await http.post(Uri.parse("$apiUrl/Auth/refresh"), headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer ${globals.token}",
           });
