@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:educarte/Interector/models/classroom_model.dart';
-import 'package:educarte/Interector/validations/convertter.dart';
+import 'package:educarte/Interactor/models/classroom_model.dart';
+import 'package:educarte/Interactor/validations/convertter.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,8 +11,8 @@ import 'package:http/http.dart' as http;
 
 import '../../../core/base/constants.dart';
 import '../../../core/enum/persistence_enum.dart';
-import '../../../Interector/models/document.dart';
-import '../../../Interector/models/students_model.dart';
+import '../../../Interactor/models/document.dart';
+import '../../../Interactor/models/students_model.dart';
 import '../../../Services/config/api_config.dart';
 import '../../../Services/config/repositories/persistence_repository.dart';
 import '../../../Services/helpers/file_management_helper.dart';

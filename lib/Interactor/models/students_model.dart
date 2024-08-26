@@ -1,6 +1,6 @@
-import 'package:educarte/Interector/models/access_control_model.dart';
-import 'package:educarte/Interector/models/contracted_hour_model.dart';
-import 'package:educarte/Interector/models/legal_guardians_model.dart';
+import 'package:educarte/Interactor/models/access_control_model.dart';
+import 'package:educarte/Interactor/models/contracted_hour_model.dart';
+import 'package:educarte/Interactor/models/legal_guardians_model.dart';
 
 import 'api_diaries.dart';
 import 'classroom_model.dart';

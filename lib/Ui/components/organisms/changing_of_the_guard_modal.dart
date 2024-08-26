@@ -1,16 +1,16 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/input.dart';
-import 'package:educarte/Ui/shell/educarte_shell.dart';
+import 'package:educarte/ui/components/input.dart';
+import 'package:educarte/ui/shell/educarte_shell.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Interector/useCase/student_use_case.dart';
+import '../../../Interactor/useCase/student_use_case.dart';
 import '../../global/global.dart' as globals;
-import '../../../Interector/models/students_model.dart';
+import '../../../Interactor/models/students_model.dart';
 import '../../../core/base/constants.dart';
 import '../bnt_azul.dart';
 
@@ -58,7 +58,6 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
         studentId();
       });
     }
-
   }
 
   Future<void> studentId()async{

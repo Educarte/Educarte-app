@@ -1,12 +1,12 @@
-import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Ui/components/organisms/changing_of_the_guard_modal.dart';
-import 'package:educarte/Ui/components/organisms/confirm_entry_or_exit_modal.dart';
-import 'package:educarte/Ui/components/organisms/my_data_modal.dart';
+import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/base/constants.dart';
 import '../../../core/enum/modal_type_enum.dart';
-import '../../../Interector/models/document.dart';
+import '../../../Interactor/models/document.dart';
+import '../../../Ui/components/organisms/changing_of_the_guard_modal.dart';
+import '../../../Ui/components/organisms/confirm_entry_or_exit_modal.dart';
+import '../../../Ui/components/organisms/my_data_modal.dart';
 import '../../screens/time_control/widgets/card_time_control.dart';
 import 'file_modal.dart';
 

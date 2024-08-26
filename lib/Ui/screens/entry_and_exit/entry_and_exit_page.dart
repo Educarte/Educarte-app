@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:educarte/core/base/constants.dart';
-import 'package:educarte/Interector/models/entry_and_exit_modal.dart';
+import 'package:educarte/Interactor/models/entry_and_exit_modal.dart';
 import 'package:educarte/Services/config/api_config.dart';
-import 'package:educarte/Ui/components/custom_table_calendar.dart';
-import 'package:educarte/Ui/screens/entryAndExit/widgets/card_entry_and_exit.dart';
+import 'package:educarte/ui/components/custom_table_calendar.dart';
+import 'package:educarte/ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';

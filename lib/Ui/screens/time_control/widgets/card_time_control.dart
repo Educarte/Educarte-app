@@ -1,14 +1,14 @@
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/base/store.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
-import 'package:educarte/Interector/models/classroom_model.dart';
-import 'package:educarte/Interector/models/legal_guardians_model.dart';
-import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Ui/components/bnt_azul.dart';
-import 'package:educarte/Ui/components/organisms/modal.dart';
+import 'package:educarte/Interactor/models/classroom_model.dart';
+import 'package:educarte/Interactor/models/legal_guardians_model.dart';
+import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../../../Ui/components/bnt_azul.dart';
+import '../../../../Ui/components/organisms/modal.dart';
 import 'dash_line.dart';
 
 class CardTimeControl extends StatefulWidget {
@@ -75,14 +75,14 @@ class _CardTimeControlState extends State<CardTimeControl> {
               onPressed: () {
                 if(widget.student.accessControl!.length < 2){
                   ModalEvent.build(
-                      context: context,
-                      modalType: widget.student.accessControl!.isEmpty ? ModalType.confirmEntry : ModalType.confirmExit,
-                      student: widget.student,
-                      callback: (result) => widget.callback!(result),
-                      cardTimeControl: CardTimeControl(
-                          student: widget.student,
-                          showButton: false
-                      )
+                    context: context,
+                    modalType: widget.student.accessControl!.isEmpty ? ModalType.confirmEntry : ModalType.confirmExit,
+                    student: widget.student,
+                    callback: (result) => widget.callback!(result),
+                    cardTimeControl: CardTimeControl(
+                        student: widget.student,
+                        showButton: false
+                    )
                   ); 
                 }else{
                   Store().showErrorMessage(context, "Este usuário já registrou entrada e saída para o dia de hoje.");

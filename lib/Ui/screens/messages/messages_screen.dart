@@ -1,15 +1,15 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/custom_pop_scope.dart';
+import 'package:educarte/ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/base/store.dart';
-import 'package:educarte/Ui/components/card_messages.dart';
-import 'package:educarte/Ui/components/custom_table_calendar.dart';
+import 'package:educarte/ui/components/card_messages.dart';
+import 'package:educarte/ui/components/custom_table_calendar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../Interector/models/api_diaries.dart';
+import '../../../Interactor/models/api_diaries.dart';
 import '../../../Services/config/api_config.dart';
 import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/bnt_azul.dart';

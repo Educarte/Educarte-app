@@ -1,4 +1,4 @@
-import 'package:educarte/Interector/models/students_model.dart';
+import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:flutter/material.dart';
 
 String? nome;

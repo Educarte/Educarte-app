@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:educarte/core/base/store.dart';
-import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Ui/global/global.dart';
-import 'package:educarte/Ui/global/global.dart' as globals;
+import 'package:educarte/Interactor/models/students_model.dart';
+import 'package:educarte/ui/global/global.dart';
+import 'package:educarte/ui/global/global.dart' as globals;
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';

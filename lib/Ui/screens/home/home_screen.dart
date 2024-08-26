@@ -1,18 +1,18 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/custom_pop_scope.dart';
+import 'package:educarte/ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
-import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Ui/components/result_not_found.dart';
+import 'package:educarte/Interactor/models/students_model.dart';
+import 'package:educarte/ui/components/result_not_found.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Interector/models/api_diaries.dart';
-import '../../../Interector/models/document.dart';
-import '../../../Interector/validations/convertter.dart';
+import '../../../Interactor/models/api_diaries.dart';
+import '../../../Interactor/models/document.dart';
+import '../../../Interactor/validations/convertter.dart';
 import '../../../Services/helpers/file_management_helper.dart';
 import '../../../core/enum/modal_type_enum.dart';
 import '../../components/bnt_azul.dart';

@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Interector/models/students_model.dart';
+import '../../../Interactor/models/students_model.dart';
 import '../../../Services/config/repositories/persistence_repository.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';

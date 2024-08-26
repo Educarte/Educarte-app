@@ -9,7 +9,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../../core/base/store.dart';
-import '../../Interector/models/document.dart';
+import '../../Interactor/models/document.dart';
 
 
 class FileManagement {

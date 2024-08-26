@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/components/bnt_azul.dart';
-import 'package:educarte/Ui/components/bnt_branco.dart';
-import 'package:educarte/Ui/components/organisms/modal.dart';
+import 'package:educarte/ui/components/bnt_azul.dart';
+import 'package:educarte/ui/components/bnt_branco.dart';
+import 'package:educarte/ui/components/organisms/modal.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../../core/base/constants.dart';
-import '../../Interector/models/document.dart';
+import '../../Interactor/models/document.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;

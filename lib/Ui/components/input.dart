@@ -4,8 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../core/enum/input_type.dart';
-import '../../Interector/masks/date_mask.dart';
-import '../../Interector/masks/hour_mask.dart';
+import '../../Interactor/masks/date_mask.dart';
+import '../../Interactor/masks/hour_mask.dart';
 
 class Input extends StatefulWidget {
   const Input({

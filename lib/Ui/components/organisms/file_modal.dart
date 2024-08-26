@@ -1,13 +1,13 @@
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Services/helpers/file_management_helper.dart';
-import 'package:educarte/Ui/components/bnt_branco.dart';
+import 'package:educarte/ui/components/bnt_branco.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
-import '../../../Interector/models/document.dart';
+import '../../../Interactor/models/document.dart';
 import '../bnt_azul.dart';
 import '../molecules/modal_application_bar.dart';
 

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:educarte/core/base/store.dart';
-import 'package:educarte/Interector/validations/validator.dart';
+import 'package:educarte/Interactor/validations/validator.dart';
 import 'package:educarte/Services/config/api_config.dart';
 import 'package:educarte/core/enum/input_type.dart';
 import 'package:flutter/material.dart';
