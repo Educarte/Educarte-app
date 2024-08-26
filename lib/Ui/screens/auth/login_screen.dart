@@ -26,7 +26,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   bool verSenha = true;
   TextEditingController email = TextEditingController(text: "isticplaystore@gmail.com");
-  TextEditingController senha = TextEditingController(text: "6caeafa6");
+  TextEditingController senha = TextEditingController(text: "ukgOAeYuR4pOHAf");
   PersistenceRepository persistenceRepository = PersistenceRepository();
   bool carregando = false;
 

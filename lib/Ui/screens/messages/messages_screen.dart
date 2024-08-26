@@ -279,7 +279,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                               decoration: BoxDecoration(
                                                                   color: colorScheme(
                                                                           context)
-                                                                      .onSurface,
+                                                                      .onSurfaceVariant,
                                                                   borderRadius: const BorderRadius
                                                                       .only(
                                                                       topRight: Radius

@@ -64,7 +64,10 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
           ),
           controlsTextStyle: controlsTextStyle,
           selectedDayTextStyle: controlsTextStyle.copyWith(
-            color: colorScheme(context).onSurface
+            color: colorScheme(context).onSurfaceVariant
+          ),
+          disabledDayTextStyle: textTheme(context).displayLarge!.copyWith(
+            color: colorScheme(context).onInverseSurface
           ),
           dayTextStyle: TextStyle(color: colorScheme(context).onInverseSurface),
           selectedDayHighlightColor: colorScheme(context).primary,
@@ -119,13 +122,15 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
     double iconSize = 24;
     int limitDate = 365 * 2;
     DateTime dateNow = DateTime.now();
-    TextStyle daysOfWeekStyle = textTheme(context)
-        .headlineSmall!
-        .copyWith(fontWeight: FontWeight.w700, fontSize: 20);
-    BoxDecoration selectedDecoration({double? withOpacity = 1}) =>
-        BoxDecoration(
-            color: colorScheme(context).primary.withOpacity(withOpacity!),
-            shape: BoxShape.circle);
+    TextStyle daysOfWeekStyle = textTheme(context).headlineSmall!.copyWith(
+      fontWeight: FontWeight.w700, 
+      color: colorScheme(context).onInverseSurface,
+      fontSize: 20
+    );
+    BoxDecoration selectedDecoration({double? withOpacity = 1}) => BoxDecoration(
+      color: colorScheme(context).primary.withOpacity(withOpacity!),
+      shape: BoxShape.circle
+    );
     DateTime initDate = dateNow.subtract(Duration(days: limitDate));
     DateTime lastDate = dateNow.add(Duration(days: limitDate));
 
@@ -193,10 +198,10 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
               daysOfWeekStyle: DaysOfWeekStyle(
                 weekdayStyle: daysOfWeekStyle,
                 weekendStyle: daysOfWeekStyle,
-                dowTextFormatter: (date, locale) =>
-                    DateFormat.E(locale).format(date)[0].toUpperCase(),
+                dowTextFormatter: (date, locale) =>DateFormat.E(locale).format(date)[0].toUpperCase(),
               ),
               calendarStyle: CalendarStyle(
+                todayDecoration: selectedDecoration(),
                 rangeStartDecoration: selectedDecoration(),
                 rangeEndDecoration: selectedDecoration(withOpacity: 0.7),
                 rangeHighlightColor:

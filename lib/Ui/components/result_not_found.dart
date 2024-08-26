@@ -30,7 +30,7 @@ class ResultNotFound extends StatelessWidget {
             style: GoogleFonts.poppins(
                 fontWeight: FontWeight.w400,
                 fontSize: 14,
-                color: colorScheme(context).onSurfaceVariant
+                color: colorScheme(context).onSurface
             ), 
             textAlign: TextAlign.center
           ),

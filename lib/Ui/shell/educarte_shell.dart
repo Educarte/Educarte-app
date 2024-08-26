@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/bnt_azul.dart';
 import 'package:educarte/Ui/components/bnt_branco.dart';
+import 'package:educarte/Ui/components/organisms/modal.dart';
+import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,11 +11,9 @@ import 'package:material_symbols_icons/symbols.dart';
 
 import '../../core/base/constants.dart';
 import '../../Interector/models/document.dart';
-import '../../Interector/useCase/student_use_case.dart';
 import '../../Services/helpers/file_management_helper.dart';
 import '../global/global.dart' as globals;
 import 'package:http/http.dart' as http;
-import '../components/input.dart';
 
 int selectedIndex = 0;
 int? previousIndex;
@@ -31,83 +30,16 @@ class EducarteShell extends StatefulWidget {
 }
 
 class _EducarteShellState extends State<EducarteShell> {
-  List<Student> students = List.empty(growable: true);
   int selectedIndex = 2;
-  TextEditingController nome = TextEditingController();
-  TextEditingController sala = TextEditingController();
-  TextEditingController responsavel = TextEditingController();
-  TextEditingController auxiliar = TextEditingController();
+  
   List<String> listId = [];
   int pageIndex = 0;
 
-  Student dropdownValue = Student.empty();
   double iconSize = 30;
   bool loadingDownload = false;
 
   String id = "";
-  void getStudents() async{
-    bool first = true;
-
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
-
-    if(response.statusCode == 200){
-      var jsonData = jsonDecode(response.body);
-
-      setState(() {
-        for(var i=0;i < jsonData["items"].length; i++){
-          Student newStudent = Student.fromJson(jsonData["items"][i]);
-          students.add(newStudent);
-
-        }
-        dropdownValue = students.first;
-
-        if(first) dropdownValue = students.first;
-        studentId();
-      });
-    }
-
-  }
-
-  void studentId()async{
-    var response = await http.get(
-      Uri.parse("http://64.225.53.11:5000/Students/${dropdownValue.id}"),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
-
-    if(response.statusCode == 200){
-      var jsonData = jsonDecode(response.body);
-
-      if(jsonData["classroom"] != null){
-        setState(() {
-          var listTeachers = jsonData["classroom"]["teachers"];
-          if(listTeachers.length != 0){
-            for(var i=0; i< listTeachers.length; i++){
-              if(listTeachers[i]["profile"] == 3){
-                responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
-              }
-              if(listTeachers[i]["profile"] == 2){
-                responsavel.text = jsonData["classroom"]["teachers"][i]["name"];
-              }
-            }
-          }
-          globals.idStudent = jsonData["id"];
-          if(jsonData["classroom"]["teachers"].isNotEmpty){
-            responsavel.text = jsonData["classroom"]["teachers"][0]["name"];
-          }
-          sala.text = jsonData["classroom"]["name"];
-          globals.nomeSala = jsonData["classroom"]["name"];
-          globals.nomeAluno = jsonData["name"];
-        });
-      }
-    }
-  }
-
+  
   void changeSelectedIndex(int index){
     setState(() {
       previousIndex = selectedIndex;
@@ -156,7 +88,6 @@ class _EducarteShellState extends State<EducarteShell> {
   @override
   void initState() {
     super.initState();
-    getStudents();
     getMenu();
   }
   @override
@@ -233,116 +164,9 @@ class _EducarteShellState extends State<EducarteShell> {
         setState(() {
           pageIndex = selectedIndex;
         });
-        changeSelectedIndex(index);
-        showModalBottomSheet(
-          useRootNavigator: false,
-          isScrollControlled: true,
-          isDismissible: false,
-          context: context,
-          backgroundColor: Colors.black.withOpacity(0.3),
-          builder: (BuildContext context){
-            return Container(
-              width: screenWidth(context),
-              height: 465,
-              decoration: BoxDecoration(
-                  color: colorScheme(context).onSurface,
-                  borderRadius: const BorderRadius.only(topRight: Radius.circular(8),topLeft: Radius.circular(8))
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16,vertical: 16),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(onPressed: (){
-                          _ontItemTapped(pageIndex, context);
-
-                          Navigator.pop(context);
-                        }, icon: Icon(Symbols.close,color: colorScheme(context).onInverseSurface,)),
-                        Text("Trocar Guarda",style: GoogleFonts.poppins(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w600,
-                            color: colorScheme(context).onInverseSurface
-                        ),)
-                      ],
-                    ),
-                    const SizedBox(height: 32,),
-                    SizedBox(
-                      height: 55,
-                      child: DropdownButtonFormField<Student>(
-                        value: dropdownValue,
-                        icon: const Icon(Symbols.expand_more),
-                        elevation: 16,
-                        style: GoogleFonts.poppins(
-                            fontWeight: FontWeight.w400,
-                            fontSize: 16,
-                            color: const Color(0xff474C51),
-                          height: 1.3
-                        ),
-                        decoration: InputDecoration(
-                            labelText: "Nome",
-                            labelStyle: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16,
-                                color: const Color(0xff474C51),
-                                height: 1.3
-                            ),
-                            border: const OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                                borderSide: const BorderSide(
-                                    color: Color(0xffA0A4A8)
-                                )
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(4),
-                                borderSide: const BorderSide(
-                                    color: Color(0xffA0A4A8)
-                                )
-                            )
-                        ),
-                        onChanged: (Student? value) {
-                          // This is called when the user selects an item.
-                          setState(() {
-                            dropdownValue = value!;
-                            //currentStudent = students.where((element) => element == value).toList().first;
-                            studentId();
-                          });
-                        },
-                        items: students.map<DropdownMenuItem<Student>>((Student value) {
-                          return DropdownMenuItem<Student>(
-                            value: value,
-                            child: Text(value.name!),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                    const SizedBox(height: 16,),
-                    Input(name: "Sala", onChange: sala),
-                    const SizedBox(height: 16,),
-                    Input(name: "Responsável pela sala", onChange: responsavel),
-                    const SizedBox(height: 16,),
-                    Input(name: "Auxiliar", onChange: auxiliar),
-                    const SizedBox(height: 32,),
-                    BotaoAzul(
-                      text: "Atualizar informações",
-                      onPressed: () async{
-                        globals.currentStudent.value = Student.empty();
-                        globals.currentStudent.value = await StudentUseCase.getStudentId(dropdownValue.id!);
-
-                        if(context.mounted){
-                          Navigator.pop(context);
-
-                          globals.updateHomeScreen = true;
-                          _ontItemTapped(2, context);
-                        } 
-                      }
-                    )
-                  ],
-                ),
-              ),
-            );
-          },
+        ModalEvent.build(
+          context: context, 
+          modalType: ModalType.guard
         );
         break;
       case 3:
@@ -369,7 +193,7 @@ class _EducarteShellState extends State<EducarteShell> {
                 width: screenWidth(context),
                 height: 277,
                 decoration: BoxDecoration(
-                    color: colorScheme(context).onSurface,
+                    color: colorScheme(context).onSurfaceVariant,
                     borderRadius: const BorderRadius.only(
                         topRight: Radius.circular(8),
                         topLeft: Radius.circular(8))

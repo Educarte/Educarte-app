@@ -16,7 +16,8 @@ class Input extends StatefulWidget {
     this.isInputModal = false, 
     this.inputType = InputType.text,
     this.suffixIcon,
-    this.enabled = true
+    this.enabled = true,
+    this. readOnly = false
   });
   final String name;
   final bool obscureText;
@@ -25,6 +26,7 @@ class Input extends StatefulWidget {
   final bool enabled;
   final InputType inputType;
   final Widget? suffixIcon;
+  final bool readOnly;
 
   @override
   State<Input> createState() => _InputState();
@@ -35,6 +37,7 @@ class _InputState extends State<Input> {
 
   @override
   Widget build(BuildContext context) {
+    Color fillColor = widget.readOnly ? colorScheme(context).outline.withOpacity(0.5) : Colors.transparent;
     OutlineInputBorder border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(4),
       borderSide: BorderSide(
@@ -51,7 +54,8 @@ class _InputState extends State<Input> {
           width: screenWidth(context),
           height: 55,
           child: TextFormField(
-            enabled: widget.enabled,
+            readOnly: widget.readOnly,
+            enabled: widget.readOnly ? false : widget.enabled,
             inputFormatters: [
               if(widget.inputType == InputType.date) DateMask(),
               if(widget.inputType == InputType.date) LengthLimitingTextInputFormatter(10),
@@ -68,6 +72,8 @@ class _InputState extends State<Input> {
                 color: const Color(0xff474C51)
             ),
             decoration: InputDecoration(
+              filled: true,
+              fillColor: fillColor,
               suffixIcon: !isPassword ? widget.suffixIcon : IconButton(
                 onPressed: () => showPassword.value = !showPassword.value,
                 icon: Icon(

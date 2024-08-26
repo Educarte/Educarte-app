@@ -234,7 +234,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
         } else {
           return Scaffold(
             resizeToAvoidBottomInset: false,
-            backgroundColor: colorScheme(context).onSurface,
+            backgroundColor: colorScheme(context).onSurfaceVariant,
             body: Padding(
               padding: const EdgeInsets.all(16),
               child: SingleChildScrollView(
@@ -293,7 +293,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                           height: 277,
                                           decoration: BoxDecoration(
                                               color: colorScheme(context)
-                                                  .onSurface,
+                                                  .onSurfaceVariant,
                                               borderRadius:
                                                   const BorderRadius.only(
                                                       topRight:
@@ -413,7 +413,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                         height: focusInput ? 900 : 449,
                                         decoration: BoxDecoration(
                                             color: colorScheme(context)
-                                                .onSurface,
+                                                .onSurfaceVariant,
                                             borderRadius:
                                                 const BorderRadius.only(
                                                     topRight:

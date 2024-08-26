@@ -298,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       width: screenWidth(context),
                                       height: focusInput? 900 : 449,
                                       decoration: BoxDecoration(
-                                        color: colorScheme(context).onSurface,
+                                        color: colorScheme(context).onSurfaceVariant,
                                         borderRadius: const BorderRadius.only(
                                           topRight: Radius.circular(8),
                                           topLeft: Radius.circular(8)
@@ -380,7 +380,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           width: screenWidth(context),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: colorScheme(context).onSurface,
+                            color: colorScheme(context).onSurfaceVariant,
                             boxShadow: [
                               BoxShadow(
                                 color: Colors.black.withOpacity(0.3),
@@ -526,7 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               height: 166,
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(8),
-                                color: colorScheme(context).onSurface,
+                                color: colorScheme(context).onSurfaceVariant,
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.3),
@@ -602,7 +602,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 14,
                                                   color: colorScheme(context)
-                                                      .onSurfaceVariant
+                                                      .onSurface
                                               ),),
                                               if(globals.currentStudent.value.horaEntrada != null)
                                               Text(DateFormat('yMd', 'pt_BR').format(DateTime.parse(globals.currentStudent.value.horaEntrada!)) ,
@@ -610,7 +610,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 14,
                                                     color: colorScheme(context)
-                                                        .onSurfaceVariant
+                                                        .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaEntrada == null)
                                                 Text("00/00/00",
@@ -618,7 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 14,
                                                       color: colorScheme(context)
-                                                          .onSurfaceVariant
+                                                          .onSurface
                                                   ),),
                                             ],
                                           ),
@@ -629,7 +629,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     fontWeight: FontWeight.w500,
                                                     fontSize: 14,
                                                     color: colorScheme(context)
-                                                        .onSurfaceVariant
+                                                        .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaEntrada != null)
                                               Text(dateConverteData(globals.currentStudent.value.horaEntrada!),
@@ -637,7 +637,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 14,
                                                     color: colorScheme(context)
-                                                        .onSurfaceVariant
+                                                        .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaEntrada == null)
                                                 Text("00h 00min",
@@ -645,7 +645,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 14,
                                                       color: colorScheme(context)
-                                                          .onSurfaceVariant
+                                                          .onSurface
                                                   ),),
                                             ],
                                           ),
@@ -656,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 14,
                                                   color: colorScheme(context)
-                                                      .onSurfaceVariant
+                                                      .onSurface
                                               ),),
                                               if(globals.currentStudent.value.horaSaida == null)
                                               Text("00h 00min",
@@ -664,7 +664,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 14,
                                                     color: colorScheme(context)
-                                                        .onSurfaceVariant
+                                                        .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaSaida != null)
                                                 Text(dateConverteData(globals.currentStudent.value.horaSaida!),
@@ -672,7 +672,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 14,
                                                       color: colorScheme(context)
-                                                          .onSurfaceVariant
+                                                          .onSurface
                                                   ),)
                                             ],
                                           ),
@@ -767,7 +767,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 height: 166,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
-                                  color: colorScheme(context).onSurface,
+                                  color: colorScheme(context).onSurfaceVariant,
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.3),
@@ -860,20 +860,20 @@ class _HomeScreenState extends State<HomeScreen> {
                                               listData[0], style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w300,
                                                 fontSize: 16,
-                                                color: colorScheme(context).onSurfaceVariant
+                                                color: colorScheme(context).onSurface
                                             ),),
                                             Text(listData[1].trim(),
                                               style: GoogleFonts.poppins(
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 20,
                                                   color: colorScheme(context)
-                                                      .onSurfaceVariant
+                                                      .onSurface
                                               ),),
                                             Text(
                                               listData[2], style: GoogleFonts.poppins(
                                                 fontWeight: FontWeight.w400,
                                                 fontSize: 12,
-                                                color: colorScheme(context).onSurfaceVariant
+                                                color: colorScheme(context).onSurface
                                             ),),
                                           ],
                                         ),
