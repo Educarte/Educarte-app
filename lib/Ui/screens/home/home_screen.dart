@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
       globals.currentStudent.value.listDiaries!.clear();
     });
     try{
-      var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students/${globals.currentStudent.value.id}"),
+      var response = await http.get(Uri.parse("$apiUrl/Students/${globals.currentStudent.value.id}"),
           headers: {
             "Authorization": "Bearer ${globals.token}"
           }
@@ -103,19 +104,20 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     if(response.statusCode == 200){
       Map<String,dynamic> jsonData = jsonDecode(response.body);
+
       setState(() {
         if(globals.currentStudent.value.isEmpty) globals.currentStudent.value = Student.fromJson(jsonData["items"][0]);
         id = globals.currentStudent.value.id!;
         globals.nomeAluno = globals.currentStudent.value.name;
-
       });
+
       getStudentId();
     }
   } 
 
   Document document = Document.empty();
   void getMenu()async{
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
+    var response = await http.get(Uri.parse("$apiUrl/Menus"),
         headers: {
           "Authorization": "Bearer ${globals.token}"
         }
@@ -129,17 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
   }
-  String dateConverteData(String date){
+  String dateConvertData(String date){
     DateTime dateTime = DateTime.parse(date);
 
     String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
     String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
 
-    // Concatenando a data formatada
     String result = '${formattedDate}h. ${formattedTime}min';
 
-    // Output
-    return result; // Saída: 18h. 08 Min
+    return result;
 
   }
 
@@ -473,7 +473,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaEntrada != null)
-                                              Text(dateConverteData(globals.currentStudent.value.horaEntrada!),
+                                              Text(dateConvertData(globals.currentStudent.value.horaEntrada!),
                                                 style: GoogleFonts.poppins(
                                                     fontWeight: FontWeight.w400,
                                                     fontSize: 14,
@@ -508,7 +508,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         .onSurface
                                                 ),),
                                               if(globals.currentStudent.value.horaSaida != null)
-                                                Text(dateConverteData(globals.currentStudent.value.horaSaida!),
+                                                Text(dateConvertData(globals.currentStudent.value.horaSaida!),
                                                   style: GoogleFonts.poppins(
                                                       fontWeight: FontWeight.w400,
                                                       fontSize: 14,

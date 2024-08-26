@@ -1,12 +1,10 @@
-import 'dart:convert';
-
+import 'package:educarte/Interactor/controllers/student_controller.dart';
 import 'package:educarte/ui/components/input.dart';
 import 'package:educarte/ui/shell/educarte_shell.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:http/http.dart' as http;
 
 import '../../../Interactor/useCase/student_use_case.dart';
 import '../../global/global.dart' as globals;
@@ -26,79 +24,20 @@ class ChangingOfTheGuardModal extends StatefulWidget {
 }
 
 class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
-  Student dropdownValue = Student.empty();
-  List<Student> students = List.empty(growable: true);
+  StudentController studentController = StudentController();
   
   TextEditingController nomeController = TextEditingController();
   TextEditingController salaController = TextEditingController();
   TextEditingController responsavelController = TextEditingController();
   TextEditingController auxiliarController = TextEditingController();
 
-  Future<void> getStudents() async{
-    bool first = true;
-
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
-
-    if(response.statusCode == 200){
-      var jsonData = jsonDecode(response.body);
-
-      setState(() {
-        for(var i=0;i < jsonData["items"].length; i++){
-          Student newStudent = Student.fromJson(jsonData["items"][i]);
-          students.add(newStudent);
-
-        }
-        dropdownValue = students.first;
-
-        if(first) dropdownValue = students.first;
-        studentId();
-      });
-    }
-  }
-
-  Future<void> studentId()async{
-    var response = await http.get(
-      Uri.parse("http://64.225.53.11:5000/Students/${dropdownValue.id}"),
-      headers: {
-        "Authorization": "Bearer ${globals.token}"
-      }
-    );
-
-    if(response.statusCode == 200){
-      var jsonData = jsonDecode(response.body);
-
-      if(jsonData["classroom"] != null){
-        setState(() {
-          var listTeachers = jsonData["classroom"]["teachers"];
-          if(listTeachers.length != 0){
-            for(var i=0; i< listTeachers.length; i++){
-              if(listTeachers[i]["profile"] == 3){
-                responsavelController.text = jsonData["classroom"]["teachers"][i]["name"];
-              }
-              if(listTeachers[i]["profile"] == 2){
-                responsavelController.text = jsonData["classroom"]["teachers"][i]["name"];
-              }
-            }
-          }
-          globals.idStudent = jsonData["id"];
-          if(jsonData["classroom"]["teachers"].isNotEmpty){
-            responsavelController.text = jsonData["classroom"]["teachers"][0]["name"];
-          }
-          salaController.text = jsonData["classroom"]["name"];
-          globals.nomeSala = jsonData["classroom"]["name"];
-          globals.nomeAluno = jsonData["name"];
-        });
-      }
-    }
-  }
-
   @override
   void initState() {
-    getStudents();
+    studentController.getStudents(
+      context: context,
+      responsavelController: responsavelController,
+      salaController: salaController
+    );
     super.initState();
   }
 
@@ -140,7 +79,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
           SizedBox(
             height: 55,
             child: DropdownButtonFormField<Student>(
-              value: dropdownValue,
+              value: studentController.dropdownValue.value,
               icon: const Icon(Symbols.expand_more),
               elevation: 16,
               style: GoogleFonts.poppins(
@@ -171,15 +110,16 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                   )
                 )
               ),
-              onChanged: (Student? value) {
-                // This is called when the user selects an item.
-                setState(() {
-                  dropdownValue = value!;
-                  //currentStudent = students.where((element) => element == value).toList().first;
-                  studentId();
-                });
+              onChanged: (Student? value) async{
+                studentController.dropdownValue.value = value!;
+
+                await studentController.getStudentId(
+                  context: context,
+                  responsavelController: responsavelController,
+                  salaController: salaController
+                );
               },
-              items: students.map<DropdownMenuItem<Student>>((Student value) {
+              items: studentController.students.value.map<DropdownMenuItem<Student>>((Student value) {
                 return DropdownMenuItem<Student>(
                   value: value,
                   child: Text(value.name!),
@@ -211,8 +151,8 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
             text: "Atualizar informações",
             onPressed: () async{
               globals.currentStudent.value = Student.empty();
-              globals.currentStudent.value = await StudentUseCase.getStudentId(
-                dropdownValue.id!
+              studentController.currentStudent.value = await StudentUseCase.getStudentId(
+                studentController.dropdownValue.value.id!
               );
       
               if(context.mounted){
