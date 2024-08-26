@@ -108,14 +108,9 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
     return Container(
       width: screenWidth(context),
       height: widget.modalType.height,
-      decoration: BoxDecoration(
-        color: colorScheme(context).onSurfaceVariant,
-        borderRadius: const BorderRadius.only(
-          topRight: Radius.circular(8),
-          topLeft: Radius.circular(8)
-        )
-      ),
+      decoration: BoxDecoration(color: colorScheme(context).onSurfaceVariant),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
@@ -150,32 +145,32 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               icon: const Icon(Symbols.expand_more),
               elevation: 16,
               style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w400,
-                  fontSize: 16,
-                  color: const Color(0xff474C51),
+                fontWeight: FontWeight.w400,
+                fontSize: 16,
+                color: const Color(0xff474C51),
                 height: 1.3
               ),
               decoration: InputDecoration(
-                  labelText: "Nome",
-                  labelStyle: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 16,
-                    color: const Color(0xff474C51),
-                    height: 1.3
-                  ),
-                  border: const OutlineInputBorder(),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(
-                        color: Color(0xffA0A4A8)
-                    )
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4),
-                    borderSide: const BorderSide(
-                        color: Color(0xffA0A4A8)
-                    )
+                labelText: "Nome",
+                labelStyle: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w400,
+                  fontSize: 16,
+                  color: const Color(0xff474C51),
+                  height: 1.3
+                ),
+                border: const OutlineInputBorder(),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: const BorderSide(
+                      color: Color(0xffA0A4A8)
                   )
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(4),
+                  borderSide: const BorderSide(
+                      color: Color(0xffA0A4A8)
+                  )
+                )
               ),
               onChanged: (Student? value) {
                 // This is called when the user selects an item.
@@ -193,25 +188,26 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               }).toList(),
             ),
           ),
-          const SizedBox(height: 16,),
+          const SizedBox(height: 16),
           Input(
             name: "Sala", 
             onChange: salaController,
             readOnly: true
           ),
-          const SizedBox(height: 16,),
-          Input(
-            name: "Responsável pela sala", 
-            onChange: responsavelController,
-            readOnly: true
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Input(
+              name: "Responsável pela sala", 
+              onChange: responsavelController,
+              readOnly: true
+            ),
           ),
-          const SizedBox(height: 16),
           Input(
             name: "Auxiliar", 
             onChange: auxiliarController,
             readOnly: true
           ),
-          const SizedBox(height: 32,),
+          const SizedBox(height: 32),
           BotaoAzul(
             text: "Atualizar informações",
             onPressed: () async{

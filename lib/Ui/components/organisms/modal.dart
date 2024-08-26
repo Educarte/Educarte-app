@@ -1,6 +1,7 @@
 import 'package:educarte/Interector/models/students_model.dart';
 import 'package:educarte/Ui/components/organisms/changing_of_the_guard_modal.dart';
 import 'package:educarte/Ui/components/organisms/confirm_entry_or_exit_modal.dart';
+import 'package:educarte/Ui/components/organisms/my_data_modal.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/base/constants.dart';
@@ -32,6 +33,7 @@ class ModalEvent {
         document: document!
       ),
       ModalType.guard => ChangingOfTheGuardModal(modalType: modalType),
+      ModalType.myData => MyDataModal(modalType: modalType)
     };
 
     double modalHeight = MediaQuery.of(context).viewInsets.bottom > 0 ? modalType.height * 1.1 : modalType.height;

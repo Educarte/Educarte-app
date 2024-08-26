@@ -2,26 +2,23 @@ import 'dart:convert';
 
 import 'package:educarte/Ui/components/custom_pop_scope.dart';
 import 'package:educarte/core/base/constants.dart';
-import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:educarte/Interector/models/students_model.dart';
-import 'package:educarte/Services/config/repositories/persistence_repository.dart';
-import 'package:educarte/Ui/components/input.dart';
 import 'package:educarte/Ui/components/result_not_found.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
+import 'package:http/http.dart' as http;
 
 import '../../../Interector/models/api_diaries.dart';
 import '../../../Interector/models/document.dart';
 import '../../../Interector/validations/convertter.dart';
 import '../../../Services/helpers/file_management_helper.dart';
+import '../../../core/enum/modal_type_enum.dart';
 import '../../components/bnt_azul.dart';
 import '../../components/bnt_branco.dart';
+import '../../components/organisms/modal.dart';
 import '../../global/global.dart' as globals;
-import 'package:http/http.dart' as http;
-
 import '../../global/global.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,9 +29,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  TextEditingController nome = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController? telefone = TextEditingController();
   bool loading = false;
   String id = "";
   List<ApiDiaries> listDiaries = [];
@@ -52,28 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       loading = load;
     });
-  }
-
-  void meusDados()async{
-    setLoading(load: true);
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Users/Me"),
-      headers: {
-        "Authorization": "Bearer ${globals.token.toString()}",
-      }
-    );
-    if(response.statusCode == 200){
-      Map<String,dynamic> jsonData = jsonDecode(response.body);
-
-      setState(() {
-        List<String> groupNames = jsonData["name"].toString().split(" ");
-        globals.nome = groupNames.first;
-        nome.text = jsonData["name"];
-        email.text = jsonData["email"];
-        if(jsonData["cellphone"] != null){
-          telefone?.text = jsonData["cellphone"];
-        }
-      });
-    }
   }
 
   Student student = Student();
@@ -141,47 +113,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   } 
 
-  void putDados()async{
-    setState(() {
-      carregando = true;
-    });
-
-
-    try{
-      Map corpo = {
-        "name": nome.text,
-        "email": email.text,
-        "cellphone": telefone?.text
-      };
-
-      var response = await http.put(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
-          body: jsonEncode(corpo),
-          headers: {
-            "Authorization": "Bearer ${globals.token}",
-            "Content-Type":"application/json"
-          }
-      );
-
-      if(response.statusCode == 200){
-        Future.delayed(const Duration(seconds: 1)).then((value) {
-          meusDados();
-          getStudentId();
-        });
-        setState(() {
-          carregando = false;
-        });
-      }else{
-        setState(() {
-          carregando = false;
-        });
-      }
-    }catch(e){
-      setState(() {
-        carregando = false;
-      });
-    }
-  }
-
   Document document = Document.empty();
   void getMenu()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
@@ -201,7 +132,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String dateConverteData(String date){
     DateTime dateTime = DateTime.parse(date);
 
-
     String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
     String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
 
@@ -213,27 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   }
 
-  Future<void> logout()async{
-    PersistenceRepository persistenceRepository = PersistenceRepository();
-
-    await persistenceRepository.delete(key: SecureKey.token);
-    setState(() {
-      globals.currentStudent.value = Student.empty();
-      globals.id = "";
-      globals.nomeAluno = "";
-      globals.idStudent = "";
-      globals.nomeSala = "";
-      globals.token = "";
-    });
-    if(context.mounted){
-      context.go("/login");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    meusDados();
     studentGet();
     getMenu();
   }
@@ -241,12 +153,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     TextStyle diaryStyle = GoogleFonts.poppins(
-        fontSize: 14,
-        color: colorScheme(context).onInverseSurface,
-        fontWeight: FontWeight.w400
+      fontSize: 14,
+      color: colorScheme(context).onInverseSurface,
+      fontWeight: FontWeight.w400
     );
 
-    bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
     if (loading) {
       return const Center(
           child: CircularProgressIndicator());
@@ -272,99 +183,29 @@ class _HomeScreenState extends State<HomeScreen> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("Olá,", style: GoogleFonts.poppins(
-                                  color: colorScheme(context).onInverseSurface,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 16,
-                                ),),
-                                Text(globals.nome.toString(),
+                                Text(
+                                  "Olá,", 
+                                  style: GoogleFonts.poppins(
+                                    color: colorScheme(context).onInverseSurface,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 16,
+                                  )
+                                ),
+                                Text(
+                                  globals.nome.toString(),
                                   style: GoogleFonts.poppins(
                                     color: colorScheme(context).primary,
                                     fontWeight: FontWeight.w800,
                                     fontSize: 25,
-                                  ),),
+                                  )
+                                ),
                               ],
                             ),
                             IconButton(
-                              onPressed: () {
-                                showModalBottomSheet(
-                                  useRootNavigator: true,
-                                  isScrollControlled: true,
-                                  isDismissible: false,
-                                  context: context,
-                                  backgroundColor: Colors.black.withOpacity(0.3),
-                                  builder: (BuildContext context) {
-                                    return Container(
-                                      width: screenWidth(context),
-                                      height: focusInput? 900 : 449,
-                                      decoration: BoxDecoration(
-                                        color: colorScheme(context).onSurfaceVariant,
-                                        borderRadius: const BorderRadius.only(
-                                          topRight: Radius.circular(8),
-                                          topLeft: Radius.circular(8)
-                                        )
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16, vertical: 16),
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                IconButton(
-                                                  onPressed: () {
-                                                    Navigator.pop(context);
-                                                  },
-                                                  icon: Icon(
-                                                    Symbols.close,
-                                                    color: colorScheme(context).onInverseSurface
-                                                  )
-                                                ),
-                                                Text("Meus dados",
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: colorScheme(context).onInverseSurface
-                                                  )
-                                                )
-                                              ]
-                                            ),
-                                            const SizedBox(height: 32,),
-                                            Input(
-                                              name: "Nome",
-                                              onChange: nome
-                                            ),
-                                            const SizedBox(height: 16,),
-                                            Input(
-                                              name: "E-mail",
-                                              onChange: email
-                                            ),
-                                            const SizedBox(height: 16,),
-                                            Input(
-                                              name: "Telefone",
-                                              onChange: telefone!
-                                            ),
-                                            const SizedBox(height: 32,),
-                                            BotaoAzul(text: "Atualizar informações",
-                                              onPressed: () {
-                                                putDados();
-                                                Navigator.pop(context);
-                                              },
-                                              loading: carregando,
-                                            ),
-                                            const SizedBox(height: 16,),
-                                            BotaoBranco(text: "Sair do aplicativo",
-                                              onPressed: () async{
-                                                logout();
-                                              }
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
+                              onPressed: () => ModalEvent.build(
+                                context: context,
+                                modalType: ModalType.myData
+                              ),
                               icon: const Icon(
                                 Symbols.account_circle,
                                 size: 30
