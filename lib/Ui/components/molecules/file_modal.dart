@@ -37,58 +37,54 @@ class _FileModalState extends State<FileModal> {
           topLeft: Radius.circular(8)
         )
       ),
-      child: Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16, vertical: 16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              ModalApplicationBar(title: widget.modalType.title),
-              const SizedBox(height: 32),
-              CustomButton(
-                title: "Visualizar",
-                onPressed: () async{
-                   XFile xFile = await FileManagement.createTemporaryXFile(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ModalApplicationBar(title: widget.modalType.title),
+            const SizedBox(height: 32),
+            CustomButton(
+              title: "Visualizar",
+              onPressed: () async{
+                 XFile xFile = await FileManagement.createTemporaryXFile(
+                  url: widget.document.fileUri!,
+                  document: widget.document
+                );
+      
+                if(context.mounted){
+                  context.push("/pdfViewer", extra: {
+                    "pdfPath": xFile.path,
+                    "document": widget.document,
+                    "xFile": xFile
+                  });
+                }
+              }
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: CustomButton(
+                title: "Baixar",
+                buttonType: ButtonType.secondary,
+                onPressed: () async {
+                  String result = await FileManagement.download(
                     url: widget.document.fileUri!,
-                    document: widget.document
+                    fileName: "${widget.document.name}_${widget.document.id!.substring(0,6)}"
                   );
-
+      
                   if(context.mounted){
-                    context.push("/pdfViewer", extra: {
-                      "pdfPath": xFile.path,
-                      "document": widget.document,
-                      "xFile": xFile
-                    });
+                    result.toLowerCase().contains("erro") ? Store().showErrorMessage(context, result) : Store().showSuccessMessage(context, result);
                   }
                 }
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                child: CustomButton(
-                  title: "Baixar",
-                  buttonType: ButtonType.secondary,
-                  onPressed: () async {
-                    String result = await FileManagement.download(
-                      url: widget.document.fileUri!,
-                      fileName: "${widget.document.name}_${widget.document.id!.substring(0,6)}"
-                    );
-
-                    if(context.mounted){
-                      result.toLowerCase().contains("erro") ? Store().showErrorMessage(context, result) : Store().showSuccessMessage(context, result);
-                    }
-                  }
-                ),
-              ),
-              CustomButton(
-                title: "Compartilhar",
-                buttonType: ButtonType.secondary,
-                onPressed: () => FileManagement.share(
-                  url: widget.document.fileUri!,
-                  document: widget.document
-                )
-              ),
-            ],
-          ),
+            ),
+            CustomButton(
+              title: "Compartilhar",
+              buttonType: ButtonType.secondary,
+              onPressed: () => FileManagement.share(
+                url: widget.document.fileUri!,
+                document: widget.document
+              )
+            ),
+          ],
         ),
       ),
     );

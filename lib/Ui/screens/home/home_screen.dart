@@ -1,14 +1,15 @@
 import 'package:educarte/Interactor/providers/menu_provider.dart';
 import 'package:educarte/Ui/components/atoms/card_timer_or_menu.dart';
 import 'package:educarte/Ui/components/organisms/header_home.dart';
+import 'package:educarte/Ui/components/organisms/modal.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/core/enum/card_home_type.dart';
+import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../Interactor/models/diary_model.dart';
 import '../../../Interactor/providers/student_provider.dart';
 import '../../../Interactor/providers/user_provider.dart';
 import '../../../Ui/components/atoms/custom_pop_scope.dart';
@@ -25,13 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   final menuProvider = GetIt.instance.get<MenuProvider>();
   final userProvider = GetIt.instance.get<UserProvider>();
   final studentProvider = GetIt.instance.get<StudentProvider>();
-  String id = "";
-  List<Diary> listDiariesFiltro = [];
-  String dataEntrada = "00/00/0000";
-  String horaEntrada = "00";
-  String minEntrada = "00";
-  String horaSaida = "00";
-  String minSaida = "00";
 
   @override
   void initState() {
@@ -217,7 +211,18 @@ class _HomeScreenState extends State<HomeScreen> {
                               const SizedBox(width: 12),
                               CardTimerOrMenu(
                                 studentProvider: studentProvider,
-                                cardType: CardHomeType.menu
+                                cardType: CardHomeType.menu,
+                                action: () { 
+                                  if(menuProvider.currentMenu.fileUri == null){
+                                    menuProvider.showErrorMessage(context, "Cardápio nāo encontrado");
+                                  }else{
+                                    ModalEvent.build(
+                                      context: context,
+                                      document: menuProvider.currentMenu,
+                                      modalType: ModalType.menu
+                                    );
+                                  }
+                                },
                               )
                             ],
                           ),

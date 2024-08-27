@@ -41,6 +41,7 @@ class ModalEvent {
     show(
       context: context, 
       modal: modal,
+      modalType: modalType,
       modalHeight: modalHeight
     );
   }
@@ -48,6 +49,7 @@ class ModalEvent {
   static show({
     required BuildContext context, 
     required Widget modal,
+    required ModalType modalType,
     required double modalHeight
   }) {
     Radius radiusModal = const Radius.circular(8);
@@ -56,7 +58,7 @@ class ModalEvent {
     return showModalBottomSheet(
       context: context, 
       isScrollControlled: true,
-      useRootNavigator: true,
+      useRootNavigator: !(modalType == ModalType.guard || modalType == ModalType.myData),
       isDismissible: false,
       builder: (_) => Padding(
         padding: EdgeInsets.only(
@@ -74,7 +76,10 @@ class ModalEvent {
           ),
           child: Scaffold(
             backgroundColor: backgroundColor,
-            body: modal
+            body: SingleChildScrollView(
+              physics: modalType == ModalType.myData ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
+              child: modal
+            )
           )
         )
       )

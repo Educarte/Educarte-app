@@ -82,6 +82,18 @@ class AuthProvider extends Store{
     setLoading(false);
   }
 
+  Future<void> logout({
+    required BuildContext context
+  })async{
+    PersistenceRepository persistenceRepository = PersistenceRepository();
+
+    await persistenceRepository.delete(key: SecureKey.token);
+
+    if(context.mounted){
+      context.go("/login");
+    }
+  }
+
   Future<String?> refreshToken({
     required BuildContext context,
     required String token,

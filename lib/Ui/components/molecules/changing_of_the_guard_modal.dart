@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:educarte/Interactor/providers/student_provider.dart';
+import 'package:educarte/Interactor/providers/user_provider.dart';
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +29,8 @@ class ChangingOfTheGuardModal extends StatefulWidget {
 
 class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
   final studentProvider = GetIt.instance.get<StudentProvider>();
-  
+  final userProvider = GetIt.instance.get<UserProvider>();
+
   TextEditingController nomeController = TextEditingController();
   TextEditingController salaController = TextEditingController();
   TextEditingController responsavelController = TextEditingController();
@@ -34,12 +38,13 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
 
   @override
   void initState() {
-    studentProvider.getStudentsLegalGuardian(
+    super.initState();
+    Timer.run(() => studentProvider.getStudentsLegalGuardian(
       context: context,
       responsavelController: responsavelController,
-      salaController: salaController
-    );
-    super.initState();
+      salaController: salaController,
+      legalGuardianId: userProvider.currentLegalGuardian.id!
+    ));
   }
 
   @override

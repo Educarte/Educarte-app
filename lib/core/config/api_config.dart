@@ -39,9 +39,8 @@ class ApiConfig {
       case RequestType.put:
         response = await put(
           Uri.parse('$apiUrl$url'),
-          headers: {
-            "Authorization": "Bearer $token"
-          }
+          body: body != null ? jsonEncode(body) : null,
+          headers: headers
         );
         break;
       case RequestType.delete:

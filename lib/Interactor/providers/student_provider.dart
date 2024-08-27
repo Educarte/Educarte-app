@@ -58,7 +58,8 @@ class StudentProvider extends Store{
   Future<void> getStudentsLegalGuardian({
     required BuildContext context,
     required TextEditingController responsavelController,
-    required TextEditingController salaController
+    required TextEditingController salaController,
+    required String legalGuardianId
   }) async {
     setLoading(true);
     bool first = true;
@@ -66,7 +67,7 @@ class StudentProvider extends Store{
 
     try {
       var response = await ApiConfig.request(
-        url: "/Students?LegalGuardianId=${currentStudent.id}"
+        url: "/Students?LegalGuardianId=$legalGuardianId"
       );
 
       if(response.statusCode == 200){
