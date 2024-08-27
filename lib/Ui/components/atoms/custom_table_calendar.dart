@@ -1,5 +1,5 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
-import 'package:educarte/Interactor/validations/convertter.dart';
+import 'package:educarte/Interactor/validations/intl_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -25,7 +25,7 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
   late PageController _pageController;
   Duration duration = const Duration(milliseconds: 400);
   Curve curve = Curves.decelerate;
-  String currentDate = Convertter.dateInMonthAndYear(date: DateTime.now());
+  String currentDate = IntlFormatter.dateInMonthAndYear(date: DateTime.now());
   final RangeSelectionMode _rangeSelectionMode = RangeSelectionMode.toggledOn;
 
   @override
@@ -109,7 +109,7 @@ class _CustomTableCalendarState extends State<CustomTableCalendar> {
   void pageChanged({required DateTime newFocusedDay}) => setState(() {
         _focusedDay = newFocusedDay;
 
-        currentDate = Convertter.dateInMonthAndYear(date: newFocusedDay);
+        currentDate = IntlFormatter.dateInMonthAndYear(date: newFocusedDay);
       });
 
   void previousPage() =>

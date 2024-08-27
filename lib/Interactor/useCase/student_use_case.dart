@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
-import '../models/api_diaries.dart';
-import '../validations/convertter.dart';
+import '../models/diary_model.dart';
+
 
 class StudentUseCase {
   static Future<Student> getStudentId(String idStudent) async {
@@ -28,7 +28,7 @@ class StudentUseCase {
         var decodeJson = jsonDecode(response.body);
         student = Student.fromJson(decodeJson);
 
-        List<ApiDiaries> listDiariesFiltro = [];
+        List<Diary> listDiariesFiltro = [];
         listDiariesFiltro = student.listDiaries!;
         student.listDiaries = listDiariesFiltro
             .where((element) =>
@@ -48,8 +48,8 @@ class StudentUseCase {
               decodeJson["accessControls"][1]["time"].toString();
         }
         if (decodeJson["currentMenu"] != null) {
-          student.listData = await Convertter.getCurrentDate(
-              isDe: true, data: decodeJson["currentMenu"]["startDate"]);
+          // student.listData = await IntlFormatter.getCurrentDate(
+          //     isDe: true, data: decodeJson["currentMenu"]["startDate"]);
         }
         updateHomeScreen = false;
       }

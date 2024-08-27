@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../Interactor/models/api_diaries.dart';
+import '../../../Interactor/models/diary_model.dart';
 import '../../../Services/helpers/file_management_helper.dart';
 import '../../../Ui/components/atoms/card_messages.dart';
 import '../../../Ui/components/atoms/custom_pop_scope.dart';
@@ -16,7 +16,6 @@ import '../../../Ui/components/atoms/custom_table_calendar.dart';
 import '../../../core/enum/button_type.dart';
 import '../../components/atoms/result_not_found.dart';
 import 'package:http/http.dart' as http;
-import '../../global/global.dart' as globals;
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key, this.idStudent});
@@ -30,7 +29,7 @@ enum Loadings { none, initial, list }
 class _MessagesScreenState extends State<MessagesScreen> {
   DateTime today = DateTime.now();
   String id = "";
-  List<ApiDiaries> listDiaries = [];
+  List<Diary> listDiaries = [];
   Loadings loading = Loadings.none;
   bool loadingDownload = false;
 
@@ -44,7 +43,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     setLoading(load: Loadings.initial);
     var response = await http.get(
       Uri.parse(
-          "http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
+          "http://64.225.53.11:5000/Students?LegalGuardianId="),
       // headers: {"Authorization": "Bearer ${globals.token}"},
     );
 
@@ -63,7 +62,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     });
 
     var params = {
-      'StudentId': globals.idStudent,
+      // 'StudentId': globals.idStudent,
       "StartDate": startDate.toString(),
       "EndDate": endDate == null ? startDate.toString() : endDate.toString()
     };
@@ -75,7 +74,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
       var decodeJson = jsonDecode(response.body);
       if (decodeJson["items"] != null) {
         (decodeJson["items"] as List).where((diary) {
-          listDiaries.add(ApiDiaries.fromJson(diary));
+          listDiaries.add(Diary.fromJson(diary));
           return true;
         }).toList();
       }
@@ -100,7 +99,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
         if (decodeJson["diaries"] != null) {
           (decodeJson["diaries"] as List).where((diary) {
-            listDiaries.add(ApiDiaries.fromJson(diary));
+            listDiaries.add(Diary.fromJson(diary));
             return true;
           }).toList();
         }
@@ -199,18 +198,15 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                             assets: "assets/imgRecados1.png"),
                                       if (listDiaries[index].diaryType == 1)
                                         CardMessages(
-                                            encaminhado: globals.nomeSala
-                                                .toString()
-                                                .toUpperCase(),
+                                            encaminhado: "Nome da sala".toString().toUpperCase(),
                                             color: colorScheme(context).primary,
                                             assets: "assets/imgRecados2.png"),
                                       if (listDiaries[index].diaryType == 0)
                                         CardMessages(
-                                            encaminhado: globals.nomeAluno
-                                                .toString()
-                                                .toUpperCase(),
-                                            color: colorScheme(context).secondary,
-                                            assets: "assets/imgRecados3.png"),
+                                          encaminhado: "Nome do aluno".toString().toUpperCase(),
+                                          color: colorScheme(context).secondary,
+                                          assets: "assets/imgRecados3.png"
+                                        ),
                                       Container(
                                         width: screenWidth(context),
                                         alignment: Alignment.centerLeft,

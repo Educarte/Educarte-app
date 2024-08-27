@@ -2,7 +2,7 @@ import 'package:educarte/Interactor/models/access_control_model.dart';
 import 'package:educarte/Interactor/models/contracted_hour_model.dart';
 import 'package:educarte/Interactor/models/legal_guardians_model.dart';
 
-import 'api_diaries.dart';
+import 'diary_model.dart';
 import 'classroom_model.dart';
 
 // ignore: must_be_immutable
@@ -26,7 +26,7 @@ class Student{
   String? birthDate;
   Classroom? classrooms;
   LegalGuardian? legalGuardian;
-  List<ApiDiaries>? listDiaries;
+  List<Diary>? listDiaries;
   List<ContratedHour>? contratedHours;
   List<AcessControl>? accessControl;
   String? horaEntrada;
@@ -80,7 +80,7 @@ class Student{
     workplace = json['workplace'];
     genre = json['genre'];
     bloodType = json['bloodType'];
-    listDiaries = json["diaries"] != null ? json["diaries"].map<ApiDiaries>((e) => ApiDiaries.fromJson(e)).toList() : [];
+    listDiaries = json["diaries"] != null ? json["diaries"].map<Diary>((e) => Diary.fromJson(e)).toList() : [];
     time = json['time'];
     status = json['status'];
     birthDate = json['birthDate'];

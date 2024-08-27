@@ -1,4 +1,4 @@
-class ApiDiaries {
+class Diary {
   String? id;
   String? name;
   String? fileUri;
@@ -8,7 +8,7 @@ class ApiDiaries {
   String? time;
   String? imageBackground;
 
-  ApiDiaries({
+  Diary({
     this.id,
     this.name,
     this.fileUri,
@@ -19,7 +19,7 @@ class ApiDiaries {
     this.imageBackground
   });
 
-  ApiDiaries.fromJson(Map<String, dynamic> json) {
+  Diary.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     fileUri = json['fileUri'];

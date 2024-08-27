@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:educarte/Interactor/models/classroom_model.dart';
-import 'package:educarte/Interactor/validations/convertter.dart';
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/core/enum/button_type.dart';
@@ -77,7 +76,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
       await getStudents(timeControlPageLoading: TimeControlPageLoading.initial);
       await getMenu();
 
-      currentDate = await Convertter.getCurrentDate();
+      // currentDate = await IntlFormatter.getCurrentDate();
 
       classroomSelected = classrooms.first;
 
@@ -192,7 +191,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
       };
 
       var response = await http.put(
-          Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
+          Uri.parse("http://64.225.53.11:5000/Users/"),
           body: jsonEncode(corpo),
           headers: {
             // "Authorization": "Bearer ${globals.token}",

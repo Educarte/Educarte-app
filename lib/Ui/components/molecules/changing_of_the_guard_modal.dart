@@ -34,7 +34,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
 
   @override
   void initState() {
-    studentProvider.getStudents(
+    studentProvider.getStudentsLegalGuardian(
       context: context,
       responsavelController: responsavelController,
       salaController: salaController
@@ -120,7 +120,8 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                     await studentProvider.getStudentId(
                       context: context,
                       responsavelController: responsavelController,
-                      salaController: salaController
+                      salaController: salaController,
+                      changingGuard: true
                     );
                   },
                   items: studentProvider.students.map<DropdownMenuItem<Student>>((Student value) {
@@ -154,7 +155,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               CustomButton(
                 title: "Atualizar informações",
                 onPressed: () async{
-                  globals.currentStudent.value = Student.empty();
+                  // globals.currentStudent.value = Student.empty();
                   studentProvider.currentStudent = await StudentUseCase.getStudentId(
                     studentProvider.dropdownValue.id!
                   );

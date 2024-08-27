@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
-import '../../../Interactor/models/students_model.dart';
 import '../../../Services/repositories/persistence_repository.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
@@ -79,7 +78,7 @@ class _MyDataModalState extends State<MyDataModal> {
         "cellphone": telefoneController?.text
       };
 
-      var response = await http.put(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
+      var response = await http.put(Uri.parse("http://64.225.53.11:5000/Users/"),
           body: jsonEncode(corpo),
           headers: {
             // "Authorization": "Bearer ${globals.token}",
@@ -106,11 +105,11 @@ class _MyDataModalState extends State<MyDataModal> {
 
     await persistenceRepository.delete(key: SecureKey.token);
     setState(() {
-      globals.currentStudent.value = Student.empty();
-      globals.id = "";
-      globals.nomeAluno = "";
-      globals.idStudent = "";
-      globals.nomeSala = "";
+      // globals.currentStudent.value = Student.empty();
+      // globals.id = "";
+      // globals.nomeAluno = "";
+      // globals.idStudent = "";
+      // globals.nomeSala = "";
     });
 
     if(context.mounted){

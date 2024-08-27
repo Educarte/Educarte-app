@@ -12,7 +12,6 @@ import '../../../Ui/components/atoms/custom_pop_scope.dart';
 import '../../../Ui/components/atoms/custom_table_calendar.dart';
 import '../../../Ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
 import '../../components/atoms/result_not_found.dart';
-import '../../global/global.dart';
 import 'package:http/http.dart' as http;
 
 class EntryAndExitPage extends StatefulWidget {
@@ -42,7 +41,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
       listAccess = [];
     });
     var params = {
-      'Id': currentStudent.value.id,
+      // 'Id': currentStudent.value.id,
       "StartDate": DateFormat.yMd().format(startDate).toString(),
       "EndDate": endDate == null
           ? DateFormat.yMd().format(startDate).toString()
@@ -50,8 +49,7 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
     };
 
     var response = await http.get(
-      Uri.parse("$apiUrl/Students/AccessControls/${currentStudent.value.id}")
-          .replace(queryParameters: params),
+      Uri.parse("$apiUrl/Students/AccessControls/IDDOSTUDENT").replace(queryParameters: params),
       headers: {
         // "Authorization": "Bearer ${globals.token}"
       },

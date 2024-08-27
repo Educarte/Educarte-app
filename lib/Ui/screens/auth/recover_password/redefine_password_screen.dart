@@ -70,7 +70,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
     };
 
     var response = await http.patch(
-      Uri.parse("$apiUrl/Users/${globals.id}/ResetPassword"),
+      Uri.parse("$apiUrl/Users/IDDOUSUARIO/ResetPassword"),
       body: jsonEncode(body),
       headers: {
         "Content-Type": "application/json",
