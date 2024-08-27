@@ -2,7 +2,6 @@ import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:flutter/material.dart';
 
 String? nome;
-String? token;
 String? id;
 String? idStudent;
 int? profile;
@@ -15,10 +14,8 @@ String? code;
 String? nomeAluno;
 String? nomeSala;
 
-final ValueNotifier<Student> currentStudent =
-    ValueNotifier<Student>(Student.empty());
-final ValueNotifier<List<Student>> listStudent =
-    ValueNotifier<List<Student>>([]);
+final ValueNotifier<Student> currentStudent = ValueNotifier<Student>(Student.empty());
+final ValueNotifier<List<Student>> listStudent = ValueNotifier<List<Student>>([]);
 
 int checkUserType({required String profileType}) {
   return switch (profileType) {

@@ -5,6 +5,7 @@ import 'package:educarte/Interactor/models/classroom_model.dart';
 import 'package:educarte/Interactor/validations/convertter.dart';
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/config/api_config.dart';
+import 'package:educarte/core/enum/button_type.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,13 +16,12 @@ import '../../../core/base/constants.dart';
 import '../../../core/enum/persistence_enum.dart';
 import '../../../Interactor/models/document.dart';
 import '../../../Interactor/models/students_model.dart';
-import '../../../Services/config/repositories/persistence_repository.dart';
+import '../../../Services/repositories/persistence_repository.dart';
 import '../../../Services/helpers/file_management_helper.dart';
 import '../../components/atoms/custom_dropdown.dart';
 import '../../components/atoms/input.dart';
 import '../../components/atoms/result_not_found.dart';
 import '../../components/atoms/search_input.dart';
-import '../../components/bnt_branco.dart';
 import '../../global/global.dart';
 import '../../global/global.dart' as globals;
 import 'widgets/card_time_control.dart';
@@ -94,7 +94,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   Future<void> getMenu() async {
     var response = await http.get(
       Uri.parse("$apiUrl/Menus"),
-      headers: {"Authorization": "Bearer ${globals.token}"}
+      // headers: {"Authorization": "Bearer ${globals.token}"}
     );
 
     if (response.statusCode == 200) {
@@ -116,7 +116,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
       globals.listStudent.value.clear();
 
       var response = await http.get(Uri.parse("$apiUrl/Students"), headers: {
-        "Authorization": "Bearer $token",
+        // "Authorization": "Bearer $token",
       });
 
       if (response.statusCode == 200) {
@@ -143,7 +143,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
       classrooms.clear();
 
       var response = await http.get(Uri.parse("$apiUrl/Classroom"), headers: {
-        "Authorization": "Bearer $token",
+        // "Authorization": "Bearer $token",
       });
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonData = jsonDecode(response.body);
@@ -162,7 +162,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
     setLoading(load: TimeControlPageLoading.loaded);
     var response = await http
         .get(Uri.parse("http://64.225.53.11:5000/Users/Me"), headers: {
-      "Authorization": "Bearer ${globals.token.toString()}",
+      // "Authorization": "Bearer ${globals.token.toString()}",
     });
     if (response.statusCode == 200) {
       Map<String, dynamic> jsonData = jsonDecode(response.body);
@@ -195,7 +195,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
           Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
           body: jsonEncode(corpo),
           headers: {
-            "Authorization": "Bearer ${globals.token}",
+            // "Authorization": "Bearer ${globals.token}",
             "Content-Type": "application/json"
           });
 
@@ -351,20 +351,19 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                 const SizedBox(
                                                   height: 16,
                                                 ),
-                                                BotaoBranco(
-                                                  text: "Baixar",
+                                                CustomButton(
+                                                  title: "Baixar",
+                                                  buttonType: ButtonType.secondary,
                                                   onPressed: () {
                                                     setstate(() {
                                                       loadingDownload = true;
                                                     });
+
                                                     FileManagement.download(
-                                                        url: document.fileUri
-                                                            .toString(),
-                                                        fileName: "Cardápio");
-                                                    Future.delayed(
-                                                            const Duration(
-                                                                seconds: 2))
-                                                        .then((value) {
+                                                      url: document.fileUri.toString(),
+                                                      fileName: "Cardápio"
+                                                    );
+                                                    Future.delayed(const Duration(seconds: 2)).then((value) {
                                                       setstate(() {
                                                         loadingDownload = false;
                                                       });
@@ -375,17 +374,13 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                                 const SizedBox(
                                                   height: 16,
                                                 ),
-                                                BotaoBranco(
-                                                  text: "Compartilhar",
-                                                  onPressed: () {
-                                                    if (loadingDownload ==
-                                                        false) {
-                                                      FileManagement.share(
-                                                          url: document.fileUri
-                                                              .toString(),
-                                                          document: document);
-                                                    }
-                                                  },
+                                                CustomButton(
+                                                  title: "Compartilhar",
+                                                  buttonType: ButtonType.secondary,
+                                                  onPressed: () async => await FileManagement.share(
+                                                    url: document.fileUri.toString(),
+                                                    document: document
+                                                  )
                                                 ),
                                               ],
                                             ),
@@ -479,22 +474,19 @@ class _TimeControlPageState extends State<TimeControlPage> {
                                               const SizedBox(
                                                 height: 16,
                                               ),
-                                              BotaoBranco(
-                                                  text: "Sair do aplicativo",
-                                                  onPressed: () async {
-                                                    PersistenceRepository
-                                                        persistenceRepository =
-                                                        PersistenceRepository();
+                                              CustomButton(
+                                                title: "Sair do aplicativo",
+                                                buttonType: ButtonType.secondary,
+                                                onPressed: () async {
+                                                  PersistenceRepository persistenceRepository = PersistenceRepository();
 
-                                                    await persistenceRepository
-                                                        .delete(
-                                                            key: SecureKey
-                                                                .token);
+                                                  await persistenceRepository.delete(key: SecureKey.token);
 
-                                                    if (context.mounted) {
-                                                      context.go("/login");
-                                                    }
-                                                  })
+                                                  if (context.mounted) {
+                                                    context.go("/login");
+                                                  }
+                                                }
+                                              )
                                             ],
                                           ),
                                         ),

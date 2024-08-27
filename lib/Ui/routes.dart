@@ -1,9 +1,6 @@
-import 'dart:convert';
-
-import 'package:educarte/core/config/api_config.dart';
+import 'package:educarte/Interactor/providers/auth_provider.dart';
 import 'package:educarte/core/enum/persistence_enum.dart';
-import 'package:educarte/Services/config/repositories/persistence_repository.dart';
-import 'package:educarte/Ui/global/global.dart' as globals;
+import 'package:educarte/Services/repositories/persistence_repository.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/email_code_screen.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/forgot_password_screen.dart';
 import 'package:educarte/Ui/screens/entry_and_exit/entry_and_exit_page.dart';
@@ -13,9 +10,8 @@ import 'package:educarte/Ui/screens/messages/messages_screen.dart';
 import 'package:educarte/Ui/screens/auth/recover_password/redefine_password_screen.dart';
 import 'package:educarte/Ui/screens/time_control/time_control_page.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:http/http.dart' as http;
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../Ui/components/atoms/search_by_voice.dart';
 import 'styles/transitions/fade_transition.dart';
@@ -29,47 +25,16 @@ class Routes {
       PersistenceRepository persistenceRepository = PersistenceRepository();
 
       String? path;
-      globals.token = await persistenceRepository.read(key: SecureKey.token);
+      String? token = await persistenceRepository.read(key: SecureKey.token);
 
-      if (globals.token != null) {
-        try {
-          var response =
-              await http.post(Uri.parse("$apiUrl/Auth/refresh"), headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer ${globals.token}",
-          });
+      if (token != null) {
+        final authProvider = GetIt.instance.get<AuthProvider>();
 
-          if (response.statusCode == 200) {
-            await persistenceRepository.update(
-                key: SecureKey.token,
-                value: jsonDecode(response.body)["token"]);
-            Map<String, dynamic> decodedToken =
-                JwtDecoder.decode(jsonDecode(response.body)["token"]);
-            globals.token = jsonDecode(response.body)["token"];
-            globals.id = decodedToken["sub"];
-            globals.checkUserType(profileType: decodedToken["profile"]);
-            bool firstAccess =
-                bool.parse(decodedToken["isFirstAccess"].toLowerCase());
-            globals.firstAccess = firstAccess;
-
-            if (globals.nome == null) {
-              // currentIndex = 2;
-              path = globals.routerPath(firstAccess: firstAccess);
-            }
-          } else if (response.statusCode == 401) {
-            await persistenceRepository.delete(key: SecureKey.token);
-            globals.token = null;
-            globals.firstAccess = false;
-
-            path = '/login';
-          }
-        } catch (e) {
-          await persistenceRepository.delete(key: SecureKey.token);
-          globals.token = null;
-          globals.firstAccess = false;
-
-          path = '/login';
-        }
+        path = await authProvider.refreshToken(
+          context: context, 
+          token: token, 
+          persistenceRepository: persistenceRepository
+        );
       }
 
       return path;

@@ -1,11 +1,11 @@
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Services/helpers/file_management_helper.dart';
-import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/enum/button_type.dart';
 import '../atoms/modal_application_bar.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
@@ -64,8 +64,9 @@ class _FileModalState extends State<FileModal> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                child: BotaoBranco(
-                  text: "Baixar",
+                child: CustomButton(
+                  title: "Baixar",
+                  buttonType: ButtonType.secondary,
                   onPressed: () async {
                     String result = await FileManagement.download(
                       url: widget.document.fileUri!,
@@ -78,8 +79,9 @@ class _FileModalState extends State<FileModal> {
                   }
                 ),
               ),
-              BotaoBranco(
-                text: "Compartilhar",
+              CustomButton(
+                title: "Compartilhar",
+                buttonType: ButtonType.secondary,
                 onPressed: () => FileManagement.share(
                   url: widget.document.fileUri!,
                   document: widget.document

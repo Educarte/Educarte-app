@@ -8,12 +8,12 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../Interactor/models/students_model.dart';
-import '../../../Services/config/repositories/persistence_repository.dart';
+import '../../../Services/repositories/persistence_repository.dart';
 import '../../../core/base/constants.dart';
 import '../../../core/base/store.dart';
+import '../../../core/enum/button_type.dart';
 import '../../../core/enum/modal_type_enum.dart';
 import '../../../core/enum/persistence_enum.dart';
-import '../bnt_branco.dart';
 import '../atoms/input.dart';
 import '../../global/global.dart' as globals;
 
@@ -46,7 +46,7 @@ class _MyDataModalState extends State<MyDataModal> {
 
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Users/Me"),
       headers: {
-        "Authorization": "Bearer ${globals.token.toString()}",
+        // "Authorization": "Bearer ${globals.token.toString()}",
       }
     );
 
@@ -82,7 +82,7 @@ class _MyDataModalState extends State<MyDataModal> {
       var response = await http.put(Uri.parse("http://64.225.53.11:5000/Users/${globals.id}"),
           body: jsonEncode(corpo),
           headers: {
-            "Authorization": "Bearer ${globals.token}",
+            // "Authorization": "Bearer ${globals.token}",
             "Content-Type":"application/json"
           }
       );
@@ -111,7 +111,6 @@ class _MyDataModalState extends State<MyDataModal> {
       globals.nomeAluno = "";
       globals.idStudent = "";
       globals.nomeSala = "";
-      globals.token = "";
     });
 
     if(context.mounted){
@@ -182,7 +181,9 @@ class _MyDataModalState extends State<MyDataModal> {
             loading: loading
           ),
           const SizedBox(height: 16,),
-          BotaoBranco(text: "Sair do aplicativo",
+          CustomButton(
+            title: "Sair do aplicativo",
+            buttonType: ButtonType.secondary,
             onPressed: () async => await logout()
           )
         ],

@@ -51,6 +51,7 @@ class ModalEvent {
     required double modalHeight
   }) {
     Radius radiusModal = const Radius.circular(8);
+    Color backgroundColor = colorScheme(context).onSurfaceVariant;
 
     return showModalBottomSheet(
       context: context, 
@@ -65,13 +66,14 @@ class ModalEvent {
           height: modalHeight,
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: colorScheme(context).onSurfaceVariant,
+            color: backgroundColor,
             borderRadius: BorderRadius.only(
               topLeft: radiusModal,
               topRight: radiusModal
             ),
           ),
           child: Scaffold(
+            backgroundColor: backgroundColor,
             body: modal
           )
         )

@@ -1,16 +1,14 @@
-import 'package:educarte/Services/config/provider/speech_provider.dart';
+import 'package:educarte/Interactor/providers/speech_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
-import 'Services/interfaces/persistence_interface.dart';
-import 'Services/config/repositories/persistence_repository.dart';
 import 'Ui/screens/my_app.dart';
+import 'core/config/dependencies_config.dart';
 
-void main() {
+void main() async{
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-  DI.addServices();
+  DI.addInjections();
   
   runApp(
     MultiProvider(
@@ -21,14 +19,3 @@ void main() {
     )
   );
 }
-
-class DI {
-  static void addServices() {
-    final services = GetIt.instance;
-
-    services.registerSingleton<IPersistence>(PersistenceRepository());
-
-    services.registerSingleton(SpeechProvider());
-  }
-}
-

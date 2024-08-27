@@ -17,6 +17,8 @@ class LegalGuardian {
     this.status
   });
 
+  LegalGuardian.empty();
+
   factory LegalGuardian.fromJson(Map<String, dynamic> json) {
     return LegalGuardian(
       id: json['id'],

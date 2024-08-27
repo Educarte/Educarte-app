@@ -6,14 +6,14 @@ import '../../../core/enum/button_type.dart';
 
 class CustomButton extends StatelessWidget {
   final bool loading;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String title;
   final ButtonType buttonType;
 
   const CustomButton({
     super.key,
     this.loading = false,
-    required this.onPressed,
+    this.onPressed,
     required this.title,
     this.buttonType = ButtonType.primary
   });
@@ -27,9 +27,15 @@ class CustomButton extends StatelessWidget {
       onDoubleTap: null,
       child: Container(
         height: 44,
+        width: screenWidth(context),
+        alignment: Alignment.center,
         decoration: BoxDecoration(
           color: buttonType == ButtonType.primary ? colorScheme(context).primary : colorScheme(context).onSurfaceVariant, 
-          borderRadius: BorderRadius.circular(8)
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: buttonType == ButtonType.secondary ? colorScheme(context).primary : Colors.transparent, 
+            width: 1
+          )
         ),
         child: loading ? CircularProgressIndicator(
           color: backgroundColor

@@ -7,16 +7,18 @@ import 'package:flutter/material.dart';
 import '../../Ui/global/global.dart' as globals;
 import '../../core/base/store.dart';
 
-class StudentController extends Store{
-  ValueNotifier loading = ValueNotifier(false);
+class StudentProvider extends Store{
+  bool loading = false;
 
   void setLoading(bool value){
-    loading.value = value;
+    loading = value;
+
+    notifyListeners();
   }
 
-  ValueNotifier students = ValueNotifier<List<Student>>(List.empty(growable: true));
-  ValueNotifier dropdownValue = ValueNotifier<Student>(Student.empty());
-  ValueNotifier currentStudent = ValueNotifier<Student>(Student.empty());
+  List<Student> students = List.empty(growable: true);
+  Student dropdownValue = Student.empty();
+  Student currentStudent = Student.empty();
 
   Future<void> getStudents({
     required BuildContext context,
@@ -25,10 +27,11 @@ class StudentController extends Store{
   }) async {
     setLoading(true);
     bool first = true;
+    String errorMessage = "Erro ao obter dados dos estudantes";
 
     try {
       var response = await ApiConfig.request(
-        url: "$apiUrl/Students?LegalGuardianId=${globals.id}"
+        url: "/Students?LegalGuardianId=${currentStudent.id}"
       );
 
       if(response.statusCode == 200){
@@ -36,20 +39,22 @@ class StudentController extends Store{
 
         for(var i=0;i < jsonData["items"].length; i++){
           Student newStudent = Student.fromJson(jsonData["items"][i]);
-          students.value.add(newStudent);
+          students.add(newStudent);
         }
-        dropdownValue.value = students.value.first;
+        dropdownValue = students.first;
 
-        if(first) dropdownValue.value = students.value.first;
+        if(first) dropdownValue = students.first;
 
         await getStudentId(
           context: context,
           responsavelController: responsavelController,
           salaController: salaController
         );
+      }else{
+        showErrorMessage(context, errorMessage);
       }
     } catch (e) {
-      showErrorMessage(context, "Erro ao obter alunos");
+      showErrorMessage(context, errorMessage);
     }
 
     setLoading(false);
@@ -62,7 +67,7 @@ class StudentController extends Store{
   }) async {
     try {
       var response = await ApiConfig.request(
-        url: "$apiUrl/Students/${dropdownValue.value.id}"
+        url: "/Students/${dropdownValue.id}"
       );
 
       if(response.statusCode == 200){

@@ -13,7 +13,7 @@ import '../../../Services/helpers/file_management_helper.dart';
 import '../../../Ui/components/atoms/card_messages.dart';
 import '../../../Ui/components/atoms/custom_pop_scope.dart';
 import '../../../Ui/components/atoms/custom_table_calendar.dart';
-import '../../components/bnt_branco.dart';
+import '../../../core/enum/button_type.dart';
 import '../../components/atoms/result_not_found.dart';
 import 'package:http/http.dart' as http;
 import '../../global/global.dart' as globals;
@@ -45,7 +45,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
     var response = await http.get(
       Uri.parse(
           "http://64.225.53.11:5000/Students?LegalGuardianId=${globals.id}"),
-      headers: {"Authorization": "Bearer ${globals.token}"},
+      // headers: {"Authorization": "Bearer ${globals.token}"},
     );
 
     if (response.statusCode == 200) {
@@ -68,8 +68,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
       "EndDate": endDate == null ? startDate.toString() : endDate.toString()
     };
     var response = await http.get(
-        Uri.parse("$apiUrl/Diary").replace(queryParameters: params),
-        headers: {"Authorization": "Bearer ${globals.token}"});
+      Uri.parse("$apiUrl/Diary").replace(queryParameters: params),
+      // headers: {"Authorization": "Bearer ${globals.token}"}
+    );
     if (response.statusCode == 200) {
       var decodeJson = jsonDecode(response.body);
       if (decodeJson["items"] != null) {
@@ -89,8 +90,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
 
     try {
       var response = await http.get(
-          Uri.parse("http://64.225.53.11:5000/Students/$id"),
-          headers: {"Authorization": "Bearer ${globals.token}"});
+        Uri.parse("http://64.225.53.11:5000/Students/$id"),
+        headers: {
+          // "Authorization": "Bearer ${globals.token}"
+        }
+      );
       if (response.statusCode == 200) {
         var decodeJson = jsonDecode(response.body);
 
@@ -336,18 +340,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                                         }
                                                                       },
                                                                     ),
-                                                                    const SizedBox(
-                                                                      height: 16,
+                                                                    const Padding(
+                                                                      padding: EdgeInsets.symmetric(vertical: 16),
+                                                                      child: CustomButton(
+                                                                        title: "Baixar",
+                                                                        buttonType: ButtonType.secondary
+                                                                      ),
                                                                     ),
-                                                                    const BotaoBranco(
-                                                                        text:
-                                                                            "Baixar"),
-                                                                    const SizedBox(
-                                                                      height: 16,
+                                                                    const CustomButton(
+                                                                      title: "Compartilhar",
+                                                                      buttonType: ButtonType.secondary
                                                                     ),
-                                                                    const BotaoBranco(
-                                                                        text:
-                                                                            "Compartilhar"),
                                                                   ],
                                                                 ),
                                                               ),

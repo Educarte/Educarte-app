@@ -18,8 +18,11 @@ class StudentUseCase {
 
     try {
       var response = await http.get(
-          Uri.parse("http://64.225.53.11:5000/Students/$idStudent"),
-          headers: {"Authorization": "Bearer ${globals.token}"});
+        Uri.parse("http://64.225.53.11:5000/Students/$idStudent"),
+        headers: {
+          // "Authorization": "Bearer ${globals.token}"
+        }
+      );
 
       if (response.statusCode == 200) {
         var decodeJson = jsonDecode(response.body);
@@ -62,7 +65,7 @@ class StudentUseCase {
       globals.listStudent.value.clear();
 
       var response = await http.get(Uri.parse("$apiUrl/Students"), headers: {
-        "Authorization": "Bearer $token",
+        // "Authorization": "Bearer $token",
       });
 
       if (response.statusCode == 200) {

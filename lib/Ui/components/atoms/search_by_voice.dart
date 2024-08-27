@@ -11,7 +11,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../core/base/constants.dart';
-import '../../../Services/config/provider/speech_provider.dart';
+import '../../../Interactor/providers/speech_provider.dart';
 
 class SearchByVoicePage extends StatefulWidget{
   const SearchByVoicePage({

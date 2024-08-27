@@ -1,7 +1,8 @@
-import 'package:educarte/Interactor/controllers/student_controller.dart';
+import 'package:educarte/Interactor/providers/student_provider.dart';
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -24,7 +25,7 @@ class ChangingOfTheGuardModal extends StatefulWidget {
 }
 
 class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
-  StudentController studentController = StudentController();
+  final studentProvider = GetIt.instance.get<StudentProvider>();
   
   TextEditingController nomeController = TextEditingController();
   TextEditingController salaController = TextEditingController();
@@ -33,7 +34,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
 
   @override
   void initState() {
-    studentController.getStudents(
+    studentProvider.getStudents(
       context: context,
       responsavelController: responsavelController,
       salaController: salaController
@@ -43,9 +44,9 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: studentController.loading,
-      builder: (_, __, ___) {
+    return ListenableBuilder(
+      listenable: studentProvider,
+      builder: (_, __) {
         return Container(
           width: screenWidth(context),
           height: widget.modalType.height,
@@ -82,7 +83,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               SizedBox(
                 height: 55,
                 child: DropdownButtonFormField<Student>(
-                  value: studentController.dropdownValue.value,
+                  value: studentProvider.dropdownValue,
                   icon: const Icon(Symbols.expand_more),
                   elevation: 16,
                   style: GoogleFonts.poppins(
@@ -114,15 +115,15 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                     )
                   ),
                   onChanged: (Student? value) async{
-                    studentController.dropdownValue.value = value!;
+                    studentProvider.dropdownValue = value!;
         
-                    await studentController.getStudentId(
+                    await studentProvider.getStudentId(
                       context: context,
                       responsavelController: responsavelController,
                       salaController: salaController
                     );
                   },
-                  items: studentController.students.value.map<DropdownMenuItem<Student>>((Student value) {
+                  items: studentProvider.students.map<DropdownMenuItem<Student>>((Student value) {
                     return DropdownMenuItem<Student>(
                       value: value,
                       child: Text(value.name!),
@@ -154,8 +155,8 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                 title: "Atualizar informações",
                 onPressed: () async{
                   globals.currentStudent.value = Student.empty();
-                  studentController.currentStudent.value = await StudentUseCase.getStudentId(
-                    studentController.dropdownValue.value.id!
+                  studentProvider.currentStudent = await StudentUseCase.getStudentId(
+                    studentProvider.dropdownValue.id!
                   );
           
                   if(context.mounted){

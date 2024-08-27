@@ -14,7 +14,6 @@ import '../../../Ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
 import '../../components/atoms/result_not_found.dart';
 import '../../global/global.dart';
 import 'package:http/http.dart' as http;
-import '../../global/global.dart' as globals;
 
 class EntryAndExitPage extends StatefulWidget {
   const EntryAndExitPage({super.key});
@@ -53,7 +52,9 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
     var response = await http.get(
       Uri.parse("$apiUrl/Students/AccessControls/${currentStudent.value.id}")
           .replace(queryParameters: params),
-      headers: {"Authorization": "Bearer ${globals.token}"},
+      headers: {
+        // "Authorization": "Bearer ${globals.token}"
+      },
     );
     if (response.statusCode == 200) {
       var decodeJson = jsonDecode(response.body);

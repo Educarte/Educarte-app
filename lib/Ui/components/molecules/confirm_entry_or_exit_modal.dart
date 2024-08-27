@@ -7,13 +7,12 @@ import 'package:educarte/core/enum/input_type.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:educarte/Interactor/useCase/student_use_case.dart';
-import 'package:educarte/Ui/components/bnt_branco.dart';
-import 'package:educarte/Ui/global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../../core/enum/button_type.dart';
 import '../atoms/input.dart';
 import '../atoms/modal_application_bar.dart';
 import '../../../core/base/constants.dart';
@@ -62,7 +61,7 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
       var response = await http.post(
         Uri.parse("$apiUrl/Students/AccessControl/${widget.student.id}"),
         headers: {
-          "Authorization": "Bearer $token",
+          // "Authorization": "Bearer $token",
           "Content-Type": "application/json"
         },
         body: jsonEncode(corpo)
@@ -135,9 +134,10 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
               ),
               Padding(
                 padding: const EdgeInsets.only(top: 16),
-                child: BotaoBranco(
-                  text: "Cancelar",
-                  onPressed: () => context.pop(),
+                child: CustomButton(
+                  title: "Cancelar",
+                  buttonType: ButtonType.secondary,
+                  onPressed: () => context.pop()
                 ),
               )
             ],

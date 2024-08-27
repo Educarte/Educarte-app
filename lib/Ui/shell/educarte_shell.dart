@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:educarte/Ui/components/atoms/custom_button.dart';
-import 'package:educarte/Ui/components/bnt_branco.dart';
 import 'package:educarte/Ui/components/organisms/modal.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +11,7 @@ import 'package:material_symbols_icons/symbols.dart';
 import '../../core/base/constants.dart';
 import '../../Interactor/models/document.dart';
 import '../../Services/helpers/file_management_helper.dart';
-import '../global/global.dart' as globals;
+import '../../core/enum/button_type.dart';
 import 'package:http/http.dart' as http;
 
 int selectedIndex = 0;
@@ -52,7 +51,7 @@ class _EducarteShellState extends State<EducarteShell> {
   void getMenu()async{
     var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
         headers: {
-          "Authorization": "Bearer ${globals.token}"
+          // "Authorization": "Bearer ${globals.token}"
         }
     );
 
@@ -231,28 +230,36 @@ class _EducarteShellState extends State<EducarteShell> {
                         ),
                       ),
                       const SizedBox(height: 16,),
-                      BotaoBranco(text: "Baixar", onPressed: () {
-                        setstate((){
-                          loadingDownload = true;
-                        });
-                        FileManagement.download(url: document.fileUri
-                            .toString(), fileName: "Cardápio");
-                        Future.delayed(const Duration(seconds: 2)).then((value) {
+                      CustomButton(
+                        title: "Baixar", 
+                        buttonType: ButtonType.secondary,
+                        onPressed: () {
                           setstate((){
-                            loadingDownload = false;
+                            loadingDownload = true;
                           });
-                        });
-                      },
+
+                          FileManagement.download(
+                            url: document.fileUri.toString(), 
+                            fileName: "Cardápio"
+                          );
+
+                          Future.delayed(const Duration(seconds: 2)).then((value) {
+                            setstate((){
+                              loadingDownload = false;
+                            });
+                          });
+                        },
                         loading: loadingDownload,
                       ),
                       const SizedBox(height: 16,),
-                      BotaoBranco(text: "Compartilhar", onPressed:  () {
-                        if(loadingDownload == false){
-                          FileManagement.share(url: document.fileUri.toString(),
-                              document: document);
-                        }
-                      },
-
+                      CustomButton(
+                        title: "Compartilhar", 
+                        buttonType: ButtonType.secondary,
+                        loading: loadingDownload,
+                        onPressed: () async => await FileManagement.share(
+                          url: document.fileUri.toString(),
+                          document: document
+                        )
                       ),
                     ],
                   ),
