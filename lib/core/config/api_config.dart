@@ -12,7 +12,8 @@ const String apiUrl = 'http://64.225.53.11:5000';
 class ApiConfig {
 
   static Future<Response> request({
-    required String url,
+    String? url,
+    Uri? customUri,
     RequestType requestType = RequestType.search,
     Map<String, dynamic>? body,
     Map<String, String>? headers
@@ -23,7 +24,7 @@ class ApiConfig {
     switch(requestType){
       case RequestType.search:
         response = await get(
-          Uri.parse('$apiUrl$url'),
+          customUri ?? Uri.parse('$apiUrl$url'),
           headers: {
             "Authorization": "Bearer $token"
           }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 String? nome;
 int? profile;
 bool firstAccess = false;
-bool updateHomeScreen = false;
 
 String? emailEsqueciSenha;
 String? code;

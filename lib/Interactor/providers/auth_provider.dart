@@ -122,13 +122,14 @@ class AuthProvider extends Store{
         final userProvider = GetIt.instance.get<UserProvider>();
 
         decodedToken["profile"] = globals.checkUserType(profileType: decodedToken["profile"]);
-        userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
-        userProvider.currentLegalGuardian.id = decodedToken["sub"];
+        
 
         bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toLowerCase());
         globals.firstAccess = firstAccess;
 
-        if (globals.nome == null) {
+        if (userProvider.currentLegalGuardian.id == null) {
+          userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
+          userProvider.currentLegalGuardian.id = decodedToken["sub"];
           // currentIndex = 2;
           path = globals.routerPath(firstAccess: firstAccess);
         }

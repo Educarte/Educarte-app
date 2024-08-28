@@ -82,8 +82,7 @@ class Routes {
           ),
           GoRoute(
             path: "/entryAndExit",
-            pageBuilder: (context, state) =>
-                FadeTransitionPage(child: const EntryAndExitPage()),
+            pageBuilder: (context, state) => FadeTransitionPage(child: const EntryAndExitPage()),
           )
         ],
       ),

@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../../core/base/store.dart';
 import '../models/diary_model.dart';
+import '../models/entry_and_exit_modal.dart';
 import '../validations/intl_formatter.dart';
 
 class StudentProvider extends Store{
@@ -19,7 +21,10 @@ class StudentProvider extends Store{
 
   List<Student> students = List.empty(growable: true);
   Student dropdownValue = Student.empty();
+  Student selectedStudent = Student.empty();  
   Student currentStudent = Student.empty();
+  List<EntryAndExit> listAccess = List.empty(growable: true);
+  String summary = "";
   (String day, String month, String year) datesMenu = ("", "", "");
 
   bool get datesMenuIsValid => datesMenu.$1.isNotEmpty && datesMenu.$2.isNotEmpty && datesMenu.$3.isNotEmpty;
@@ -44,7 +49,10 @@ class StudentProvider extends Store{
           dropdownValue = currentStudent;
         }
 
-        getStudentId(context: context);
+        getStudentId(
+          context: context,
+          receivedStudent: currentStudent
+        );
       }else{
         showErrorMessage(context, errorMessage);
       }
@@ -72,20 +80,28 @@ class StudentProvider extends Store{
 
       if(response.statusCode == 200){
         var jsonData = jsonDecode(response.body);
+        students.clear();
 
         for(var i=0;i < jsonData["items"].length; i++){
           Student newStudent = Student.fromJson(jsonData["items"][i]);
           students.add(newStudent);
         }
-        dropdownValue = students.first;
+        
+        if(selectedStudent.id != null){
+          selectedStudent = dropdownValue;
+        }else{
+          selectedStudent = students.first;
+          dropdownValue = students.first;
 
-        if(first) dropdownValue = students.first;
+          if(first) dropdownValue = students.first;
+        }
 
         await getStudentId(
           context: context,
           responsavelController: responsavelController,
           salaController: salaController,
-          changingGuard: true
+          changingGuard: true,
+          receivedStudent: currentStudent
         );
       }else{
         showErrorMessage(context, errorMessage);
@@ -101,7 +117,8 @@ class StudentProvider extends Store{
     required BuildContext context,
     TextEditingController? responsavelController,
     TextEditingController? salaController,
-    bool changingGuard = false
+    bool changingGuard = false,
+    required Student receivedStudent
   }) async {
     setLoading(true);
     String errorMessage = "Erro ao dados dos alunos";
@@ -115,8 +132,10 @@ class StudentProvider extends Store{
         var jsonData = jsonDecode(response.body);
 
         if(jsonData["diaries"] != null){
+          receivedStudent.listDiaries!.clear();
+          
           for (var diary in jsonData["diaries"]) {
-            currentStudent.listDiaries!.add(Diary.fromJson(diary));
+            receivedStudent.listDiaries!.add(Diary.fromJson(diary));
           }
         }
 
@@ -141,14 +160,56 @@ class StudentProvider extends Store{
         List accessControls = jsonData["accessControls"] ?? [];
 
         if(accessControls.length == 1){
-          currentStudent.horaEntrada = jsonData["accessControls"][0]["time"].toString();
+          receivedStudent.horaEntrada = jsonData["accessControls"][0]["time"].toString();
         }else if(accessControls.length == 2){
-          currentStudent.horaEntrada = jsonData["accessControls"][0]["time"].toString();
-          currentStudent.horaSaida = jsonData["accessControls"][1]["time"].toString();
+          receivedStudent.horaEntrada = jsonData["accessControls"][0]["time"].toString();
+          receivedStudent.horaSaida = jsonData["accessControls"][1]["time"].toString();
         }
 
         if(jsonData["currentMenu"] != null){
           datesMenu = await IntlFormatter.getCurrentDate(isDe: true, data: jsonData["currentMenu"]["startDate"]);
+        }
+      }else{
+        showErrorMessage(context, errorMessage);
+      }
+    } catch (e) {
+      showErrorMessage(context, errorMessage);
+    }
+
+    setLoading(false);
+  }
+
+  Future<void> getAccessControls({
+    required BuildContext context,
+    required DateTime startDate,
+    DateTime? endDate
+  }) async{
+    setLoading(true);
+    String errorMessage = "Erro ao buscar entradas e saídas";
+
+    try {
+      var params = {
+        'Id': currentStudent.id,
+        "StartDate": DateFormat.yMd().format(startDate).toString(),
+        "EndDate": endDate == null
+            ? DateFormat.yMd().format(startDate).toString()
+            : DateFormat.yMd().format(endDate).toString()
+      };
+
+      
+      var response = await ApiConfig.request(
+        customUri: Uri.parse("$apiUrl/Students/AccessControls/${currentStudent.id}").replace(queryParameters: params)
+      );
+
+      if(response.statusCode == 200) {
+        var decodeJson = jsonDecode(response.body);
+        summary = "";
+        
+        if (!decodeJson["accessControlsByDate"].isEmpty) {
+          listAccess.clear();
+
+          decodeJson["accessControlsByDate"] .forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
+          summary = decodeJson["summary"];
         }
       }else{
         showErrorMessage(context, errorMessage);

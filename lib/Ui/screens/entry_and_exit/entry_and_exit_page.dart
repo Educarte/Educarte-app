@@ -1,9 +1,8 @@
-import 'dart:convert';
-
+import 'package:educarte/Interactor/providers/student_provider.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:educarte/Interactor/models/entry_and_exit_modal.dart';
-import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_symbols_icons/symbols.dart';
@@ -12,7 +11,6 @@ import '../../../Ui/components/atoms/custom_pop_scope.dart';
 import '../../../Ui/components/atoms/custom_table_calendar.dart';
 import '../../../Ui/screens/entry_and_exit/widgets/card_entry_and_exit.dart';
 import '../../components/atoms/result_not_found.dart';
-import 'package:http/http.dart' as http;
 
 class EntryAndExitPage extends StatefulWidget {
   const EntryAndExitPage({super.key});
@@ -24,141 +22,122 @@ class EntryAndExitPage extends StatefulWidget {
 enum Loadings { none, list }
 
 class _EntryAndExitPageState extends State<EntryAndExitPage> {
-  Loadings loading = Loadings.none;
+  final studentProvider = GetIt.instance.get<StudentProvider>();
+
   List<EntryAndExit> listAccess = [];
-  String summary = "";
-
-  void setLoading({required Loadings load}) {
-    setState(() {
-      loading = load;
-    });
-  }
-
-  Future<void> getAccessControls(DateTime startDate, DateTime? endDate) async {
-    setLoading(load: Loadings.list);
-    setState(() {
-      summary = "";
-      listAccess = [];
-    });
-    var params = {
-      // 'Id': currentStudent.value.id,
-      "StartDate": DateFormat.yMd().format(startDate).toString(),
-      "EndDate": endDate == null
-          ? DateFormat.yMd().format(startDate).toString()
-          : DateFormat.yMd().format(endDate).toString()
-    };
-
-    var response = await http.get(
-      Uri.parse("$apiUrl/Students/AccessControls/IDDOSTUDENT").replace(queryParameters: params),
-      headers: {
-        // "Authorization": "Bearer ${globals.token}"
-      },
-    );
-    if (response.statusCode == 200) {
-      var decodeJson = jsonDecode(response.body);
-      if (!decodeJson["accessControlsByDate"].isEmpty) {
-        decodeJson["accessControlsByDate"]
-            .forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
-        summary = decodeJson["summary"];
-      }
-    }
-    setLoading(load: Loadings.none);
-  }
 
   @override
   void initState() {
     super.initState();
-    getAccessControls(DateTime.now(), DateTime.now());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      studentProvider.getAccessControls(
+        context: context,
+        startDate: DateTime.now(),
+        endDate: DateTime.now()
+      );
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return CustomPopScope(
-      child: Scaffold(
-        body: Container(
-          width: screenWidth(context),
-          height: screenHeight(context),
-          color: colorScheme(context).surface,
-          alignment: Alignment.center,
-          child: SafeArea(
-            child: Column(
-              children: [
-                CustomTableCalendar(
-                  paddingTop: 16,
-                  callback: (DateTime? startDate, DateTime? endDate) {
-                    if (endDate != null) {
-                      if (startDate != null && startDate.isAfter(endDate)) {
-                        DateTime temp = startDate;
-                        startDate = endDate;
-                        endDate = temp;
-                      }
-                    }
-                    getAccessControls(startDate!, endDate);
-                  }),
-                Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.symmetric(vertical: 16),
-                  height: 38,
-                  color: colorScheme(context).primary.withOpacity(0.5),
-                  child: listAccess.isEmpty
-                      ? Text(
-                          "Saldo de horas: +00h. 00Min",
-                          style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme(context).onPrimary),
+      child: ListenableBuilder(
+        listenable: studentProvider,
+        builder: (_, __) {
+          return Scaffold(
+            body: Container(
+              width: screenWidth(context),
+              height: screenHeight(context),
+              color: colorScheme(context).surface,
+              alignment: Alignment.center,
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    CustomTableCalendar(
+                      paddingTop: 16,
+                      callback: (DateTime? startDate, DateTime? endDate) {
+                        if (endDate != null) {
+                          if (startDate != null && startDate.isAfter(endDate)) {
+                            DateTime temp = startDate;
+                            startDate = endDate;
+                            endDate = temp;
+                          }
+                        }
+          
+                        studentProvider.getAccessControls(
+                          context: context,
+                          startDate: startDate!,
+                          endDate: endDate
+                        );
+                      }),
+                    Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.symmetric(vertical: 16),
+                      height: 38,
+                      color: colorScheme(context).primary.withOpacity(0.5),
+                      child: listAccess.isEmpty
+                          ? Text(
+                              "Saldo de horas: +00h. 00Min",
+                              style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme(context).onPrimary),
+                            )
+                          : Text(
+                              "Saldo de horas: +${studentProvider.summary.substring(0, 2)}h. ${studentProvider.summary.substring(3, 5)}Min",
+                              style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: colorScheme(context).onPrimary),
+                            ),
+                    ),
+                    if (studentProvider.loading )...[
+                      const Expanded(
+                        child: Center(
+                          child: CircularProgressIndicator()
                         )
-                      : Text(
-                          "Saldo de horas: +${summary.substring(0, 2)}h. ${summary.substring(3, 5)}Min",
-                          style: GoogleFonts.poppins(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              color: colorScheme(context).onPrimary),
-                        ),
+                      )
+                    ]else...[
+                      Expanded(
+                        child: listAccess.isEmpty
+                          ? const ResultNotFound(
+                              description:
+                                  "Sem registro de entrada e saída desse aluno!",
+                              iconData: Symbols.error)
+                          : ListView.builder(
+                        padding:const EdgeInsets.only(top: 10, left: 8, right: 8),
+                        shrinkWrap: true,
+                        itemCount: listAccess.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          return CardEntryAndExit(
+                            date: DateFormat.yMMMMd('pt_BR').format(
+                                DateTime.parse(
+                                    listAccess[index].date.toString())),
+                            horaEntrada: listAccess[index]
+                                .accessControls![0]
+                                .time
+                                .toString(),
+                            horaSaida:
+                                listAccess[index].accessControls!.length == 2
+                                    ? listAccess[index]
+                                        .accessControls![1]
+                                        .time
+                                        .toString()
+                                    : null,
+                            resumoDiario: listAccess[index]
+                                .dailySummary
+                                ?.substring(0, 8),
+                          );
+                        },
+                      ),
+                      ),
+                    ]
+                  ],
                 ),
-                if (loading == Loadings.list)
-                  const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else
-                  Expanded(
-                    child: listAccess.isEmpty
-                        ? const ResultNotFound(
-                            description:
-                                "Sem registro de entrada e saída desse aluno!",
-                            iconData: Symbols.error)
-                        : ListView.builder(
-                            padding:
-                                const EdgeInsets.only(top: 10, left: 8, right: 8),
-                            shrinkWrap: true,
-                            itemCount: listAccess.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return CardEntryAndExit(
-                                date: DateFormat.yMMMMd('pt_BR').format(
-                                    DateTime.parse(
-                                        listAccess[index].date.toString())),
-                                horaEntrada: listAccess[index]
-                                    .accessControls![0]
-                                    .time
-                                    .toString(),
-                                horaSaida:
-                                    listAccess[index].accessControls!.length == 2
-                                        ? listAccess[index]
-                                            .accessControls![1]
-                                            .time
-                                            .toString()
-                                        : null,
-                                resumoDiario: listAccess[index]
-                                    .dailySummary
-                                    ?.substring(0, 8),
-                              );
-                            },
-                          ),
-                  ),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }

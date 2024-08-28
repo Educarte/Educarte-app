@@ -9,9 +9,7 @@ import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
-import '../../../Interactor/useCase/student_use_case.dart';
 import '../../../core/enum/modal_type_enum.dart';
-import '../../global/global.dart' as globals;
 import '../../../Interactor/models/students_model.dart';
 import '../../../core/base/constants.dart';
 import '../atoms/input.dart';
@@ -66,6 +64,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                       setState(() {
                         selectedIndex = 4;
                       });
+                      studentProvider.selectedStudent = Student.empty();
           
                       Navigator.pop(context);
                     }, 
@@ -88,7 +87,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               SizedBox(
                 height: 55,
                 child: DropdownButtonFormField<Student>(
-                  value: studentProvider.dropdownValue,
+                  value: studentProvider.currentStudent,
                   icon: const Icon(Symbols.expand_more),
                   elevation: 16,
                   style: GoogleFonts.poppins(
@@ -126,6 +125,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                       context: context,
                       responsavelController: responsavelController,
                       salaController: salaController,
+                      receivedStudent: studentProvider.selectedStudent,
                       changingGuard: true
                     );
                   },
@@ -160,15 +160,19 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               CustomButton(
                 title: "Atualizar informações",
                 onPressed: () async{
-                  // globals.currentStudent.value = Student.empty();
-                  studentProvider.currentStudent = await StudentUseCase.getStudentId(
-                    studentProvider.dropdownValue.id!
+                  studentProvider.currentStudent = studentProvider.dropdownValue;
+
+                  await studentProvider.getStudentId(
+                    context: context,
+                    responsavelController: responsavelController,
+                    salaController: salaController,
+                    receivedStudent: studentProvider.currentStudent,
+                    changingGuard: true
                   );
           
                   if(context.mounted){
                     Navigator.pop(context);
           
-                    globals.updateHomeScreen = true;
                     selectedIndex = 2;
                   } 
                 }

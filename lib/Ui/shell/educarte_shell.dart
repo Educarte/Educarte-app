@@ -171,7 +171,7 @@ class _EducarteShellState extends State<EducarteShell> {
       case 3:
         changeSelectedIndex(index);
         
-        context.go("/entryAndExit");
+        context.push("/entryAndExit");
         break;
       case 1:
         setState(() {
