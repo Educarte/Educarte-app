@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:educarte/Interactor/models/students_model.dart';
+import 'package:educarte/Interactor/providers/menu_provider.dart';
 import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/base/store.dart';
 import '../models/diary_model.dart';
+import '../models/document.dart';
 import '../models/entry_and_exit_modal.dart';
 import '../validations/intl_formatter.dart';
 
@@ -49,7 +52,7 @@ class StudentProvider extends Store{
           dropdownValue = currentStudent;
         }
 
-        getStudentId(
+        await getStudentId(
           context: context,
           receivedStudent: currentStudent
         );
@@ -167,7 +170,17 @@ class StudentProvider extends Store{
         }
 
         if(jsonData["currentMenu"] != null){
-          datesMenu = await IntlFormatter.getCurrentDate(isDe: true, data: jsonData["currentMenu"]["startDate"]);
+          final menuProvider = GetIt.instance.get<MenuProvider>();
+          
+          menuProvider.currentMenu = Document(
+            id: jsonData["currentMenu"]["id"].toString(),
+            name: jsonData["currentMenu"]["name"].toString(),
+            fileUri: jsonData["currentMenu"]["uri"].toString(),
+            startDate: jsonData["currentMenu"]["startDate"],
+            validUntil: jsonData["currentMenu"]["validUntil"]
+          );
+          
+          datesMenu = await IntlFormatter.getCurrentDate(isDe: true, data: menuProvider.currentMenu.startDate);
         }
       }else{
         showErrorMessage(context, errorMessage);

@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       legalGuardianId: userProvider.currentLegalGuardian.id!
     );
-    menuProvider.getMenu(context: context);
   }
 
   @override

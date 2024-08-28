@@ -327,14 +327,11 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                                     ),
                                                                     CustomButton(
                                                                       title: "Visualizar",
-                                                                      onPressed: () {
-                                                                        if (!loadingDownload) {
-                                                                          FileManagement.launchUri(
-                                                                            link: listDiaries[index].fileUri.toString(),
-                                                                            context: context
-                                                                          );
-                                                                        }
-                                                                      },
+                                                                      loading: loadingDownload,
+                                                                      onPressed: () async => await FileManagement.launchUri(
+                                                                        link: listDiaries[index].fileUri.toString(),
+                                                                        context: context
+                                                                      ),
                                                                     ),
                                                                     const Padding(
                                                                       padding: EdgeInsets.symmetric(vertical: 16),

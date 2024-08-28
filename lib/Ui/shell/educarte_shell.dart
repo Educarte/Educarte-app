@@ -1,21 +1,15 @@
-import 'dart:convert';
-
-import 'package:educarte/Ui/components/atoms/custom_button.dart';
 import 'package:educarte/Ui/components/organisms/modal.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../../Interactor/providers/menu_provider.dart';
 import '../../core/base/constants.dart';
-import '../../Interactor/models/document.dart';
-import '../../Services/helpers/file_management_helper.dart';
-import '../../core/enum/button_type.dart';
-import 'package:http/http.dart' as http;
 
-int selectedIndex = 0;
-int? previousIndex;
+ValueNotifier selectedIndex = ValueNotifier<int>(0);
+ValueNotifier? previousIndex = ValueNotifier<int?>(null);
 
 class EducarteShell extends StatefulWidget {
   const EducarteShell({
@@ -29,10 +23,10 @@ class EducarteShell extends StatefulWidget {
 }
 
 class _EducarteShellState extends State<EducarteShell> {
-  int selectedIndex = 2;
+  final menuProvider = GetIt.instance.get<MenuProvider>();  
+  ValueNotifier selectedIndex = ValueNotifier<int>(2);
   
   List<String> listId = [];
-  int pageIndex = 0;
 
   double iconSize = 30;
   bool loadingDownload = false;
@@ -41,27 +35,9 @@ class _EducarteShellState extends State<EducarteShell> {
   
   void changeSelectedIndex(int index){
     setState(() {
-      previousIndex = selectedIndex;
-      selectedIndex = index;
+      previousIndex!.value = selectedIndex.value;
+      selectedIndex.value = index;
     });
-  }
-
-  Document document = Document.empty();
-
-  void getMenu()async{
-    var response = await http.get(Uri.parse("http://64.225.53.11:5000/Menus"),
-        headers: {
-          // "Authorization": "Bearer ${globals.token}"
-        }
-    );
-
-    if(response.statusCode == 200){
-      Map<String,dynamic> decodeJson = jsonDecode(response.body);
-      setState(() {
-        document = Document(id: decodeJson["items"][0]["id"].toString(),name: decodeJson["items"][0]["name"].toString(),fileUri: decodeJson["items"][0]["uri"].toString());
-      });
-    }
-
   }
 
   Widget selectedIcon({
@@ -69,17 +45,16 @@ class _EducarteShellState extends State<EducarteShell> {
     required double iconSize,
     required BuildContext context
   }) {
-
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(32),
-          color: colorScheme(context).onPrimary.withOpacity(0.30)
+        borderRadius: BorderRadius.circular(32),
+        color: colorScheme(context).onPrimary.withOpacity(0.3)
       ),
       child: Icon(
-          icon,
-          color: colorScheme(context).onPrimary,
-          size: iconSize
+        icon,
+        color: colorScheme(context).onPrimary,
+        size: iconSize
       ),
     );
   }
@@ -87,82 +62,83 @@ class _EducarteShellState extends State<EducarteShell> {
   @override
   void initState() {
     super.initState();
-    getMenu();
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: widget.child,
-      bottomNavigationBar: Theme(
-        data: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-        ),
-        child: NavigationBar(
-          height: 65,
-          labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
-          backgroundColor: colorScheme(context).primary,
-          indicatorColor: colorScheme(context).primary,
-          destinations: <NavigationDestination>[
-            NavigationDestination(
-              icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
-              selectedIcon: selectedIcon(
-                  context: context,
-                  icon: Symbols.diagnosis,
-                  iconSize: iconSize
-              ),
-              label: 'Recados',
+    return ValueListenableBuilder(
+      valueListenable: selectedIndex,
+      builder: (_, __, ___) {
+        return Scaffold(
+          body: widget.child,
+          bottomNavigationBar: Theme(
+            data: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
-            NavigationDestination(
-              icon: Icon(Symbols.nutrition,color: colorScheme(context).onPrimary,),
-              selectedIcon: selectedIcon(
-                  context: context,
-                  icon: Symbols.nutrition,
-                  iconSize: iconSize
-              ),
-              label: 'Cardápio',
+            child: NavigationBar(
+              height: 65,
+              labelBehavior:  NavigationDestinationLabelBehavior.alwaysHide,
+              backgroundColor: colorScheme(context).primary,
+              indicatorColor: colorScheme(context).primary,
+              destinations: <NavigationDestination>[
+                NavigationDestination(
+                  icon: Icon(Symbols.diagnosis,color: colorScheme(context).onPrimary),
+                  selectedIcon: selectedIcon(
+                      context: context,
+                      icon: Symbols.diagnosis,
+                      iconSize: iconSize
+                  ),
+                  label: 'Recados',
+                ),
+                NavigationDestination(
+                  icon: Icon(Symbols.nutrition,color: colorScheme(context).onPrimary,),
+                  selectedIcon: selectedIcon(
+                      context: context,
+                      icon: Symbols.nutrition,
+                      iconSize: iconSize
+                  ),
+                  label: 'Cardápio',
+                ),
+                NavigationDestination(
+                  icon: Icon(Symbols.cottage,color: colorScheme(context).onPrimary),
+                  selectedIcon: selectedIcon(
+                      context: context,
+                      icon: Symbols.cottage,
+                      iconSize: iconSize
+                  ),
+                  label: 'Home',
+                ),
+                NavigationDestination(
+                  icon: Icon(Symbols.alarm_on,color: colorScheme(context).onPrimary),
+                  selectedIcon: selectedIcon(
+                      context: context,
+                      icon: Symbols.alarm_on,
+                      iconSize: iconSize
+                  ),
+                  label: 'EntradaSaida',
+                ),
+                NavigationDestination(
+                  icon: Icon(Symbols.switch_account,color: colorScheme(context).onPrimary),
+                  selectedIcon: selectedIcon(
+                      context: context,
+                      icon: Symbols.switch_account,
+                      iconSize: iconSize
+                  ),
+                  label: 'Troca de Guarda',
+                ),
+              ],
+              selectedIndex: selectedIndex.value,
+              onDestinationSelected: (int idx) async => _ontItemTapped(idx, context),
             ),
-            NavigationDestination(
-              icon: Icon(Symbols.cottage,color: colorScheme(context).onPrimary),
-              selectedIcon: selectedIcon(
-                  context: context,
-                  icon: Symbols.cottage,
-                  iconSize: iconSize
-              ),
-              label: 'Home',
-            ),
-            NavigationDestination(
-              icon: Icon(Symbols.alarm_on,color: colorScheme(context).onPrimary),
-              selectedIcon: selectedIcon(
-                  context: context,
-                  icon: Symbols.alarm_on,
-                  iconSize: iconSize
-              ),
-              label: 'EntradaSaida',
-            ),
-            NavigationDestination(
-              icon: Icon(Symbols.switch_account,color: colorScheme(context).onPrimary),
-              selectedIcon: selectedIcon(
-                  context: context,
-                  icon: Symbols.switch_account,
-                  iconSize: iconSize
-              ),
-              label: 'Troca de Guarda',
-            ),
-          ],
-          selectedIndex: selectedIndex,
-          onDestinationSelected: (int idx) => _ontItemTapped(idx, context),
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 
-  void _ontItemTapped(int index, BuildContext context) {
+  void _ontItemTapped(int index, BuildContext context) async{
     switch (index) {
       case 4:
-        setState(() {
-          pageIndex = selectedIndex;
-        });
         ModalEvent.build(
           context: context, 
           modalType: ModalType.guard
@@ -174,100 +150,20 @@ class _EducarteShellState extends State<EducarteShell> {
         context.push("/entryAndExit");
         break;
       case 1:
-        setState(() {
-          pageIndex = selectedIndex;
-        });
         changeSelectedIndex(index);
 
-        showModalBottomSheet(
-          context: context,
-          isDismissible: false,
-          useRootNavigator: true,
-          isScrollControlled: true,
-          backgroundColor: Colors.black.withOpacity(0.3),
-          builder: (BuildContext context){
-            return StatefulBuilder(builder: (context,setstate)
-            {
-              return Container(
-                width: screenWidth(context),
-                height: 277,
-                decoration: BoxDecoration(
-                    color: colorScheme(context).onSurfaceVariant,
-                    borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(8),
-                        topLeft: Radius.circular(8))
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 16),
-                  child:
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(onPressed: () {
-                            if(loadingDownload == false){
-                              _ontItemTapped(pageIndex, context);
-                              Navigator.pop(context);
+        await menuProvider.getMenu(context: context);
 
-
-                            }
-                          }, icon: Icon(Symbols.close, color: colorScheme(
-                              context).onInverseSurface,)),
-                          Text("Cardápio em PDF", style: GoogleFonts.poppins(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme(context).onInverseSurface
-                          ),)
-                        ],
-                      ),
-                      const SizedBox(height: 32,),
-                      CustomButton(
-                        title: "Visualizar", 
-                        onPressed: () async => await FileManagement.launchUri(
-                          link: document.fileUri.toString(), 
-                          context: context
-                        ),
-                      ),
-                      const SizedBox(height: 16,),
-                      CustomButton(
-                        title: "Baixar", 
-                        buttonType: ButtonType.secondary,
-                        onPressed: () {
-                          setstate((){
-                            loadingDownload = true;
-                          });
-
-                          FileManagement.download(
-                            url: document.fileUri.toString(), 
-                            fileName: "Cardápio"
-                          );
-
-                          Future.delayed(const Duration(seconds: 2)).then((value) {
-                            setstate((){
-                              loadingDownload = false;
-                            });
-                          });
-                        },
-                        loading: loadingDownload,
-                      ),
-                      const SizedBox(height: 16,),
-                      CustomButton(
-                        title: "Compartilhar", 
-                        buttonType: ButtonType.secondary,
-                        loading: loadingDownload,
-                        onPressed: () async => await FileManagement.share(
-                          url: document.fileUri.toString(),
-                          document: document
-                        )
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            });
-          },
-        );
+        if(menuProvider.currentMenu.fileUri != null){
+          ModalEvent.build(
+            context: context, 
+            modalType: ModalType.menu,
+            document: menuProvider.currentMenu
+          );
+        }else{
+          menuProvider.showErrorMessage(context, "Nenhum cardápio disponível");
+        }
+       
         break;
       case 0:
         changeSelectedIndex(index);

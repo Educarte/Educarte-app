@@ -2,8 +2,8 @@ class Document {
   String? id;
   String? name;
   String? fileUri;
-  DateTime? startDate;
-  DateTime? validUntil;
+  String? startDate;
+  String? validUntil;
 
   Document({
     this.id,

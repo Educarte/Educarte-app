@@ -14,7 +14,7 @@ class CustomPopScope extends StatelessWidget {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (didPop, result) {
-        selectedIndex = previousIndex == 4 ? 2 : previousIndex!;
+        selectedIndex.value = previousIndex!.value == 4 ? 2 : previousIndex!;
 
         return;
       },

@@ -61,9 +61,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                 children: [
                   IconButton(
                     onPressed: (){
-                      setState(() {
-                        selectedIndex = 4;
-                      });
+                      selectedIndex.value = 4;
                       studentProvider.selectedStudent = Student.empty();
           
                       Navigator.pop(context);
@@ -173,7 +171,7 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                   if(context.mounted){
                     Navigator.pop(context);
           
-                    selectedIndex = 2;
+                    selectedIndex.value = 2;
                   } 
                 }
               )

@@ -24,6 +24,7 @@ class CardTimerOrMenu extends StatelessWidget {
     double cardSize = 166;
     Radius radius = const Radius.circular(8);
     bool isMenu = cardType == CardHomeType.menu;
+    double textMenuHeight = 1.2;
 
     return Expanded(
       child: GestureDetector(
@@ -253,7 +254,8 @@ class CardTimerOrMenu extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w300,
                             fontSize: 16,
-                            color: colorScheme(context).onSurface
+                            color: colorScheme(context).onSurface,
+                            height: textMenuHeight
                           )
                         ),
                         Text(
@@ -261,14 +263,15 @@ class CardTimerOrMenu extends StatelessWidget {
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w600,
                             fontSize: 20,
-                            color: colorScheme(context).onSurface
+                            color: colorScheme(context).onSurface,
+                            height: textMenuHeight
                           )
                         ),
                         Text(
                           studentProvider.datesMenu.$3, 
                           style: GoogleFonts.poppins(
                             fontWeight: FontWeight.w400,
-                            fontSize: 12,
+                            fontSize: 16,
                             color: colorScheme(context).onSurface
                           )
                         ),

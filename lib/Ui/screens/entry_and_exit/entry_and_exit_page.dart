@@ -75,21 +75,19 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                       margin: const EdgeInsets.symmetric(vertical: 16),
                       height: 38,
                       color: colorScheme(context).primary.withOpacity(0.5),
-                      child: listAccess.isEmpty
-                          ? Text(
-                              "Saldo de horas: +00h. 00Min",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: colorScheme(context).onPrimary),
-                            )
-                          : Text(
-                              "Saldo de horas: +${studentProvider.summary.substring(0, 2)}h. ${studentProvider.summary.substring(3, 5)}Min",
-                              style: GoogleFonts.poppins(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: colorScheme(context).onPrimary),
-                            ),
+                      child: listAccess.isEmpty ? Text(
+                        "Saldo de horas: +00h. 00Min",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme(context).onPrimary),
+                      ) : Text(
+                        "Saldo de horas: +${studentProvider.summary.substring(0, 2)}h. ${studentProvider.summary.substring(3, 5)}Min",
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: colorScheme(context).onPrimary),
+                      ),
                     ),
                     if (studentProvider.loading )...[
                       const Expanded(
@@ -100,36 +98,30 @@ class _EntryAndExitPageState extends State<EntryAndExitPage> {
                     ]else...[
                       Expanded(
                         child: listAccess.isEmpty
-                          ? const ResultNotFound(
-                              description:
-                                  "Sem registro de entrada e saída desse aluno!",
-                              iconData: Symbols.error)
-                          : ListView.builder(
-                        padding:const EdgeInsets.only(top: 10, left: 8, right: 8),
-                        shrinkWrap: true,
-                        itemCount: listAccess.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return CardEntryAndExit(
-                            date: DateFormat.yMMMMd('pt_BR').format(
-                                DateTime.parse(
-                                    listAccess[index].date.toString())),
-                            horaEntrada: listAccess[index]
-                                .accessControls![0]
-                                .time
-                                .toString(),
-                            horaSaida:
-                                listAccess[index].accessControls!.length == 2
-                                    ? listAccess[index]
-                                        .accessControls![1]
-                                        .time
-                                        .toString()
-                                    : null,
-                            resumoDiario: listAccess[index]
-                                .dailySummary
-                                ?.substring(0, 8),
-                          );
-                        },
-                      ),
+                        ? const ResultNotFound(
+                          description:"Sem registro de entrada e saída desse aluno!",
+                          iconData: Symbols.error
+                        ) : ListView.builder(
+                          padding:const EdgeInsets.only(top: 10, left: 8, right: 8),
+                          shrinkWrap: true,
+                          itemCount: listAccess.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return CardEntryAndExit(
+                              date: DateFormat.yMMMMd('pt_BR').format(DateTime.parse(listAccess[index].date.toString())),
+                              horaEntrada: listAccess[index]
+                                  .accessControls![0]
+                                  .time
+                                  .toString(),
+                              horaSaida: listAccess[index].accessControls!.length == 2
+                                ? listAccess[index]
+                                    .accessControls![1]
+                                    .time
+                                    .toString()
+                                : null,
+                              resumoDiario: listAccess[index].dailySummary?.substring(0, 8)
+                            );
+                          },
+                        ),
                       ),
                     ]
                   ],

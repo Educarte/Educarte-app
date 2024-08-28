@@ -14,6 +14,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../Ui/components/atoms/search_by_voice.dart';
+import 'components/organisms/pdf_viewer_page.dart';
 import 'styles/transitions/fade_transition.dart';
 
 class Routes {
@@ -64,6 +65,14 @@ class Routes {
         path: "/searchByVoice",
         builder: (context, state) => SearchByVoicePage(
             controller: (state.extra as Map)["controller"], context: context),
+      ),
+      GoRoute(
+        path: '/pdfViewer',
+        builder: (context, state) => PDFViewerPage(
+          pdfPath: (state.extra as Map)["pdfPath"],
+          document: (state.extra as Map)["document"],
+          xFile: (state.extra as Map)["xFile"],
+        )
       ),
       ShellRoute(
         builder: (context, state, child) {
