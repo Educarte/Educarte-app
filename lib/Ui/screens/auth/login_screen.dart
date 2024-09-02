@@ -17,17 +17,9 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final authProvider = GetIt.instance.get<AuthProvider>(); 
-  // isticplaystore@gmail.com
-  // ukgOAeYuR4pOHAf
-
-  // sebip94990@kwalah.com
-  // Asdf1234
-
-  // admin@email.com
-  // Asdf1234
-
-  TextEditingController emailController = TextEditingController(text: "isticplaystore@gmail.com");
-  TextEditingController passwordController = TextEditingController(text: "ukgOAeYuR4pOHAf");
+  
+  TextEditingController emailController = TextEditingController(text: "");
+  TextEditingController passwordController = TextEditingController(text: "");
 
   @override
   Widget build(BuildContext context) {
