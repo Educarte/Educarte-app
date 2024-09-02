@@ -37,7 +37,7 @@ class IntlFormatter {
   }
 
   static String formatTimeToHourMinutes(String date) {
-    DateTime dateTime = DateTime.parse(date);
+    DateTime dateTime = DateTime.parse(date).add(const Duration(hours: -3));
 
     String formattedHour = DateFormat('HH', 'pt_BR').format(dateTime);
     String formattedMinutes = DateFormat('mm', 'pt_BR').format(dateTime);

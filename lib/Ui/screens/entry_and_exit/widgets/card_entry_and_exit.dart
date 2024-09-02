@@ -103,7 +103,7 @@ class CardEntryAndExit extends StatelessWidget {
                     TextSpan(
                       text: IntlFormatter.formatTimeToHourMinutes(horaEntrada),
                       style: textStyle
-                    ),
+                    )
                   ]
               ),
             ),

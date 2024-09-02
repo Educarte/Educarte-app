@@ -60,10 +60,7 @@ dependencies:
   equatable: ^2.0.5
   dio:
   flutter_pdfview: ^1.3.2
-
-
-
-
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
