@@ -20,8 +20,6 @@ class MessagesScreen extends StatefulWidget {
   State<MessagesScreen> createState() => _MessagesScreenState();
 }
 
-enum Loadings { none, initial, list }
-
 class _MessagesScreenState extends State<MessagesScreen> {
   final studentProvider = GetIt.instance.get<StudentProvider>();
   DateTime today = DateTime.now();
@@ -118,7 +116,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                 children: [
                                   CardMessages(
                                     title: switch(studentProvider.listDiaries[index].diaryType){
-                                      0 => "Nome do aluno".toString().toUpperCase(),
+                                      0 => studentProvider.currentStudent.name!.toUpperCase(),
                                       1 =>  "Nome da sala".toString().toUpperCase(),
                                       _ => "ESCOLA"
                                     },
@@ -138,12 +136,24 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            studentProvider.listDiaries[index].description.toString(),
+                                            studentProvider.listDiaries[index].name.toString(),
                                             textAlign: TextAlign.start,
-                                            style: textStyle
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: textStyle.copyWith(
+                                              fontWeight: FontWeight.w600
+                                            )
                                           ),
-                                          const SizedBox(
-                                            height: 15,
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 16,
+                                              bottom: 8
+                                            ),
+                                            child: Text(
+                                              studentProvider.listDiaries[index].description.toString(),
+                                              textAlign: TextAlign.start,
+                                              style: textStyle
+                                            ),
                                           ),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,14 +174,17 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                               ),
                                               if (studentProvider.listDiaries[index].fileUri != "null")...[
                                                 GestureDetector(
-                                                  onTap: () => ModalEvent.build(
-                                                    context: context,
-                                                    modalType: ModalType.archive,
-                                                    document: Document(
-                                                      name: studentProvider.listDiaries[index].name,
-                                                      fileUri: studentProvider.currentStudent.listDiaries![index].fileUri
-                                                    ),
-                                                  ),
+                                                  onTap: () {
+                                                    
+                                                    ModalEvent.build(
+                                                      context: context,
+                                                      modalType: ModalType.archive,
+                                                      document: Document(
+                                                        name: studentProvider.listDiaries[index].name,
+                                                        fileUri: studentProvider.listDiaries[index].fileUri
+                                                      ),
+                                                    );
+                                                  },
                                                   child: Container(
                                                     width: 36,
                                                     height: 36,

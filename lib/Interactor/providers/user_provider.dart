@@ -64,9 +64,11 @@ class UserProvider extends Store{
 
     try{
       final String? token = await PersistenceRepository().read(key: SecureKey.token);
+      bool isLegalGuardian = currentLegalGuardian.id != null;
+      String userId = isLegalGuardian ? currentLegalGuardian.id! : user.id!;
       
       var response = await ApiConfig.request(
-        url: "/Users/${currentLegalGuardian.id}",
+        url: "/Users/$userId",
         requestType: RequestType.put,
         body: {
           "name": nomeController.text,
@@ -80,7 +82,13 @@ class UserProvider extends Store{
       );
 
       if(response.statusCode == 200){
-        currentLegalGuardian = LegalGuardian.fromJson(jsonDecode(response.body));
+        final decodedJson = jsonDecode(response.body);
+        
+        if (isLegalGuardian) {
+          currentLegalGuardian = LegalGuardian.fromJson(decodedJson);
+        } else {
+          user = User.fromJson(decodedJson);
+        }
       }else{
         Store().showErrorMessage(context, errorMessage);
       }

@@ -75,10 +75,10 @@ class FileManagement {
         );
       }else{
         await FlutterDownloader.enqueue(
-            url: url,
-            saveInPublicStorage: true,
-            savedDir: filePath,
-            fileName: fileName
+          url: url,
+          saveInPublicStorage: true,
+          savedDir: filePath,
+          fileName: fileName
         );
       }
 

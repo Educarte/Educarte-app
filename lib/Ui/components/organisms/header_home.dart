@@ -1,6 +1,7 @@
 import 'package:educarte/Interactor/providers/menu_provider.dart';
 import 'package:educarte/Interactor/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
@@ -8,30 +9,36 @@ import '../../../core/base/constants.dart';
 import '../../../core/enum/modal_type_enum.dart';
 import 'modal.dart';
 
-class HeaderHome extends StatelessWidget {
-  final UserProvider userProvider;
+class HeaderHome extends StatefulWidget {
   final MenuProvider? menuProvider;
   final bool secondProfile;
   const HeaderHome({
     super.key,
-    required this.userProvider,
     this.menuProvider,
     this.secondProfile = false
   });
 
   @override
+  State<HeaderHome> createState() => _HeaderHomeState();
+}
+
+class _HeaderHomeState extends State<HeaderHome> {
+  final userProvider = GetIt.instance.get<UserProvider>();
+  
+  @override
   Widget build(BuildContext context) {
-    dynamic user;
-    if(secondProfile){
-      user = userProvider.user;
-    }else{
-      user = userProvider.currentLegalGuardian;
-    }
     double iconSize = 30;
 
     return ListenableBuilder(
       listenable: userProvider,
       builder: (_, __) {
+        dynamic user;
+        if(widget.secondProfile){
+          user = userProvider.user;
+        }else{
+          user = userProvider.currentLegalGuardian;
+        }
+
         return Expanded(
           flex: 0,
           child: Row(
@@ -60,17 +67,17 @@ class HeaderHome extends StatelessWidget {
               ),
               Row(
                 children: [
-                  if(secondProfile)...[
+                  if(widget.secondProfile)...[
                     GestureDetector(
                       onTap: () async{
-                        await menuProvider!.getMenu(context: context);
+                        await widget.menuProvider!.getMenu(context: context);
                         
 
-                        if(menuProvider!.currentMenu.id != null){
+                        if(widget.menuProvider!.currentMenu.id != null){
                           ModalEvent.build(
                             context: context,
                             modalType: ModalType.menu,
-                            document: menuProvider!.currentMenu
+                            document: widget.menuProvider!.currentMenu
                           );
                         }
                       },

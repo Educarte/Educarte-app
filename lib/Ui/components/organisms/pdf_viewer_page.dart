@@ -130,7 +130,7 @@ class _PDFViewerPageState extends State<PDFViewerPage> {
                 "$currentPage / $totalPage",
                 textAlign: TextAlign.center,
                 style: textTheme(context).bodyLarge!.copyWith(
-                  color: colorScheme(context).onSurface,
+                  color: colorScheme(context).surface,
                   fontWeight: FontWeight.w600
                 ),
               ),

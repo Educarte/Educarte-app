@@ -37,9 +37,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
   TextEditingController? telefoneController = TextEditingController();
   (String, String, String) currentDate = ("", "", "");
   final TextEditingController searchController = TextEditingController();
-  TimeControlPageLoading loading = TimeControlPageLoading.none;
-  bool carregando = false;
-  String getStudentsUrl = "/Students";
+  String getStudentsUrl = "/Students/Mobile";
 
   @override
   void initState() {
@@ -109,7 +107,6 @@ class _TimeControlPageState extends State<TimeControlPage> {
                       ),
                     ],
                     HeaderHome(
-                      userProvider: userProvider,
                       secondProfile: true,
                       menuProvider: menuProvider
                     ),
@@ -134,11 +131,11 @@ class _TimeControlPageState extends State<TimeControlPage> {
                               "ClassroomId": result.id
                             };
 
-                            Uri customUri = Uri.parse("$apiUrl/Students").replace(queryParameters: params);
+                            Uri customUri = Uri.parse("$apiUrl$getStudentsUrl").replace(queryParameters: params);
                             
                             await studentProvider.getStudents(
                               context: context,
-                              customUrl: "$apiUrl/Students",
+                              customUrl: "$apiUrl$getStudentsUrl",
                               term: searchController.text,
                               customResponse: await ApiConfig.request(
                                 customUri: customUri
@@ -168,9 +165,19 @@ class _TimeControlPageState extends State<TimeControlPage> {
                             student: activeStudents[index],
                             callback: (bool result) async{
                               if (result) {
+                                var params = {
+                                  "ClassroomId": studentProvider.classroomSelected.id
+                                };
+
+                                Uri customUri = Uri.parse("$apiUrl$getStudentsUrl").replace(queryParameters: params);
+                                
                                 await studentProvider.getStudents(
                                   context: context,
-                                  customUrl: getStudentsUrl
+                                  customUrl: "$apiUrl$getStudentsUrl",
+                                  term: searchController.text,
+                                  customResponse: await ApiConfig.request(
+                                    customUri: customUri
+                                  )
                                 );
                               }
                             }

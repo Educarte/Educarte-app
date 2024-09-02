@@ -12,16 +12,17 @@ import '../../../../Ui/components/organisms/modal.dart';
 import 'dash_line.dart';
 
 class CardTimeControl extends StatefulWidget {
+  final Student student;
+  final bool showButton;
+  final Function(bool result)? callback;
+
   const CardTimeControl({
     super.key, 
     required this.student,
     this.showButton = true, 
     this.callback
   });
-  final Student student;
-  final bool showButton;
-  final Function(bool result)? callback;
-
+  
   @override
   State<CardTimeControl> createState() => _CardTimeControlState();
 }

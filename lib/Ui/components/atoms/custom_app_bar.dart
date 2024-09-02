@@ -12,12 +12,12 @@ class CustomAppBar extends PreferredSize {
     child: ClipRRect(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: colorScheme(context).surface,
+          backgroundColor: colorScheme(context).primary,
           toolbarHeight: 60,
           title: Text(
             title,
             style: textTheme(context).titleLarge!.copyWith(
-              color: colorScheme(context).onPrimary,
+              color: colorScheme(context).surface,
               fontWeight: FontWeight.bold
             )
           ),
@@ -32,7 +32,7 @@ class CustomAppBar extends PreferredSize {
                   child: Icon(
                     Icons.arrow_back_ios,
                     size: 24,
-                    color: colorScheme(context).outlineVariant
+                    color: colorScheme(context).surface
                   ),
                 ),
                 const SizedBox(width: 12),

@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           child: Column(
             children: [
-              HeaderHome(userProvider: userProvider),
+              const HeaderHome(),
               ListenableBuilder(
                 listenable: studentProvider,
                 builder: (_, __) {

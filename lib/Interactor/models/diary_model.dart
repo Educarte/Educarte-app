@@ -1,3 +1,5 @@
+import 'package:educarte/Interactor/models/classroom_model.dart';
+
 class Diary {
   String? id;
   String? name;
@@ -5,6 +7,7 @@ class Diary {
   String? description;
   bool? isDiaryForAll;
   int? diaryType;
+  Classroom? classroom; 
   String? time;
   String? imageBackground;
 
@@ -14,6 +17,7 @@ class Diary {
     this.fileUri,
     this.description,
     this.isDiaryForAll,
+    this.classroom,
     this.diaryType,
     this.time,
     this.imageBackground

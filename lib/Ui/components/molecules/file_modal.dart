@@ -45,6 +45,10 @@ class _FileModalState extends State<FileModal> {
             CustomButton(
               title: "Visualizar",
               onPressed: () async{
+                if(widget.document.fileUri! == "null"){
+                  return Store().showErrorMessage(context, "Documento não encontrado"); 
+                }
+
                  XFile xFile = await FileManagement.createTemporaryXFile(
                   url: widget.document.fileUri!,
                   document: widget.document
@@ -65,6 +69,10 @@ class _FileModalState extends State<FileModal> {
                 title: "Baixar",
                 buttonType: ButtonType.secondary,
                 onPressed: () async {
+                  if(widget.document.fileUri! == "null"){
+                    return Store().showErrorMessage(context, "Documento não encontrado"); 
+                  }
+
                   String result = await FileManagement.download(
                     url: widget.document.fileUri!,
                     fileName: "${widget.document.name}_${widget.document.id!.substring(0,6)}"
@@ -79,10 +87,16 @@ class _FileModalState extends State<FileModal> {
             CustomButton(
               title: "Compartilhar",
               buttonType: ButtonType.secondary,
-              onPressed: () => FileManagement.share(
-                url: widget.document.fileUri!,
-                document: widget.document
-              )
+              onPressed: () async{
+                if(widget.document.fileUri! == "null"){
+                  return Store().showErrorMessage(context, "Documento não encontrado"); 
+                }
+
+                await FileManagement.share(
+                  url: widget.document.fileUri!,
+                  document: widget.document
+                );
+              }
             ),
           ],
         ),

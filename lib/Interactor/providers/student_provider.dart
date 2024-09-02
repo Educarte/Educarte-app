@@ -2,13 +2,17 @@ import 'dart:convert';
 
 import 'package:educarte/Interactor/models/students_model.dart';
 import 'package:educarte/Interactor/providers/menu_provider.dart';
+import 'package:educarte/Services/repositories/persistence_repository.dart';
 import 'package:educarte/core/config/api_config.dart';
+import 'package:educarte/core/enum/persistence_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 
 import '../../core/base/store.dart';
+import '../../core/enum/modal_type_enum.dart';
+import '../../core/enum/request_type.dart';
 import '../models/classroom_model.dart';
 import '../models/diary_model.dart';
 import '../models/document.dart';
@@ -77,6 +81,45 @@ class StudentProvider extends Store{
 
     setLoading(false);
   }
+  
+  Future<void> registerHour({
+    required BuildContext context,
+    required String studentId,
+    required ModalType modalType
+  }) async {
+    setLoading(true);
+    String errorMessage = "Erro ao confirmar entrada e saída!";
+    
+    try {
+      String? token = await PersistenceRepository().read(key: SecureKey.token);  
+      
+      var response = await ApiConfig.request(
+        url: "/Students/AccessControl/$studentId",
+        requestType: RequestType.post,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+        body: {}
+      );
+
+      if (response.statusCode == 200) {
+        if (modalType == ModalType.confirmEntry) {
+          showSuccessMessage(context, "Entrada confirmada com sucesso!");
+        } else {
+          showSuccessMessage(context, "Saída confirmada com sucesso!");
+        }
+
+        Navigator.of(context).pop();
+      } else {
+        showErrorMessage(context, errorMessage);
+      }
+    } catch (e) {
+      showErrorMessage(context, errorMessage);
+    }
+
+    setLoading(false);
+  }
 
   Future<void> getStudents({
     required BuildContext context,
@@ -91,7 +134,7 @@ class StudentProvider extends Store{
 
     try {
       var response = customResponse ?? await ApiConfig.request(
-        url: customUrl ?? "/Students?LegalGuardianId=$legalGuardianId"
+        url: customUrl ?? "/Students/Mobile?LegalGuardianId=$legalGuardianId"
       );
 
       if(response.statusCode == 200){
@@ -104,7 +147,7 @@ class StudentProvider extends Store{
             students.add(Student.fromJson(student));
           }
         
-          await filterStudents(term: term!);
+          await filterStudents(term: term ?? "");
         }else{
           if(currentStudent.isEmpty) {
             currentStudent = Student.fromJson(jsonData["items"][0]);
@@ -139,7 +182,7 @@ class StudentProvider extends Store{
 
     try {
       var response = await ApiConfig.request(
-        url: "/Students?LegalGuardianId=$legalGuardianId"
+        url: "/Students/Mobile?LegalGuardianId=$legalGuardianId"
       );
 
       if(response.statusCode == 200){
@@ -319,7 +362,7 @@ class StudentProvider extends Store{
       };
 
       var response = await ApiConfig.request(
-        customUri: Uri.parse("$apiUrl/Diary").replace(queryParameters: params)
+        customUri: Uri.parse("$apiUrl/Diary/Mobile").replace(queryParameters: params)
       );
 
       if(response.statusCode == 200){
