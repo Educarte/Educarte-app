@@ -26,6 +26,7 @@ class StudentProvider extends Store{
   }
 
   List<Student> students = List.empty(growable: true);
+  List<Student> studentsFilter = List.empty(growable: true);
   Student dropdownValue = Student.empty();
   Student selectedStudent = Student.empty();  
   Classroom classroomSelected = Classroom.empty();
@@ -39,6 +40,12 @@ class StudentProvider extends Store{
   (String day, String month, String year) datesMenu = ("", "", "");
 
   bool get datesMenuIsValid => datesMenu.$1.isNotEmpty && datesMenu.$2.isNotEmpty && datesMenu.$3.isNotEmpty;
+
+  Future<void> filterStudents({required String term}) async {
+    studentsFilter = term.isEmpty ? [] : students.where((element) => element.name!.toLowerCase().contains(term.toLowerCase())).toList();
+
+    notifyListeners();
+  } 
 
   Future<void> getClassrooms({
     required BuildContext context,
@@ -75,6 +82,7 @@ class StudentProvider extends Store{
     required BuildContext context,
     String? legalGuardianId,
     String? customUrl,
+    String? term,
     Response? customResponse,
     bool changingDiaries = false
   }) async{
@@ -95,6 +103,8 @@ class StudentProvider extends Store{
           for (var student in jsonData["items"]) {
             students.add(Student.fromJson(student));
           }
+        
+          await filterStudents(term: term!);
         }else{
           if(currentStudent.isEmpty) {
             currentStudent = Student.fromJson(jsonData["items"][0]);

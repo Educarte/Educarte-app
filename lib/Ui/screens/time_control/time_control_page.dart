@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:educarte/Interactor/models/classroom_model.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,11 +36,8 @@ class _TimeControlPageState extends State<TimeControlPage> {
   TextEditingController emailController = TextEditingController();
   TextEditingController? telefoneController = TextEditingController();
   (String, String, String) currentDate = ("", "", "");
-  final TextEditingController _search = TextEditingController();
+  final TextEditingController searchController = TextEditingController();
   TimeControlPageLoading loading = TimeControlPageLoading.none;
-  late Classroom classroomSelected = Classroom.empty();
-  List<Student> students = [];
-  List<Student> studentsFilter = [];
   bool carregando = false;
   String getStudentsUrl = "/Students";
 
@@ -79,6 +75,8 @@ class _TimeControlPageState extends State<TimeControlPage> {
         if (studentProvider.loading) {
           return const Center(child: CircularProgressIndicator());
         } else {
+          List<Student> activeStudents = studentProvider.studentsFilter.isNotEmpty || searchController.text.isNotEmpty ? studentProvider.studentsFilter : studentProvider.students;
+
           return Scaffold(
             resizeToAvoidBottomInset: false,
             backgroundColor: colorScheme(context).onSurfaceVariant,
@@ -117,16 +115,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                     ),
                     const SizedBox(height: 12),
                     CustomSearchInput(
-                      controller: _search,
-                      action: () {
-                        setState(() {
-                          studentProvider.students = studentsFilter.where((element) => element.name!
-                                  .toLowerCase()
-                                  .contains(
-                                      _search.text.toString().toLowerCase()))
-                              .toList();
-                        });
-                      }
+                      controller: searchController,
+                      action: () => studentProvider.filterStudents(
+                        term: searchController.text
+                      ),
                     ),
                     if(studentProvider.classrooms.isNotEmpty)...[
                       Padding(
@@ -147,6 +139,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                             await studentProvider.getStudents(
                               context: context,
                               customUrl: "$apiUrl/Students",
+                              term: searchController.text,
                               customResponse: await ApiConfig.request(
                                 customUri: customUri
                               )
@@ -155,7 +148,7 @@ class _TimeControlPageState extends State<TimeControlPage> {
                         )
                       )
                     ],
-                    if(studentProvider.students.isEmpty)...[
+                    if(activeStudents.isEmpty)...[
                       const SizedBox(
                         height: 500,
                         child: Center(
@@ -169,10 +162,10 @@ class _TimeControlPageState extends State<TimeControlPage> {
                         padding: EdgeInsets.zero,
                         primary: false,
                         shrinkWrap: true,
-                        itemCount: studentProvider.students.length,
+                        itemCount: activeStudents.length,
                         itemBuilder: (_, index) {
                           return CardTimeControl(
-                            student: studentProvider.students[index],
+                            student: activeStudents[index],
                             callback: (bool result) async{
                               if (result) {
                                 await studentProvider.getStudents(

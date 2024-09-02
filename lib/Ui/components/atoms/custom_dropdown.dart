@@ -39,7 +39,7 @@ class _CustomDropdownState extends State<CustomDropdown> {
     );
 
     return widget.list.isEmpty ? const SizedBox() : DropdownButtonFormField<dynamic>(
-      value: widget.list.first,
+      value: widget.selected,
       icon: const Icon(Symbols.expand_more),
       elevation: 16,
       style: GoogleFonts.poppins(
