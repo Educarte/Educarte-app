@@ -178,6 +178,7 @@ class _MessagesScreenState extends State<MessagesScreen> {
                                                       context: context,
                                                       modalType: ModalType.archive,
                                                       document: Document(
+                                                        id: studentProvider.listDiaries[index].id,
                                                         name: studentProvider.listDiaries[index].name,
                                                         fileUri: studentProvider.listDiaries[index].fileUri
                                                       ),
