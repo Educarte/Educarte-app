@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:educarte/Interactor/models/legal_guardians_model.dart';
+import 'package:educarte/Interactor/models/user_model.dart';
 import 'package:educarte/Interactor/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
@@ -9,6 +10,7 @@ import 'package:jwt_decoder/jwt_decoder.dart';
 
 import '../../Services/interfaces/persistence_interface.dart';
 import '../../Services/repositories/persistence_repository.dart';
+import '../../Ui/global/global.dart';
 import '../../core/base/store.dart';
 import '../../core/config/api_config.dart';
 import '../../core/enum/persistence_enum.dart';
@@ -58,8 +60,16 @@ class AuthProvider extends Store{
       final userProvider = GetIt.instance.get<UserProvider>();
 
       decodedToken["profile"] = globals.checkUserType(profileType: decodedToken["profile"]);
-      userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
-      userProvider.currentLegalGuardian.id = decodedToken["sub"];
+      profile = decodedToken["profile"];
+
+      if(profile == 1){
+        userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
+        userProvider.currentLegalGuardian.id = decodedToken["sub"];
+      }else{
+        userProvider.user = User.fromJson(decodedToken);
+        userProvider.user.id = decodedToken["sub"];
+      }
+      
 
       bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toString().toLowerCase());
 
@@ -122,14 +132,19 @@ class AuthProvider extends Store{
         final userProvider = GetIt.instance.get<UserProvider>();
 
         decodedToken["profile"] = globals.checkUserType(profileType: decodedToken["profile"]);
-        
+        profile = decodedToken["profile"];
 
         bool firstAccess = bool.parse(decodedToken["isFirstAccess"].toLowerCase());
         globals.firstAccess = firstAccess;
 
-        if (userProvider.currentLegalGuardian.id == null) {
-          userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
-          userProvider.currentLegalGuardian.id = decodedToken["sub"];
+        if ((profile == 1 && userProvider.currentLegalGuardian.id == null) || (profile == 2 && userProvider.user.id == null)) {
+          if(profile == 1){
+            userProvider.currentLegalGuardian = LegalGuardian.fromJson(decodedToken);
+            userProvider.currentLegalGuardian.id = decodedToken["sub"];
+          }else{
+            userProvider.user = User.fromJson(decodedToken);
+            userProvider.user.id = decodedToken["sub"];
+          }
           // currentIndex = 2;
           path = globals.routerPath(firstAccess: firstAccess);
         }

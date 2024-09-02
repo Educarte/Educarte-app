@@ -1,3 +1,4 @@
+import 'package:educarte/Interactor/validations/intl_formatter.dart';
 import 'package:educarte/core/base/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,23 +36,14 @@ class CardEntryAndExit extends StatelessWidget {
 
   }
 
-  String dateConverteData(String date){
-    DateTime dateTime = DateTime.parse(date);
-
-
-    String formattedDate = DateFormat('HH', 'pt_BR').format(dateTime);
-    String formattedTime = DateFormat('mm', 'pt_BR').format(dateTime);
-
-    // Concatenando a data formatada
-    String result = '${formattedDate}h. ${formattedTime}min';
-
-    // Output
-    return result; // Saída: 18h. 08 Min
-
-  }
-
   @override
   Widget build(BuildContext context) {
+    TextStyle textStyle = GoogleFonts.poppins(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: colorScheme(context).onInverseSurface
+    );
+
     return Container(
       width: screenWidth(context),
       height: 127,
@@ -74,15 +66,20 @@ class CardEntryAndExit extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Symbols.more_time,color: colorScheme(context).outline,size: 18,),
-                const SizedBox(width: 12,),
+                Icon(
+                  Symbols.more_time,
+                  color: colorScheme(context).outline,size: 18
+                ),
+                const SizedBox(width: 12),
                 RichText(
                   text: TextSpan(
                     children: [
-                      TextSpan(text: date,style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).onInverseSurface)),
-                      // TextSpan(text: "Janeiro ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w700,color: colorScheme(context).onInverseSurface)),
-                      // TextSpan(text: "de 2024",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w300,color: colorScheme(context).onInverseSurface)),
-                      //
+                      TextSpan(
+                        text: date,
+                        style: textStyle.copyWith(
+                        fontWeight: FontWeight.w300
+                      )
+                      )
                     ]
                   ),
                 )
@@ -90,24 +87,45 @@ class CardEntryAndExit extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
-              child: MySeparator(color: colorScheme(context).outline,),
+              child: MySeparator(
+                color: colorScheme(context).outline
+              ),
             ),
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Entrada: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
-                    TextSpan(text: dateConverteData(horaEntrada),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(
+                      text: "Entrada: ",
+                      style: textStyle.copyWith(
+                        fontWeight: FontWeight.w600
+                      )
+                    ),
+                    TextSpan(
+                      text: IntlFormatter.formatTimeToHourMinutes(horaEntrada),
+                      style: textStyle
+                    ),
                   ]
               ),
             ),
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Saida: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(
+                      text: "Saida: ",
+                      style: textStyle.copyWith(
+                        fontWeight: FontWeight.w600
+                      )
+                    ),
                     if(horaSaida == null)
-                    TextSpan(text: "00h. 00Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(
+                      text: "00h. 00Min",
+                      style: textStyle
+                    ),
                     if(horaSaida != null)
-                    TextSpan(text: dateConverteData(horaSaida!),style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(
+                      text: IntlFormatter.formatTimeToHourMinutes(horaSaida!),
+                      style: textStyle
+                    ),
                   ]
               ),
             ),
@@ -116,8 +134,16 @@ class CardEntryAndExit extends StatelessWidget {
             RichText(
               text: TextSpan(
                   children: [
-                    TextSpan(text: "Resumo diário: ",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w600,color: colorScheme(context).onInverseSurface)),
-                    TextSpan(text: "${resumoDiario!.substring(0,2)}h. ${resumoDiario!.substring(3,5)}Min",style: GoogleFonts.poppins(fontSize: 14,fontWeight: FontWeight.w400,color: colorScheme(context).onInverseSurface)),
+                    TextSpan(
+                      text: "Resumo diário: ",
+                      style: textStyle.copyWith(
+                        fontWeight: FontWeight.w600
+                      )
+                    ),
+                    TextSpan(
+                      text: "${resumoDiario!.substring(0,2)}h. ${resumoDiario!.substring(3,5)}Min",
+                      style: textStyle
+                    )
                   ]
               ),
             ),

@@ -1,14 +1,9 @@
-import 'package:educarte/Interactor/models/students_model.dart';
-import 'package:flutter/material.dart';
-
 String? nome;
 int? profile;
 bool firstAccess = false;
 
 String? emailEsqueciSenha;
 String? code;
-
-final ValueNotifier<List<Student>> listStudent = ValueNotifier<List<Student>>([]);
 
 int checkUserType({required String profileType}) {
   return switch (profileType) {

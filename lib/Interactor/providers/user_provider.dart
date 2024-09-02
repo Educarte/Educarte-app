@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import '../../Services/repositories/persistence_repository.dart';
 import '../../core/enum/persistence_enum.dart';
 import '../models/legal_guardians_model.dart';
+import '../models/user_model.dart';
 
 class UserProvider extends Store{
   bool loading = false;
@@ -19,6 +20,7 @@ class UserProvider extends Store{
   }
 
   LegalGuardian currentLegalGuardian = LegalGuardian.empty();
+  User user = User.empty();
 
   Future<void> getMyData({
     required BuildContext context,

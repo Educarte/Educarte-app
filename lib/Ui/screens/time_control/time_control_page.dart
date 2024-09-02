@@ -1,28 +1,22 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:educarte/Interactor/models/classroom_model.dart';
-import 'package:educarte/Ui/components/atoms/custom_button.dart';
-import 'package:educarte/core/config/api_config.dart';
-import 'package:educarte/core/enum/button_type.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get_it/get_it.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
-import 'package:http/http.dart' as http;
 
+import '../../../Interactor/providers/menu_provider.dart';
+import '../../../Interactor/providers/student_provider.dart';
+import '../../../Interactor/providers/user_provider.dart';
+import '../../../Interactor/validations/intl_formatter.dart';
 import '../../../core/base/constants.dart';
-import '../../../core/enum/persistence_enum.dart';
-import '../../../Interactor/models/document.dart';
 import '../../../Interactor/models/students_model.dart';
-import '../../../Services/repositories/persistence_repository.dart';
-import '../../../Services/helpers/file_management_helper.dart';
+import '../../../core/config/api_config.dart';
 import '../../components/atoms/custom_dropdown.dart';
-import '../../components/atoms/input.dart';
 import '../../components/atoms/result_not_found.dart';
 import '../../components/atoms/search_input.dart';
-import '../../global/global.dart';
-import '../../global/global.dart' as globals;
+import '../../components/organisms/header_home.dart';
 import 'widgets/card_time_control.dart';
 
 enum TimeControlPageLoading { none, initial, getStudents, filter, loaded }
@@ -35,204 +29,54 @@ class TimeControlPage extends StatefulWidget {
 }
 
 class _TimeControlPageState extends State<TimeControlPage> {
-  TextEditingController nome = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController? telefone = TextEditingController();
-  List<String> currentDate = List.empty(growable: true);
+  final userProvider = GetIt.instance.get<UserProvider>();
+  final menuProvider = GetIt.instance.get<MenuProvider>();
+  final studentProvider = GetIt.instance.get<StudentProvider>();
+
+  TextEditingController nomeController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController? telefoneController = TextEditingController();
+  (String, String, String) currentDate = ("", "", "");
   final TextEditingController _search = TextEditingController();
   TimeControlPageLoading loading = TimeControlPageLoading.none;
   late Classroom classroomSelected = Classroom.empty();
-  List<Classroom> classrooms = List.empty(growable: true);
   List<Student> students = [];
-  List<Student> students2 = [];
   List<Student> studentsFilter = [];
-  Document? menu;
   bool carregando = false;
-  bool carregandoData = false;
+  String getStudentsUrl = "/Students";
 
   @override
   void initState() {
-    getInitialData();
-    getClassrooms();
-    meusDados();
-    Future.delayed(const Duration(milliseconds: 1200), () {
-      setState(() {
-        carregandoData = true;
-      });
-    });
     super.initState();
-  }
-
-  void setLoading({required TimeControlPageLoading load}) {
-    setState(() {
-      loading = load;
-    });
+    studentProvider.getClassrooms(
+      context: context
+    );
+    getInitialData();
   }
 
   Future<void> getInitialData() async {
-    try {
-      setLoading(load: TimeControlPageLoading.initial);
-
-      await getStudents(timeControlPageLoading: TimeControlPageLoading.initial);
-      await getMenu();
-
-      // currentDate = await IntlFormatter.getCurrentDate();
-
-      classroomSelected = classrooms.first;
-
-      setLoading(load: TimeControlPageLoading.loaded);
-    } catch (e) {
-      setLoading(load: TimeControlPageLoading.loaded);
-    }
-  }
-
-  bool loadingDownload = false;
-
-  Document document = Document.empty();
-
-  Future<void> getMenu() async {
-    var response = await http.get(
-      Uri.parse("$apiUrl/Menus"),
-      // headers: {"Authorization": "Bearer ${globals.token}"}
+    currentDate = await IntlFormatter.getCurrentDate(
+      isDe: true, 
+      data: DateTime.now().toString()
     );
 
-    if (response.statusCode == 200) {
-      Map<String, dynamic> decodeJson = jsonDecode(response.body);
-      setState(() {
-        document = Document(
-            id: decodeJson["items"][0]["id"].toString(),
-            name: decodeJson["items"][0]["name"].toString(),
-            fileUri: decodeJson["items"][0]["uri"].toString());
-      });
-    }
+    await studentProvider.getStudents(
+      context: context,
+      customUrl: getStudentsUrl
+    );
   }
-
-  Future<void> getStudents(
-      {required TimeControlPageLoading timeControlPageLoading}) async {
-    try {
-      setLoading(load: timeControlPageLoading);
-
-      globals.listStudent.value.clear();
-
-      var response = await http.get(Uri.parse("$apiUrl/Students"), headers: {
-        // "Authorization": "Bearer $token",
-      });
-
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
-        jsonData["items"].forEach(
-          (item) => globals.listStudent.value.add(Student.fromJson(item))
-        );
-
-        setState(() {
-          studentsFilter = globals.listStudent.value;
-          students2 = globals.listStudent.value;
-        });
-
-        await getClassrooms();
-      }
-      setLoading(load: TimeControlPageLoading.loaded);
-    } catch (e) {
-      setLoading(load: TimeControlPageLoading.loaded);
-    }
-  }
-
-  Future<void> getClassrooms() async {
-    try {
-      classrooms.clear();
-
-      var response = await http.get(Uri.parse("$apiUrl/Classroom"), headers: {
-        // "Authorization": "Bearer $token",
-      });
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
-        classrooms.add(Classroom.empty());
-
-        jsonData["items"]
-            .forEach((item) => classrooms.add(Classroom.fromJson(item)));
-        setState(() {});
-      }
-    } catch (e) {
-      setLoading(load: TimeControlPageLoading.loaded);
-    }
-  }
-
-  Future<void> meusDados() async {
-    setLoading(load: TimeControlPageLoading.loaded);
-    var response = await http
-        .get(Uri.parse("http://64.225.53.11:5000/Users/Me"), headers: {
-      // "Authorization": "Bearer ${globals.token.toString()}",
-    });
-    if (response.statusCode == 200) {
-      Map<String, dynamic> jsonData = jsonDecode(response.body);
-
-      setState(() {
-        List<String> groupNames = jsonData["name"].toString().split(" ");
-        globals.nome = groupNames.first;
-        nome.text = jsonData["name"];
-        email.text = jsonData["email"];
-        if (jsonData["cellphone"] != null) {
-          telefone?.text = jsonData["cellphone"];
-        }
-      });
-    }
-  }
-
-  Future<void> putDados() async {
-    setState(() {
-      carregando = true;
-    });
-
-    try {
-      Map corpo = {
-        "name": nome.text,
-        "email": email.text,
-        "cellphone": telefone?.text
-      };
-
-      var response = await http.put(
-          Uri.parse("http://64.225.53.11:5000/Users/"),
-          body: jsonEncode(corpo),
-          headers: {
-            // "Authorization": "Bearer ${globals.token}",
-            "Content-Type": "application/json"
-          });
-
-      if (response.statusCode == 200) {
-        Future.delayed(const Duration(seconds: 1)).then((value) {
-          meusDados();
-        });
-        setState(() {
-          carregando = false;
-        });
-      } else {
-        setState(() {
-          carregando = false;
-        });
-      }
-    } catch (e) {
-      setState(() {
-        carregando = false;
-      });
-    }
-  }
-
-  String id = "";
-
-  Future<void> postAccessControl() async {}
 
   @override
   Widget build(BuildContext context) {
-    bool focusInput = MediaQuery.of(context).viewInsets.bottom > 0;
-    double iconSize = 30;
-    Color colorIcon = const Color(0xFFA0A4A8);
     TextStyle style({FontWeight? fontWeight}) => GoogleFonts.poppins(
-        color: colorScheme(context).onInverseSurface,
-        fontWeight: fontWeight ?? FontWeight.w300);
-    return ValueListenableBuilder(
-      valueListenable: globals.listStudent,
-      builder: (_, __, ___) {
-        if (loading == TimeControlPageLoading.initial) {
+      color: colorScheme(context).onInverseSurface,
+      fontWeight: fontWeight ?? FontWeight.w300
+    );
+
+    return ListenableBuilder(
+      listenable: studentProvider,
+      builder: (_, __) {
+        if (studentProvider.loading) {
           return const Center(child: CircularProgressIndicator());
         } else {
           return Scaffold(
@@ -241,327 +85,108 @@ class _TimeControlPageState extends State<TimeControlPage> {
             body: Padding(
               padding: const EdgeInsets.all(16),
               child: SingleChildScrollView(
-                child: Column(children: [
-                  const SizedBox(height: 48),
-                  if (currentDate.isNotEmpty)
-                    RichText(
-                        text: TextSpan(children: [
-                      TextSpan(text: currentDate[0], style: style()),
-                      TextSpan(
-                          text: currentDate[1],
-                          style: style(fontWeight: FontWeight.w600)),
-                      TextSpan(text: currentDate[2], style: style())
-                    ])),
-                  const SizedBox(height: 32),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Olá,",
-                              style: GoogleFonts.poppins(
-                                color: colorScheme(context).onInverseSurface,
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16,
+                child: Column(
+                  children: [
+                    if (currentDate.$1.isNotEmpty)...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 32),
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "${IntlFormatter.getDayWeek(DateTime.now())}, ${currentDate.$1}", 
+                                style: style()
                               ),
-                            ),
-                            Text(globals.nome.toString(),
-                                style: GoogleFonts.poppins(
-                                  color: colorScheme(context).primary,
-                                  fontWeight: FontWeight.w800,
-                                  fontSize: 25,
-                                )),
-                          ],
+                              TextSpan(
+                                text: currentDate.$2,
+                                style: style(fontWeight: FontWeight.w600)
+                              ),
+                              TextSpan(
+                                text: " de ${currentDate.$3}", 
+                                style: style()
+                              )
+                            ]
+                          )
                         ),
                       ),
-                      Expanded(
-                          flex: 0,
-                          child: Row(children: [
-                            GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isDismissible: false,
-                                    useRootNavigator: true,
-                                    isScrollControlled: true,
-                                    backgroundColor:
-                                        Colors.black.withOpacity(0.3),
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setstate) {
-                                        return Container(
-                                          width: screenWidth(context),
-                                          height: 277,
-                                          decoration: BoxDecoration(
-                                              color: colorScheme(context)
-                                                  .onSurfaceVariant,
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                      topRight:
-                                                          Radius.circular(8),
-                                                      topLeft:
-                                                          Radius.circular(8))),
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 16),
-                                            child: Column(
-                                              children: [
-                                                Row(
-                                                  children: [
-                                                    IconButton(
-                                                        onPressed: () {
-                                                          if (loadingDownload ==
-                                                              false) {
-                                                            Navigator.pop(
-                                                                context);
-                                                          }
-                                                        },
-                                                        icon: Icon(
-                                                          Symbols.close,
-                                                          color: colorScheme(
-                                                                  context)
-                                                              .onInverseSurface,
-                                                        )),
-                                                    Text(
-                                                      "Cardápio em PDF",
-                                                      style: GoogleFonts.poppins(
-                                                          fontSize: 22,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: colorScheme(
-                                                                  context)
-                                                              .onInverseSurface),
-                                                    )
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 32,
-                                                ),
-                                                CustomButton(
-                                                  title: "Visualizar",
-                                                  loading: loadingDownload,
-                                                  onPressed: () async => await FileManagement.launchUri(
-                                                    link: document.fileUri.toString(),
-                                                    context: context
-                                                  )
-                                                ),
-                                                const SizedBox(
-                                                  height: 16,
-                                                ),
-                                                CustomButton(
-                                                  title: "Baixar",
-                                                  buttonType: ButtonType.secondary,
-                                                  onPressed: () {
-                                                    setstate(() {
-                                                      loadingDownload = true;
-                                                    });
-
-                                                    FileManagement.download(
-                                                      url: document.fileUri.toString(),
-                                                      fileName: "Cardápio"
-                                                    );
-                                                    Future.delayed(const Duration(seconds: 2)).then((value) {
-                                                      setstate(() {
-                                                        loadingDownload = false;
-                                                      });
-                                                    });
-                                                  },
-                                                  loading: loadingDownload,
-                                                ),
-                                                const SizedBox(
-                                                  height: 16,
-                                                ),
-                                                CustomButton(
-                                                  title: "Compartilhar",
-                                                  buttonType: ButtonType.secondary,
-                                                  onPressed: () async => await FileManagement.share(
-                                                    url: document.fileUri.toString(),
-                                                    document: document
-                                                  )
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        );
-                                      });
-                                    },
-                                  );
-                                },
-                                child: Icon(Symbols.nutrition,
-                                    size: iconSize, color: colorIcon)),
-                            const SizedBox(width: 32),
-                            GestureDetector(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    useRootNavigator: true,
-                                    isScrollControlled: true,
-                                    isDismissible: false,
-                                    context: context,
-                                    backgroundColor:
-                                        Colors.black.withOpacity(0.3),
-                                    builder: (BuildContext context) {
-                                      return Container(
-                                        width: screenWidth(context),
-                                        height: focusInput ? 900 : 449,
-                                        decoration: BoxDecoration(
-                                            color: colorScheme(context)
-                                                .onSurfaceVariant,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    topRight:
-                                                        Radius.circular(8),
-                                                    topLeft:
-                                                        Radius.circular(8))),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 16),
-                                          child: Column(
-                                            children: [
-                                              Row(children: [
-                                                IconButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    icon: Icon(Symbols.close,
-                                                        color:
-                                                            colorScheme(context)
-                                                                .onInverseSurface)),
-                                                Text("Meus dados",
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 22,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color:
-                                                            colorScheme(context)
-                                                                .onInverseSurface))
-                                              ]),
-                                              const SizedBox(
-                                                height: 32,
-                                              ),
-                                              Input(
-                                                name: "Nome",
-                                                onChange: nome,
-                                              ),
-                                              const SizedBox(
-                                                height: 16,
-                                              ),
-                                              Input(
-                                                name: "E-mail",
-                                                onChange: email
-                                              ),
-                                              const SizedBox(
-                                                height: 16,
-                                              ),
-                                              Input(
-                                                name: "Telefone",
-                                                onChange: telefone!
-                                              ),
-                                              const SizedBox(
-                                                height: 32,
-                                              ),
-                                              CustomButton(
-                                                title: "Atualizar informações",
-                                                loading: carregando,
-                                                onPressed: () async{
-                                                  await putDados();
-
-                                                  Navigator.pop(context);
-                                                }
-                                              ),
-                                              const SizedBox(
-                                                height: 16,
-                                              ),
-                                              CustomButton(
-                                                title: "Sair do aplicativo",
-                                                buttonType: ButtonType.secondary,
-                                                onPressed: () async {
-                                                  PersistenceRepository persistenceRepository = PersistenceRepository();
-
-                                                  await persistenceRepository.delete(key: SecureKey.token);
-
-                                                  if (context.mounted) {
-                                                    context.go("/login");
-                                                  }
-                                                }
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Icon(Symbols.account_circle_rounded,
-                                    size: iconSize, color: colorIcon))
-                          ]))
                     ],
-                  ),
-                  const SizedBox(height: 12),
-                  CustomSearchInput(
-                    controller: _search,
-                    action: () {
-                      setState(() {
-                        globals.listStudent.value = studentsFilter
-                            .where((element) => element.name!
-                                .toLowerCase()
-                                .contains(
-                                    _search.text.toString().toLowerCase()))
-                            .toList();
-                      });
-                    }
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: CustomDropdown(
-                      list: classrooms,
-                      selected: classroomSelected,
-                      callback: (result) => setState(() {
-                        classroomSelected = result;
-                        if (classroomSelected.name == null) {
-                          globals.listStudent.value = students2;
-                        } else {
-                          globals.listStudent.value = studentsFilter
-                              .where((element) => element.classrooms!.name
-                                  .toString()
+                    HeaderHome(
+                      userProvider: userProvider,
+                      secondProfile: true,
+                      menuProvider: menuProvider
+                    ),
+                    const SizedBox(height: 12),
+                    CustomSearchInput(
+                      controller: _search,
+                      action: () {
+                        setState(() {
+                          studentProvider.students = studentsFilter.where((element) => element.name!
                                   .toLowerCase()
                                   .contains(
-                                      classroomSelected.name!.toLowerCase()))
+                                      _search.text.toString().toLowerCase()))
                               .toList();
-                        }
-                      }),
-                    )),
-                  if(listStudent.value.isEmpty)...[
-                    const SizedBox(
-                      height: 500,
-                      child: Center(
-                        child: ResultNotFound(
-                            description: "Nenhum usuário encontrado!",
-                            iconData: Symbols.error),
-                      ),
-                    )
-                  ]else...[
-                    ListView.builder(
-                      padding: EdgeInsets.zero,
-                      primary: false,
-                      shrinkWrap: true,
-                      itemCount: listStudent.value.length,
-                      itemBuilder: (_, index) {
-                        return CardTimeControl(
-                          student: listStudent.value[index],
-                          callback: (bool result) {
-                            if (result) {
-                              getStudents(
-                                  timeControlPageLoading:
-                                      TimeControlPageLoading.filter);
-                            }
-                          }
-                        );
+                        });
                       }
-                    )
+                    ),
+                    if(studentProvider.classrooms.isNotEmpty)...[
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: CustomDropdown(
+                          list: studentProvider.classrooms,
+                          selected: studentProvider.classrooms[studentProvider.classroomSelectedIndex],
+                          callback: (result) async{
+                            studentProvider.classroomSelected = result;
+                            studentProvider.classroomSelectedIndex = studentProvider.classrooms.indexWhere((element) => element.id == result.id);
+
+                            var params = {
+                              "ClassroomId": result.id
+                            };
+
+                            Uri customUri = Uri.parse("$apiUrl/Students").replace(queryParameters: params);
+                            
+                            await studentProvider.getStudents(
+                              context: context,
+                              customUrl: "$apiUrl/Students",
+                              customResponse: await ApiConfig.request(
+                                customUri: customUri
+                              )
+                            );
+                          },
+                        )
+                      )
+                    ],
+                    if(studentProvider.students.isEmpty)...[
+                      const SizedBox(
+                        height: 500,
+                        child: Center(
+                          child: ResultNotFound(
+                              description: "Nenhum usuário encontrado!",
+                              iconData: Symbols.error),
+                        ),
+                      )
+                    ]else...[
+                      ListView.builder(
+                        padding: EdgeInsets.zero,
+                        primary: false,
+                        shrinkWrap: true,
+                        itemCount: studentProvider.students.length,
+                        itemBuilder: (_, index) {
+                          return CardTimeControl(
+                            student: studentProvider.students[index],
+                            callback: (bool result) async{
+                              if (result) {
+                                await studentProvider.getStudents(
+                                  context: context,
+                                  customUrl: getStudentsUrl
+                                );
+                              }
+                            }
+                          );
+                        }
+                      )
+                    ]
                   ]
-                ]),
+                ),
               ),
             ),
           );

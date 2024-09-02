@@ -1,6 +1,18 @@
 import 'package:intl/intl.dart';
 
 class IntlFormatter {
+  static String getDayWeek(DateTime data) {
+    List<String> diasSemana = [
+      'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira',
+      'Sexta-feira', 'Sábado', 'Domingo'
+    ];
+
+    String dayWeek = diasSemana[data.weekday - 1];
+
+    return dayWeek;
+  }
+
+
   static Future<(String day, String month, String year)> getCurrentDate({bool? isDe, String? data}) async{
     DateTime now = DateTime.now();
     String locale = 'pt_BR';

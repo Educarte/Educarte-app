@@ -49,13 +49,6 @@ class _CustomDropdownState extends State<CustomDropdown> {
         height: 1.3
       ),
       decoration: InputDecoration(
-          // labelText: selected,
-          // labelStyle: GoogleFonts.poppins(
-          //     fontWeight: FontWeight.w400,
-          //     fontSize: 16,
-          //     color: const Color(0xff474C51),
-          //     height: 1.3
-          // ),
           border: const OutlineInputBorder(),
           focusedBorder: border,
           enabledBorder: border

@@ -84,8 +84,8 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
               const SizedBox(height: 32,),
               SizedBox(
                 height: 55,
-                child: DropdownButtonFormField<Student>(
-                  value: studentProvider.currentStudent,
+                child: DropdownButtonFormField<Student?>(
+                  value: studentProvider.students.isEmpty ? studentProvider.dropdownValue : studentProvider.students[studentProvider.dropdownValueIndex],
                   icon: const Icon(Symbols.expand_more),
                   elevation: 16,
                   style: GoogleFonts.poppins(
@@ -165,7 +165,8 @@ class _ChangingOfTheGuardModalState extends State<ChangingOfTheGuardModal> {
                     responsavelController: responsavelController,
                     salaController: salaController,
                     receivedStudent: studentProvider.currentStudent,
-                    changingGuard: true
+                    changingGuard: true,
+                    changingDiaries: true
                   );
           
                   if(context.mounted){

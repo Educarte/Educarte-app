@@ -9,7 +9,7 @@ import '../../Interactor/providers/menu_provider.dart';
 import '../../core/base/constants.dart';
 
 ValueNotifier selectedIndex = ValueNotifier<int>(0);
-ValueNotifier? previousIndex = ValueNotifier<int?>(null);
+ValueNotifier? previousIndex = ValueNotifier<int>(0);
 
 class EducarteShell extends StatefulWidget {
   const EducarteShell({
@@ -34,10 +34,8 @@ class _EducarteShellState extends State<EducarteShell> {
   String id = "";
   
   void changeSelectedIndex(int index){
-    setState(() {
-      previousIndex!.value = selectedIndex.value;
-      selectedIndex.value = index;
-    });
+    previousIndex!.value = selectedIndex.value;
+    selectedIndex.value = index;
   }
 
   Widget selectedIcon({
@@ -137,6 +135,8 @@ class _EducarteShellState extends State<EducarteShell> {
   }
 
   void _ontItemTapped(int index, BuildContext context) async{
+    changeSelectedIndex(index);
+
     switch (index) {
       case 4:
         ModalEvent.build(
@@ -145,13 +145,9 @@ class _EducarteShellState extends State<EducarteShell> {
         );
         break;
       case 3:
-        changeSelectedIndex(index);
-        
         context.push("/entryAndExit");
         break;
       case 1:
-        changeSelectedIndex(index);
-
         await menuProvider.getMenu(context: context);
 
         if(menuProvider.currentMenu.fileUri != null){
@@ -160,19 +156,13 @@ class _EducarteShellState extends State<EducarteShell> {
             modalType: ModalType.menu,
             document: menuProvider.currentMenu
           );
-        }else{
-          menuProvider.showErrorMessage(context, "Nenhum cardápio disponível");
         }
        
         break;
       case 0:
-        changeSelectedIndex(index);
-
         context.go("/recados");
         break;
       default:
-        changeSelectedIndex(index);
-
         context.go("/home");
     }
   }

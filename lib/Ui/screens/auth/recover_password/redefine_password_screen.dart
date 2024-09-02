@@ -5,11 +5,16 @@ import 'package:educarte/Interactor/validations/validator.dart';
 import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/core/enum/input_type.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../Interactor/providers/user_provider.dart';
+import '../../../../Services/repositories/persistence_repository.dart';
+import '../../../../core/enum/persistence_enum.dart';
 import '../../../components/atoms/input.dart';
 import '../../../global/global.dart' as globals;
 
@@ -21,6 +26,7 @@ class RedefinePassword extends StatefulWidget {
 }
 
 class _RedefinePasswordState extends State<RedefinePassword> {
+  final userProvider = GetIt.instance.get<UserProvider>();
   TextEditingController novaSenha = TextEditingController();
   TextEditingController confirmarSenha = TextEditingController();
   bool loading = false;
@@ -53,8 +59,7 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       setState(() {
         loading = false;
       });
-      
-      
+
       Store().showErrorMessage(context, "Erro ao tentar redefinir senha!");
     }
   }
@@ -69,23 +74,25 @@ class _RedefinePasswordState extends State<RedefinePassword> {
       "confirmPassword": confirmarSenha.text
     };
 
+    final String? token = await PersistenceRepository().read(key: SecureKey.token);
+    
     var response = await http.patch(
-      Uri.parse("$apiUrl/Users/IDDOUSUARIO/ResetPassword"),
+      Uri.parse("$apiUrl/Users/${userProvider.currentLegalGuardian.id}/ResetPassword"),
       body: jsonEncode(body),
       headers: {
         "Content-Type": "application/json",
-        // "Authorization": "Bearer ${globals.token}"
+        "Authorization": "Bearer $token"
       }
     );
 
     if (response.statusCode == 200 && mounted) {
-      // Map<String, dynamic> decodedToken = JwtDecoder.decode(globals.token!);
-      // int profile = globals.checkUserType(profileType: decodedToken["profile"]);
-      // if (profile == 1) {
-      //   context.go("/home");
-      // } else {
-      //   context.go("/timeControl");
-      // }
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(token!);
+      int profile = globals.checkUserType(profileType: decodedToken["profile"]);
+      if (profile == 1) {
+        context.go("/home");
+      } else {
+        context.go("/timeControl");
+      }
 
       Store().showSuccessMessage(context, "Senha redefinida com sucesso!");
     } else {

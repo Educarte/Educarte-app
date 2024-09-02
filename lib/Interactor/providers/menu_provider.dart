@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:educarte/Ui/shell/educarte_shell.dart';
 import 'package:educarte/core/config/api_config.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +29,6 @@ class MenuProvider extends Store{
         "EndDate": DateFormat.yMd().format(DateTime.now()).toString()
       };
 
-      
       var response = await ApiConfig.request(
         customUri: Uri.parse("$apiUrl/Menus").replace(queryParameters: params)
       );
@@ -40,7 +38,6 @@ class MenuProvider extends Store{
 
         if((decodeJson["items"] as List).isEmpty){
           showErrorMessage(context, "Nenhum menu encontrado");
-          selectedIndex.value = previousIndex!.value;
         }else{
           currentMenu = Document(id: decodeJson["items"][0]["id"].toString(),name: decodeJson["items"][0]["name"].toString(),fileUri: decodeJson["items"][0]["uri"].toString());
         }

@@ -32,7 +32,8 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     studentProvider.getStudents(
       context: context,
-      legalGuardianId: userProvider.currentLegalGuardian.id!
+      legalGuardianId: userProvider.currentLegalGuardian.id!,
+      changingDiaries: true
     );
   }
 

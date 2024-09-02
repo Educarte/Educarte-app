@@ -6,12 +6,13 @@ import 'package:educarte/core/config/api_config.dart';
 import 'package:educarte/core/enum/input_type.dart';
 import 'package:educarte/core/enum/modal_type_enum.dart';
 import 'package:educarte/Interactor/models/students_model.dart';
-import 'package:educarte/Interactor/useCase/student_use_case.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 
+import '../../../Interactor/providers/student_provider.dart';
 import '../../../core/enum/button_type.dart';
 import '../atoms/input.dart';
 import '../atoms/modal_application_bar.dart';
@@ -36,6 +37,7 @@ class ConfirmEntryOrExitModal extends StatefulWidget {
 }
 
 class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
+  final studentProvider = GetIt.instance.get<StudentProvider>();
   bool loading = false;
   DateTime dateTimeNow = DateTime.now();
   final TextEditingController _hour = TextEditingController();
@@ -129,7 +131,12 @@ class _ConfirmEntryOrExitModalState extends State<ConfirmEntryOrExitModal> {
                 onPressed: () async {
                   await registerHour();
 
-                  if(context.mounted) await StudentUseCase.getStudentsReset(context: context);
+                  if(context.mounted) {
+                    await studentProvider.getStudents(
+                      context: context,
+                      customUrl: "/Students"
+                    );
+                  }
                 }
               ),
               Padding(
