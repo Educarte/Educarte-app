@@ -7,7 +7,7 @@ class Diary {
   String? description;
   bool? isDiaryForAll;
   int? diaryType;
-  Classroom? classroom; 
+  List<Classroom>? classroom; 
   String? time;
   String? imageBackground;
 
@@ -30,6 +30,7 @@ class Diary {
     description = json['description'];
     isDiaryForAll = json['isDiaryForAll'];
     diaryType = json['diaryType'];
+    classroom = json['classrooms'] != null ? (json['classrooms'] as List).map((val) => Classroom.fromJson(val)).toList() : [];
     time = json['time'];
   }
 

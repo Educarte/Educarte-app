@@ -115,11 +115,9 @@ class _MessagesScreenState extends State<MessagesScreen> {
                               child: Column(
                                 children: [
                                   CardMessages(
-                                    title: switch(studentProvider.listDiaries[index].diaryType){
-                                      0 => studentProvider.currentStudent.name!.toUpperCase(),
-                                      1 =>  "Nome da sala".toString().toUpperCase(),
-                                      _ => "ESCOLA"
-                                    },
+                                    title: studentProvider.messageRecipient(
+                                      diary: studentProvider.listDiaries[index]
+                                    ),
                                     color: colorScheme(context).primary,
                                     assets: switch(studentProvider.listDiaries[index].diaryType){
                                       0 => "imgRecados3",

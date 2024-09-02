@@ -340,6 +340,14 @@ class StudentProvider extends Store{
     setLoading(false);
   }
 
+  String messageRecipient({required Diary diary}){
+    return switch(diary.diaryType){
+      0 => currentStudent.name!,
+      1 => diary.classroom!.isNotEmpty ? diary.classroom!.first.name! : "Sala nāo encontrada",
+      _ => "Escola"
+    };
+  }
+
   Future<void> getDiarys({
     required BuildContext context,
     required DateTime startDate,

@@ -166,11 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         )
                                                       ),
                                                       Text(
-                                                        switch(studentProvider.currentStudent.listDiaries![index].diaryType){
-                                                          0 => studentProvider.currentStudent.name!,
-                                                          1 => "Nome da sala",
-                                                          _ => "Escola"
-                                                        },
+                                                        studentProvider.messageRecipient(
+                                                          diary: studentProvider.currentStudent.listDiaries![index]
+                                                        ),
                                                         style: diaryStyle
                                                       )
                                                     ],
