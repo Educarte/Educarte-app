@@ -25,4 +25,5 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
-/.upload-keystore.jks.base64.txt
+upload-keystore.jks.base64.txt
+educarte.pem
