@@ -148,7 +148,7 @@ class _EducarteShellState extends State<EducarteShell> {
         context.push("/entryAndExit");
         break;
       case 1:
-        await menuProvider.getMenu(context: context);
+        // await menuProvider.getMenu(context: context);
 
         if(menuProvider.currentMenu.fileUri != null){
           ModalEvent.build(
@@ -156,6 +156,8 @@ class _EducarteShellState extends State<EducarteShell> {
             modalType: ModalType.menu,
             document: menuProvider.currentMenu
           );
+        }else{
+          menuProvider.showErrorMessage(context, "Nenhum cardápio encontrado");
         }
        
         break;

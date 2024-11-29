@@ -41,6 +41,7 @@ class StudentProvider extends Store{
   int dropdownValueIndex = 0;
   int classroomSelectedIndex = 0;
   String summary = "";
+  String monthSummary = "";
   (String day, String month, String year) datesMenu = ("", "", "");
 
   bool get datesMenuIsValid => datesMenu.$1.isNotEmpty && datesMenu.$2.isNotEmpty && datesMenu.$3.isNotEmpty;
@@ -328,7 +329,7 @@ class StudentProvider extends Store{
           listAccess.clear();
 
           decodeJson["accessControlsByDate"] .forEach((item) => listAccess.add(EntryAndExit.fromJson(item)));
-          summary = decodeJson["summary"];
+          await getSummary(receivedSummary: decodeJson["summary"]);
         }
       }else{
         showErrorMessage(context, errorMessage);
@@ -393,4 +394,43 @@ class StudentProvider extends Store{
     initialLoading = false;
     setLoading(false);
   } 
+
+  String getDailySummary({
+    required String firstDate,
+    required String lastDate
+  }) {
+    DateTime firstTime = DateTime.parse(firstDate);
+    DateTime secondTime = DateTime.parse(lastDate);
+
+    Duration difference = firstTime.difference(secondTime);
+    String result = '${difference.inHours}h. ${difference.inMinutes % 60} min';
+
+    return result;
+  }
+
+  Future<void> getSummary({
+    required String receivedSummary
+  }) async{
+    DateTime timeNow = DateTime.now();
+    double contractedHour = listAccess.first.contractedHour!.hours!;
+    int hours = contractedHour.toInt();
+    int minutes = ((contractedHour - hours) * 60).round();
+    DateTime contractedTime = DateTime(timeNow.year, timeNow.month, timeNow.day, hours, minutes, 0, 0);
+
+    receivedSummary = receivedSummary.replaceAll("-", "");
+    DateTime dateTimeBase = DateTime(timeNow.year, timeNow.month, timeNow.day);
+
+    Duration duration = Duration(
+      hours: int.parse(receivedSummary.split(":")[0]),
+      minutes: int.parse(receivedSummary.split(":")[1]),
+      seconds: int.parse(receivedSummary.split(":")[2].split(".")[0])
+    );
+
+    DateTime dateTimeSummary = dateTimeBase.add(duration);
+
+    Duration difference = contractedTime.difference(dateTimeSummary);
+    String result = '${difference.inHours}h. ${difference.inMinutes % 60} min';
+
+    monthSummary = result.contains("-") ? result : "+$result";
+  }
 }

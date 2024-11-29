@@ -76,8 +76,10 @@ class _RedefinePasswordState extends State<RedefinePassword> {
 
     final String? token = await PersistenceRepository().read(key: SecureKey.token);
     
+    String id = userProvider.currentLegalGuardian.id ?? userProvider.user.id!;
+
     var response = await http.patch(
-      Uri.parse("$apiUrl/Users/${userProvider.currentLegalGuardian.id}/ResetPassword"),
+      Uri.parse("$apiUrl/Users/$id/ResetPassword"),
       body: jsonEncode(body),
       headers: {
         "Content-Type": "application/json",
